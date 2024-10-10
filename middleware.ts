@@ -18,7 +18,7 @@ export default auth((req) => {
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
   if (isApiRoute) {
-    return new Response(null, { status: 200 });
+    return;
   }
 
   if (isAuthRoute) {
@@ -31,6 +31,8 @@ export default auth((req) => {
   if (!isLoggedIn && !isPublicRoute) {
     return Response.redirect(new URL("/auth/login", nextUrl));
   }
+
+  return;
 });
 
 export const config = {
