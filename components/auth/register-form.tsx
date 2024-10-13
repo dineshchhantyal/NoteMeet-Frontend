@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import { CardWrapper } from "@/components/auth/card-wrapper";
 import { FormError } from "@/components/form-error";
-import { FormSuccess } from "../form-succes";
+import { FormSuccess } from "../form-success";
 import { register } from "@/actions/register";
 
 export const RegisterForm = () => {
