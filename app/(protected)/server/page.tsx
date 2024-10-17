@@ -1,8 +1,8 @@
 import { UserInfo } from "@/components/user-info";
-import { currentuser } from "@/lib/auth";
+import { currentUser } from "@/lib/auth";
 
 export default async function ServerPage() {
-  const user = await currentuser();
+  const user = await currentUser();
 
   return <UserInfo user={user} label="Server component" />;
 }
