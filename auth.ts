@@ -4,6 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/lib/db";
 import authConfig from "@/auth.config";
 import { getUserById } from "@/data/user";
+import { getTwoFactorConfoirmationByUserId } from "@/data/two-factor-confirmation";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
@@ -28,9 +29,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         // Prevent sign in without email verification
         if (!existingUser?.emailVerified) return false;
+
+        if (existingUser.isTwoFactorEnabled) {
+          const twoFactorConfirmation = await getTwoFactorConfoirmationByUserId(
+            existingUser.id
+          );
+
+          if (!twoFactorConfirmation) return false;
+
+          await db.twoFactorConfirmation.delete({
+            where: { id: twoFactorConfirmation.id },
+          });
+        }
       }
 
-      // TODO: Add 2FA check
       return true;
     },
     async session({ session, token }) {
