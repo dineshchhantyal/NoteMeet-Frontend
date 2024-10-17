@@ -1,21 +1,9 @@
-import { auth, signOut } from "@/auth";
+"use client";
 
-export default async function SettingsPage() {
-  const session = await auth();
-
+export default function SettingsPage() {
   return (
-    <div>
-      {JSON.stringify(session)}
-
-      <form
-        action={async () => {
-          "use server";
-
-          await signOut();
-        }}
-      >
-        <button type="submit">Sign Out</button>
-      </form>
+    <div className="bg-secondary flex justify-between items-center p-4 rounded-xl w-[600px] shadow-sm">
+      Settings
     </div>
   );
 }
