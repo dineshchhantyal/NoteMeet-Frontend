@@ -58,7 +58,7 @@ export const LoginForm = () => {
 
           if (data?.success) {
             form.reset();
-            setError(data.success);
+            setSuccess(data.success);
           }
 
           if (data?.twoFactor) {
