@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NextAuth.js v5 Template
 
-## Getting Started
+This project was created to learn and implement **Auth.js v5** (formerly NextAuth.js) for authentication in a Next.js app. The learning process followed a highly detailed tutorial by [Code With Antonio](https://www.codewithantonio.com/projects/auth-masterclass) (Antonio Erdeljac) from GitHub - [AntonioErdeljac](https://github.com/AntonioErdeljac).
 
-First, run the development server:
+## Project Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This template demonstrates how to integrate Auth.js v5 into a Next.js application using the App Router. The project includes multiple authentication providers, such as GitHub, Google, and custom credentials.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Authentication Providers**:
+  - Credentials
+  - OAuth (Google & GitHub)
+- **Two-Factor Authentication (2FA)**
+- **Email Verification** using [Resend](https://resend.com/) for sending mails
+- **Protected Routes**: Restrict access to specific parts of the app to authenticated users
+- **User Session Management**: Efficient session handling to manage user login states
+- **PostgreSQL Integration** with **Prisma ORM**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Technologies Used
 
-## Learn More
+- **Next.js** (App Router)
+- **Auth.js v5**
+- **PostgreSQL** (with Prisma ORM)
+- **Resend** (for email services)
+- **TypeScript**
+- **Tailwind CSS** (for styling)
 
-To learn more about Next.js, take a look at the following resources:
+## Setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone the repository:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   git clone https://github.com/valik3201/next-auth-template
+   cd next-auth-template
+   ```
 
-## Deploy on Vercel
+2. Install dependencies:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   npm install
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. Configure environment variables for authentication providers and database connection:
+
+   - GitHub OAuth
+   - Google OAuth
+   - PostgreSQL connection string
+   - Resend API key for email services
+
+4. Run Prisma migration:
+
+   ```bash
+   npx prisma migrate dev
+   ```
+
+5. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+## Credits
+
+This project was developed by following [Code With Antonio](https://www.codewithantonio.com/projects/auth-masterclass)'s excellent tutorial.
