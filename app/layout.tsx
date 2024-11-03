@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { SessionProvider } from "next-auth/react";
-import { auth } from "@/auth";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -22,22 +20,19 @@ export const metadata: Metadata = {
     "Next Auth Template using the Next Auth v5 (Auth.js), Prisma and much more",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
   return (
-    <SessionProvider session={session}>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-primary`}
-        >
-          <Toaster />
-          {children}
-        </body>
-      </html>
-    </SessionProvider>
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-primary`}
+      >
+        <Toaster />
+        {children}
+      </body>
+    </html>
   );
 }
