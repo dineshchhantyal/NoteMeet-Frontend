@@ -1,3 +1,4 @@
+import { VideoPlayer } from '@/app/(protected)/dashboard/components/video-player'
 import { Button } from '@/components/ui/button'
 import { Play } from 'lucide-react'
 import Image from 'next/image'
@@ -8,13 +9,7 @@ export function ProductDemo() {
       <div className="container mx-auto px-4 text-center">
         <h2 className="mb-8">See NoteMeet in Action</h2>
         <div className="relative aspect-video max-w-4xl mx-auto">
-          <Image
-            src="/demo-thumbnail.jpg"
-            alt="NoteMeet Demo Video Thumbnail"
-            layout="fill"
-            objectFit="cover"
-            className="rounded-lg"
-          />
+         <VideoPlayer src='https://www.youtube.com/watch?v=cbj_bmFflrE'/>
           <Button
             size="lg"
             className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-secondary text-secondary-foreground hover:bg-secondary/90"

@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import { VideoPlayer } from './video-player'
 
 const integrations = [
   { name: "Google Calendar", logo: "/GoogleCalendarLogo.png" },
@@ -19,9 +18,12 @@ export function IntegrationsHighlight() {
           {integrations.map((integration) => (
             <div key={integration.name} className="text-center">
               <div className='w-20 h-20 rounded-full bg-white p-2 flex items-center justify-center'>
-              <VideoPlayer
-              src='https://www.youtube.com/watch?v=cbj_bmFflrE'
-              ></VideoPlayer>
+              <Image
+                src={integration.logo}
+                alt={`${integration.name} logo`}
+                width={80}
+                height={80}
+              />
               </div>
               <p className="text-sm text-muted-foreground">{integration.name}</p>
             </div>
