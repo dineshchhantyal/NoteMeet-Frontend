@@ -6,9 +6,9 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { Header } from "@/components/auth/header";
 import { Social } from "@/components/auth/social";
 import { BackButton } from "@/components/auth/back-button";
+import AuthenticatedHeader from "@/app/(protected)/_components/header";
 
 interface CardWrapperProps {
   children: React.ReactNode;
@@ -28,7 +28,7 @@ export const CardWrapper = ({
   return (
     <Card className="w-[400px]">
       <CardHeader>
-        <Header label={headerLabel} />
+        <AuthenticatedHeader label={headerLabel} />
       </CardHeader>
       <CardContent>{children}</CardContent>
 

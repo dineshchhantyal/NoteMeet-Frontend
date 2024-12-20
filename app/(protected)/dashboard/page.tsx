@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
 import { useState } from 'react'
-import { useSession } from 'next-auth/react'
+import { SessionProvider, useSession } from 'next-auth/react'
 import { AppSidebar } from './components/app-sidebar'
 import { MeetingInfo } from './components/meeting-info'
 import { VideoPlayer } from './components/video-player'
@@ -11,34 +11,25 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
 import { Plus, ChevronLeft, ChevronRight } from 'lucide-react'
-import { NotificationDropdown } from './components/notification-dropdown'
 import { signIn, signOut } from 'next-auth/react'
 import { MeetingInterface } from '@/interfaces'
+import { NotificationDropdown } from './components/notification-dropdown'
+import { UserButton } from '@/components/auth/user-button'
 
 
 
-export default function DashboardPage() {
-  const [selectedMeeting, setSelectedMeeting] = useState<MeetingInterface|null>(null)
+export default async function DashboardPage() {
+  const [selectedMeeting, setSelectedMeeting] = useState<MeetingInterface | null>(null)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
-  const { data: session, status } = useSession()
-
-  if (status === 'loading') {
-    return <div>Loading...</div>
-  }
-
-  if (!session) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Button onClick={() => signIn()}>Sign in</Button>
-      </div>
-    )
-  }
+  
+  
 
   return (
+    
     <SidebarProvider>
-      <div className="flex h-screen overflow-hidden">
-        <AppSidebar 
-          onSelectMeeting={setSelectedMeeting} 
+      <div className="flex h-screen">
+        <AppSidebar
+          onSelectMeeting={setSelectedMeeting}
           isCollapsed={isSidebarCollapsed}
         />
         <SidebarInset className="flex flex-col">
@@ -53,12 +44,13 @@ export default function DashboardPage() {
             </Button>
             <h1 className="text-2xl font-semibold">Dashboard</h1>
             <div className="ml-auto flex items-center gap-4">
-              <NotificationDropdown />
               <Button>
                 <Plus className="mr-2 h-4 w-4" /> New Meeting
               </Button>
-              <Button variant="outline" onClick={() => signOut()}>Sign out</Button>
             </div>
+            <NotificationDropdown />
+            <UserButton />
+
           </header>
           <main className="flex-grow overflow-auto p-6 space-y-6">
             {selectedMeeting ? (

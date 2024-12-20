@@ -77,7 +77,7 @@ export function AppSidebar({ onSelectMeeting, isCollapsed }: AppSidebarProps) {
     <Sidebar collapsible={isCollapsed ? 'icon' : 'offcanvas'}>
       <SidebarHeader>
         <div className="relative px-2 py-2">
-          <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
+          <Search className="absolute left-4 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
           <Input
             type="search"
             placeholder="Search meetings..."

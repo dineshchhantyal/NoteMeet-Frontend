@@ -1,6 +1,5 @@
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
-import AuthenticatedHeader from "./_components/header";
 
 interface ProtectedLayoutProps {
   children: React.ReactNode;
@@ -16,7 +15,6 @@ export default async function ProtectedLayout({
   return (
     <SessionProvider session={session}>
       <div className="h-full w-full flex flex-col gap-y-10 items-center justify-center">
-        <AuthenticatedHeader label="auth"/>
         {children}
       </div>
     </SessionProvider>
