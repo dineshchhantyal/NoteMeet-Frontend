@@ -15,10 +15,10 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Next Auth Template",
-  description:
-    "Next Auth Template using the Next Auth v5 (Auth.js), Prisma and much more",
-};
+  title: 'NoteMeet - Simplifying Meetings, Maximizing Impact',
+  description: 'NoteMeet is a modern productivity tool designed to enhance the way meetings are scheduled, recorded, and analyzed.',
+}
+
 
 export default function RootLayout({
   children,
@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-primary`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background font-sans antialiased bg-primary`}
       >
         <Toaster />
         {children}
