@@ -1,10 +1,10 @@
-# NextAuth.js v5 Template
+# NoteMeet: Next.js Frontend & Backend
 
-This project was created to learn and implement **Auth.js v5** (formerly NextAuth.js) for authentication in a Next.js app. The learning process followed a highly detailed tutorial by [Code With Antonio](https://www.codewithantonio.com/projects/auth-masterclass) (Antonio Erdeljac) from GitHub - [AntonioErdeljac](https://github.com/AntonioErdeljac).
+NoteMeet is a dynamic web application built with Next.js that seamlessly integrates note-taking and meeting collaboration features. Designed to enhance productivity, it allows users to create, organize, and share notes effortlessly while collaborating with team members in real-time. With a user-friendly interface, NoteMeet provides a smooth experience for managing meeting agendas, taking meeting notes, and tracking action items. The app allows for easy sharing of notes with team members, making collaboration simple and efficient. Users can organize their notes with tags, categories, and search functionalities, ensuring quick access to important information. Additionally, real-time syncing ensures that all team members have up-to-date information. The app is optimized for performance, leveraging Next.js’s server-side rendering capabilities to provide a fast, responsive experience. NoteMeet aims to improve team collaboration, streamline workflows, and ensure that important meeting details are captured and accessible for all team members.
 
 ## Project Overview
 
-This template demonstrates how to integrate Auth.js v5 into a Next.js application using the App Router. The project includes multiple authentication providers, such as GitHub, Google, and custom credentials.
+This repo contains the backend and frontend code for NoteMeet. The main responsibilities of the backend are to handle user authentication, manage user sessions, and interact with the database. The frontend is responsible for rendering the user interface, handling user interactions, and communicating with the backend API. The backend is built with Next.js, Auth.js, and Prisma ORM, while the frontend is built with React and Tailwind CSS. The backend provides authentication features such as login, registration, password reset, and two-factor authentication. It also includes email verification using the Resend API. The frontend provides a user-friendly interface for users to interact with the app, create notes, manage meetings, and collaborate with team members. The app is designed to be responsive and accessible, providing a seamless experience across devices.
 
 ## Features
 
@@ -58,7 +58,3 @@ This template demonstrates how to integrate Auth.js v5 into a Next.js applicatio
    ```bash
    npm run dev
    ```
-
-## Credits
-
-This project was developed by following [Code With Antonio](https://www.codewithantonio.com/projects/auth-masterclass)'s excellent tutorial.
