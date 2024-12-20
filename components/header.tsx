@@ -5,6 +5,7 @@ import { LoginButton } from "./auth/login-button";
 import { useSession } from "next-auth/react";
 import { NotificationDropdown } from "@/app/(protected)/dashboard/components/notification-dropdown";
 import { UserButton } from "./auth/user-button";
+import { useRouter } from "next/navigation";
 
 interface HeaderProps {
   label: string;
@@ -12,7 +13,7 @@ interface HeaderProps {
 
 export const Header = ({ label }: HeaderProps) => {
   const { data: session, status } = useSession();
-
+  const router = useRouter();
   if (status === 'loading') {
     return <div>Loading...</div>; // Show loading state while checking session
   }
@@ -45,7 +46,9 @@ export const Header = ({ label }: HeaderProps) => {
             )}
             {status === 'authenticated' && (
               <>
-              <Button variant={"outline"}>Dashboard</Button>
+              <Button variant={"outline"}
+              onClick={() => {router.push("/dashboard")}}
+              >Dashboard</Button>
                <NotificationDropdown />
                 <UserButton />
               </>

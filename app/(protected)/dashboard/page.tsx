@@ -11,7 +11,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
 import { Plus, ChevronLeft, ChevronRight } from 'lucide-react'
-import { signIn, signOut } from 'next-auth/react'
 import { MeetingInterface } from '@/interfaces'
 import { NotificationDropdown } from './components/notification-dropdown'
 import { UserButton } from '@/components/auth/user-button'
@@ -22,8 +21,6 @@ export default async function DashboardPage() {
   const [selectedMeeting, setSelectedMeeting] = useState<MeetingInterface | null>(null)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   
-  
-
   return (
     
     <SidebarProvider>
@@ -33,7 +30,7 @@ export default async function DashboardPage() {
           isCollapsed={isSidebarCollapsed}
         />
         <SidebarInset className="flex flex-col">
-          <header className="flex h-16 items-center gap-4 border-b bg-background px-6">
+          <div className="flex h-16 items-center gap-4 border-b bg-background px-6">
             <Button
               variant="ghost"
               size="icon"
@@ -51,7 +48,7 @@ export default async function DashboardPage() {
             <NotificationDropdown />
             <UserButton />
 
-          </header>
+          </div>
           <main className="flex-grow overflow-auto p-6 space-y-6">
             {selectedMeeting ? (
               <>
