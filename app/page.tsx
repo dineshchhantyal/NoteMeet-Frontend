@@ -25,7 +25,6 @@ export default function HomePage() {
         <ProductDemo />
         <IntegrationsHighlight />
       </main>
-
       <Footer />
     </div>
   )
