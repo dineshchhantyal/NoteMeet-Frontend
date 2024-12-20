@@ -6,9 +6,11 @@ export function HeroSection() {
   return (
     <section className="bg-gradient-to-r from-primary to-[#50E3C2] text-white section-padding">
       <div className="container py-12 mx-auto px-4 flex flex-col lg:flex-row items-center">
-        <div className="lg:w-1/2 mb-10 lg:mb-0">
-          <h1 className="mb-6">Simplifying Meetings, Maximizing Impact</h1>
-          <p className="text-xl mb-8 max-w-lg">Automate your meeting workflow with intelligent recordings, transcriptions, and summaries.</p>
+        <div className="lg:w-1/2 mb-10 lg:mb-0 justify-se">
+        <h1 className="mb-2  text-white text-3xl font-bold">
+  Simplifying Meetings, Maximizing Impact
+</h1>
+          <p className="text-xl mb-8 text-gray-100 max-w-lg">Automate your meeting workflow with intelligent recordings, transcriptions, and summaries.</p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button size="lg" className="bg-white text-primary font-semibold hover:bg-primary hover:text-white">
               Get Started
