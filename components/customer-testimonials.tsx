@@ -1,8 +1,7 @@
-import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import { Quote } from 'lucide-react'
-import { Avatar, AvatarFallback } from './ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 
 const testimonials = [
   {
@@ -48,13 +47,10 @@ export function CustomerTestimonials() {
                         className="rounded-full mx-auto"
                       /> */}
                       {testimonial.image ? (
-                        <Image
-                          src={testimonial.image}
-                          alt={testimonial.name}
-                          width={120}
-                          height={120}
-                          className="rounded-full mx-auto"
-                        />
+                       <Avatar className="rounded-full mx-auto">
+                         <AvatarImage src={testimonial.image} alt={testimonial.name} />
+                        </Avatar>
+
                       ) : (
                         <AvatarFallback className="rounded-full mx-auto">{testimonial.name}</AvatarFallback>
                       )}

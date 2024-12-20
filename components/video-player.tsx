@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 
 interface VideoPlayerProps extends React.HTMLProps<HTMLVideoElement> {
-  
+  text?: string
 }
 
 
