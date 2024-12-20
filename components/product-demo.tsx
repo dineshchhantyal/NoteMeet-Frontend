@@ -1,7 +1,4 @@
 import { VideoPlayer } from '@/app/(protected)/dashboard/components/video-player'
-import { Button } from '@/components/ui/button'
-import { Play } from 'lucide-react'
-import Image from 'next/image'
 
 export function ProductDemo() {
   return (
