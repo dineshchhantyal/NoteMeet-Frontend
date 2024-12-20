@@ -1,15 +1,19 @@
+import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Pause, Play, SkipBack, SkipForward } from 'lucide-react'
 // import { Button } from '@/components/ui/button'
 // import { Play, Pause, SkipBack, SkipForward } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 
 interface VideoPlayerProps {
-  src: string
+  src: string,
+  showControls?: boolean
 }
-  // const [isPlaying, setIsPlaying] = useState(false)
 
   
-export function VideoPlayer({ src }: VideoPlayerProps) {
+export function VideoPlayer({ src, showControls = true }: VideoPlayerProps) {
+  const [isPlaying, setIsPlaying] = useState(false)
+
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -38,15 +42,15 @@ export function VideoPlayer({ src }: VideoPlayerProps) {
     }
   }
 
-  // const togglePlay = () => {
-  //   if (!videoRef.current) return
-  //   if (isPlaying) {
-  //     videoRef.current.pause()
-  //   } else {
-  //     videoRef.current.play()
-  //   }
-  //   setIsPlaying(!isPlaying)
-  // }
+  const togglePlay = () => {
+    if (!videoRef.current) return
+    if (isPlaying) {
+      videoRef.current.pause()
+    } else {
+      videoRef.current.play()
+    }
+    setIsPlaying(!isPlaying)
+  }
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!videoRef.current) return
@@ -55,16 +59,16 @@ export function VideoPlayer({ src }: VideoPlayerProps) {
     setCurrentTime(newTime)
   }
 
-  // const formatTime = (time: number) => {
+  const formatTime = (time: number) => {
 
-  //   const minutes = Math.floor(time / 60)
-  //   const seconds = Math.floor(time % 60)
-  //   return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
-  // }
+    const minutes = Math.floor(time / 60)
+    const seconds = Math.floor(time % 60)
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`
+  }
 
   return (
     <Card>
-      <CardContent className="p-0">
+      <CardContent className="p-0 relative">
         <div className="aspect-video relative">
           <video
             ref={videoRef}
@@ -79,6 +83,7 @@ export function VideoPlayer({ src }: VideoPlayerProps) {
             </div>
           )}
         </div>
+        {showControls ?
         <div className="p-4 bg-gray-50">
           <input
             type="range"
@@ -88,7 +93,7 @@ export function VideoPlayer({ src }: VideoPlayerProps) {
             onChange={handleSeek}
             className="w-full mb-2"
           />
-          {/* <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center">
             <span className="text-sm text-muted-foreground">{formatTime(currentTime)} / {formatTime(duration)}</span>
             <div className="flex space-x-2">
               <Button variant="outline" size="icon" onClick={() => {
@@ -107,8 +112,19 @@ export function VideoPlayer({ src }: VideoPlayerProps) {
                 <SkipForward className="h-4 w-4" />
               </Button>
             </div>
-          </div> */}
-        </div>
+          </div>
+        </div> :
+        isPlaying ? "" :
+       ( <Button
+        size="lg"
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-secondary text-secondary-foreground hover:bg-secondary/90"
+        onClick={togglePlay}
+      >
+        <Play className="mr-2 h-6 w-6" />
+        Watch Demo
+      </Button>)
+        }
+
       </CardContent>
     </Card>
   )

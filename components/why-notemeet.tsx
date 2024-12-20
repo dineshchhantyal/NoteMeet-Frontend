@@ -23,7 +23,7 @@ export function WhyNoteMeet() {
   return (
     <section className="py-20 bg-[#F5F7FA]">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-6">Why NoteMeet?</h2>
+        <h2 className="text-xl font-bold text-center mb-6">Why NoteMeet?</h2>
         <p className="text-xl text-center mb-12 max-w-2xl mx-auto">
           Say goodbye to unproductive meetings. NoteMeet empowers teams to focus on what matters by automating the repetitive.
         </p>

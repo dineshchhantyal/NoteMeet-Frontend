@@ -31,7 +31,7 @@ export function CustomerTestimonials() {
   return (
     <section className="section-padding py-20 bg-white">
       <div className="container mx-auto px-4">
-        <h2 className="text-center mb-12">What Our Customers Say</h2>
+        <h2 className="text-center mb-12 text-xl font-semibold">What Our Customers Say</h2>
         <Carousel className="w-full max-w-4xl mx-auto">
           <CarouselContent>
             {testimonials.map((testimonial, index) => (
