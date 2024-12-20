@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "../../../components/ui/avatar";
 import { UserButton } from "../../../components/auth/user-button";
 import { NotificationDropdown } from "@/app/(protected)/dashboard/components/notification-dropdown";
 

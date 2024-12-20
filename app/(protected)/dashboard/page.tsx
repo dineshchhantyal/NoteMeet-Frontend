@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react'
-import { SessionProvider, useSession } from 'next-auth/react'
 import { AppSidebar } from './components/app-sidebar'
 import { MeetingInfo } from './components/meeting-info'
 import { VideoPlayer } from './components/video-player'
@@ -17,7 +16,7 @@ import { UserButton } from '@/components/auth/user-button'
 
 
 
-export default async function DashboardPage() {
+export default function DashboardPage() {
   const [selectedMeeting, setSelectedMeeting] = useState<MeetingInterface | null>(null)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   

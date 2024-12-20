@@ -12,11 +12,9 @@ interface HeaderProps {
 }
 
 export const Header = ({ label }: HeaderProps) => {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
-  if (status === 'loading') {
-    return <div>Loading...</div>; // Show loading state while checking session
-  }
+
 
 
   return (
