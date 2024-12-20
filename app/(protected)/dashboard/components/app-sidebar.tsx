@@ -26,7 +26,8 @@ const MOCK_MEETINGS: MeetingInterface[] = [
       keyTopics: ['Discussed sprint progress', 'Identified blockers', 'Set priorities'],
       actionItems: ['Review PR #123', 'Update documentation'],
       participants: ['John', 'Alice', 'Bob']
-    }
+    },
+    status: 'Completed'
   },
   {
     id: '2',
@@ -39,7 +40,8 @@ const MOCK_MEETINGS: MeetingInterface[] = [
       keyTopics: ['Project status update', 'Resource allocation', 'Timeline review'],
       actionItems: ['Update roadmap', 'Schedule follow-up'],
       participants: ['Sarah', 'Mike', 'Emma']
-    }
+    },
+    status: 'In Progress'
   },
   {
     id: '3',
@@ -52,7 +54,9 @@ const MOCK_MEETINGS: MeetingInterface[] = [
       keyTopics: ['Requirements gathering', 'Feature discussion', 'Next steps'],
       actionItems: ['Send proposal', 'Schedule demo'],
       participants: ['Client A', 'David', 'Lisa']
-    }
+    },
+    status: 'Scheduled'
+
   }
 ]
 
@@ -77,7 +81,7 @@ export function AppSidebar({ onSelectMeeting, isCollapsed }: AppSidebarProps) {
     <Sidebar collapsible={isCollapsed ? 'icon' : 'offcanvas'}>
       <SidebarHeader>
         <div className="relative px-2 py-2">
-          <Search className="absolute left-4 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
+        <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
           <Input
             type="search"
             placeholder="Search meetings..."
@@ -98,13 +102,13 @@ export function AppSidebar({ onSelectMeeting, isCollapsed }: AppSidebarProps) {
         <SidebarMenu>
           {filteredMeetings.map((meeting) => (
             <SidebarMenuItem key={meeting.id} className="mb-2">
-              <SidebarMenuButton onClick={() => onSelectMeeting(meeting)} className="w-full">
+              <SidebarMenuButton onClick={() => onSelectMeeting(meeting)} className="w-full" size={'lg'}>
                 <div className="flex flex-col items-start w-full overflow-hidden">
                   <span className="font-medium truncate w-full">{meeting.title}</span>
                   <span className="text-xs text-muted-foreground truncate w-full">{meeting.date} - {meeting.time}</span>
-                  <Badge variant="outline" className={`mt-1 ${getStatusColor(meeting.status)}`}>
+                  {/* <Badge variant="outline" className={`mt-1 ${getStatusColor(meeting.status)}`}>
                     {meeting.status}
-                  </Badge>
+                  </Badge> */}
                 </div>
               </SidebarMenuButton>
             </SidebarMenuItem>

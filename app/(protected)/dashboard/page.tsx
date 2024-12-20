@@ -22,7 +22,7 @@ export default function DashboardPage() {
   
   return (
     
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={true} open={!isSidebarCollapsed}>
       <div className="flex h-screen">
         <AppSidebar
           onSelectMeeting={setSelectedMeeting}
@@ -38,7 +38,7 @@ export default function DashboardPage() {
             >
               {isSidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             </Button>
-            <h1 className="text-2xl font-semibold">Dashboard</h1>
+            <h1 className="text-2xl font-semibold">NoteMeet</h1>
             <div className="ml-auto flex items-center gap-4">
               <Button>
                 <Plus className="mr-2 h-4 w-4" /> New Meeting
