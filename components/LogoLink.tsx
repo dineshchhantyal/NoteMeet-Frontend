@@ -10,7 +10,7 @@ const LogoLink = ({ showText = true }: LogoLinkProps) => {
         <Link href="/" className="flex items-center space-x-2">
             <Image src="/logo.jpeg" alt="NoteMeet Logo" width={40} height={40} />
             {showText && (
-                <span className="text-2xl font-bold text-[#4A4A4A]">NoteMeet</span>
+                <span className="text-2xl text-foreground"><span className="font-bold">note</span>meet</span>
             )}
         </Link>
     )

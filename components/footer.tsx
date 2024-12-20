@@ -38,7 +38,13 @@ export function Footer() {
             <h3 className="font-bold text-lg mb-4">Stay Connected</h3>
             <form className="mb-4">
               <Input type="email" placeholder="Enter your email" className="mb-2 bg-white/10 border-white/20 text-white placeholder-gray-500" />
-              <Button variant={'outline'} type="submit" className="w-full text-secondary-foreground hover:bg-secondary/90">Subscribe to Newsletter</Button>
+                <Button 
+                variant="secondary" 
+                type="submit" 
+                className="w-full bg-foreground hover:bg-white/20 text-white border-white/20 p-4"
+                >
+                Subscribe to Newsletter
+                </Button>
             </form>
             <div className="flex space-x-4">
               <Link href="#" aria-label="Facebook" className="hover:text-secondary transition-colors">
