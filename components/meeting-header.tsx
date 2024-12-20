@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Bell, Search, Settings } from 'lucide-react'
+import LogoLink from './LogoLink'
 
 export function MeetingHeader() {
   return (
@@ -10,9 +11,8 @@ export function MeetingHeader() {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Link href="/dashboard" className="text-2xl font-bold text-primary">
-              NoteMeet
-            </Link>
+          <LogoLink />
+
             <div className="relative">
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <Input

@@ -68,7 +68,7 @@ export function PricingTiers() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex-grow">
-            <p className="text-sm text-muted-foreground mb-4">{tier.description}</p>
+            <p className="text-sm text-muted mb-4">{tier.description}</p>
             <ul className="space-y-2">
               {tier.features.map((feature, index) => (
                 <li key={index} className="flex items-center">

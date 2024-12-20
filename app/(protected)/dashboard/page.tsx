@@ -13,6 +13,7 @@ import { Plus, ChevronLeft, ChevronRight } from 'lucide-react'
 import { MeetingInterface } from '@/interfaces'
 import { NotificationDropdown } from './components/notification-dropdown'
 import { UserButton } from '@/components/auth/user-button'
+import LogoLink from '@/components/LogoLink';
 
 
 
@@ -38,7 +39,8 @@ export default function DashboardPage() {
             >
               {isSidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
             </Button>
-            <h1 className="text-2xl font-semibold">NoteMeet</h1>
+            <LogoLink showText={true}/>
+
             <div className="ml-auto flex items-center gap-4">
               <Button>
                 <Plus className="mr-2 h-4 w-4" /> New Meeting
@@ -46,7 +48,6 @@ export default function DashboardPage() {
             </div>
             <NotificationDropdown />
             <UserButton />
-
           </div>
           <main className="flex-grow overflow-auto p-6 space-y-6">
             {selectedMeeting ? (

@@ -1,16 +1,17 @@
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Calendar } from 'lucide-react'
+import { VideoPlayer } from './video-player'
 
 export function HeroSection() {
   return (
     <section className="bg-gradient-to-r from-primary to-[#50E3C2] text-white section-padding">
-      <div className="container mx-auto px-4 flex flex-col lg:flex-row items-center">
+      <div className="container py-12 mx-auto px-4 flex flex-col lg:flex-row items-center">
         <div className="lg:w-1/2 mb-10 lg:mb-0">
           <h1 className="mb-6">Simplifying Meetings, Maximizing Impact</h1>
           <p className="text-xl mb-8 max-w-lg">Automate your meeting workflow with intelligent recordings, transcriptions, and summaries.</p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold">
+            <Button size="lg" className="bg-white text-primary font-semibold hover:bg-primary hover:text-white">
               Get Started
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -21,12 +22,19 @@ export function HeroSection() {
           </div>
         </div>
         <div className="lg:w-1/2">
-          <Image
+          {/* <Image
             src="/hero-illustration.svg"
             alt="NoteMeet collaboration illustration"
             width={600}
             height={400}
             className="w-full h-auto"
+          /> */}
+          <VideoPlayer src='/hero.mp4'
+            width={600}
+            height={400}
+            autoPlay={true}
+            loop={true}
+            muted={true}
           />
         </div>
       </div>

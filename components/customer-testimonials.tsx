@@ -2,6 +2,7 @@ import Image from 'next/image'
 import { Card, CardContent } from '@/components/ui/card'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import { Quote } from 'lucide-react'
+import { Avatar, AvatarFallback } from './ui/avatar'
 
 const testimonials = [
   {
@@ -29,7 +30,7 @@ const testimonials = [
 
 export function CustomerTestimonials() {
   return (
-    <section className="section-padding bg-white">
+    <section className="section-padding py-20 bg-white">
       <div className="container mx-auto px-4">
         <h2 className="text-center mb-12">What Our Customers Say</h2>
         <Carousel className="w-full max-w-4xl mx-auto">
@@ -39,13 +40,24 @@ export function CustomerTestimonials() {
                 <Card className="bg-gray-50">
                   <CardContent className="flex flex-col md:flex-row items-center text-center md:text-left p-6">
                     <div className="md:w-1/3 mb-6 md:mb-0">
-                      <Image
+                      {/* <Image
                         src={testimonial.image}
                         alt={testimonial.name}
                         width={120}
                         height={120}
                         className="rounded-full mx-auto"
-                      />
+                      /> */}
+                      {testimonial.image ? (
+                        <Image
+                          src={testimonial.image}
+                          alt={testimonial.name}
+                          width={120}
+                          height={120}
+                          className="rounded-full mx-auto"
+                        />
+                      ) : (
+                        <AvatarFallback className="rounded-full mx-auto">{testimonial.name}</AvatarFallback>
+                      )}
                     </div>
                     <div className="md:w-2/3 md:pl-6">
                       <Quote className="h-8 w-8 text-primary mb-4" />

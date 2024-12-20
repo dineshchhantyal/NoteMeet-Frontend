@@ -1,6 +1,11 @@
 import { Card, CardContent } from '@/components/ui/card'
 
-export function VideoPlayer({ src }: { src: string }) {
+interface VideoPlayerProps extends React.HTMLProps<HTMLVideoElement> {
+  
+}
+
+
+export function VideoPlayer({ src, ...props }: VideoPlayerProps) {
   return (
     <Card>
       <CardContent className="p-0">
@@ -9,6 +14,7 @@ export function VideoPlayer({ src }: { src: string }) {
             src={src}
             controls
             className="w-full h-full"
+            {...props}
           >
             Your browser does not support the video tag.
           </video>

@@ -39,7 +39,7 @@ export function KeyFeatures() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-center text-muted-foreground text-sm group-hover:text-foreground transition-colors duration-300">{feature.description}</p>
+                <p className="text-center text-gray-600 text-sm group-hover:text-foreground transition-colors duration-300">{feature.description}</p>
               </CardContent>
             </Card>
           ))}

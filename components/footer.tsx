@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Facebook, Twitter, Linkedin } from 'lucide-react'
+import Image from 'next/image'
 
 export function Footer() {
   return (
@@ -9,6 +10,7 @@ export function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
+            <Image src="/logo.jpeg" alt="NoteMeet Logo" width={80} height={80} className='rounded'/>
             <h3 className="font-bold text-lg mb-4">Product</h3>
             <ul className="space-y-2">
               <li><Link href="/features" className="hover:underline">Features</Link></li>
@@ -35,8 +37,8 @@ export function Footer() {
           <div>
             <h3 className="font-bold text-lg mb-4">Stay Connected</h3>
             <form className="mb-4">
-              <Input type="email" placeholder="Enter your email" className="mb-2 bg-white/10 border-white/20 text-white placeholder-white/50" />
-              <Button type="submit" className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90">Subscribe to Newsletter</Button>
+              <Input type="email" placeholder="Enter your email" className="mb-2 bg-white/10 border-white/20 text-white placeholder-gray-500" />
+              <Button variant={'outline'} type="submit" className="w-full text-secondary-foreground hover:bg-secondary/90">Subscribe to Newsletter</Button>
             </form>
             <div className="flex space-x-4">
               <Link href="#" aria-label="Facebook" className="hover:text-secondary transition-colors">
@@ -57,10 +59,10 @@ export function Footer() {
             <Link href="/privacy" className="hover:underline">Privacy Policy</Link>
             <Link href="/terms" className="hover:underline">Terms of Service</Link>
           </div>
-          <div className="flex justify-center space-x-4">
+          {/* <div className="flex justify-center space-x-4">
             <img src="/gdpr-compliant.svg" alt="GDPR Compliant" className="h-8" />
             <img src="/iso-certified.svg" alt="ISO Certified" className="h-8" />
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>

@@ -11,6 +11,7 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { FaUser } from "react-icons/fa";
 import { ExitIcon } from "@radix-ui/react-icons";
+import { SettingsIcon } from "lucide-react";
 
 export const UserButton = () => {
   const user = useCurrentUser();
@@ -32,6 +33,10 @@ export const UserButton = () => {
             Logout
           </DropdownMenuItem>
         </LogoutButton>
+        <DropdownMenuItem>
+          <SettingsIcon className="h-4 w-4" />
+          <a href="/settings">Settings</a>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

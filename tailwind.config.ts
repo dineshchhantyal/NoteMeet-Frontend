@@ -1,73 +1,85 @@
 import type { Config } from "tailwindcss";
 
+const colors = {
+  midnightGreen: "#0C4A51",
+  emerald: "#2EC4B6",
+  mintCream: "#F6FFF8",
+  mintCream2: "#E9FAF3",
+  cambridgeBlue: "#A7C4C2",
+  softRed: "#F87171",
+  deepBlue: "#073B4C",
+  softYellow: "#FFDD87",
+};
+
 const config: Config = {
-    darkMode: ["class"],
-    content: [
+  darkMode: ["class"],
+  content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-  	extend: {
-  		colors: {
-  			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
-  			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
-  			},
-  			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
-  			},
-  			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
-  			},
-  			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
-  			},
-  			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
-  			},
-  			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
-  			},
-  			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
-  				foreground: 'hsl(var(--destructive-foreground))'
-  			},
-  			border: 'hsl(var(--border))',
-  			input: 'hsl(var(--input))',
-  			ring: 'hsl(var(--ring))',
-  			chart: {
-  				'1': 'hsl(var(--chart-1))',
-  				'2': 'hsl(var(--chart-2))',
-  				'3': 'hsl(var(--chart-3))',
-  				'4': 'hsl(var(--chart-4))',
-  				'5': 'hsl(var(--chart-5))'
-  			},
-  			sidebar: {
-  				DEFAULT: 'hsl(var(--sidebar-background))',
-  				foreground: 'hsl(var(--sidebar-foreground))',
-  				primary: 'hsl(var(--sidebar-primary))',
-  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-  				accent: 'hsl(var(--sidebar-accent))',
-  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-  				border: 'hsl(var(--sidebar-border))',
-  				ring: 'hsl(var(--sidebar-ring))'
-  			}
-  		},
-  		borderRadius: {
-  			lg: 'var(--radius)',
-  			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
-  		}
-  	}
+    extend: {
+      colors: {
+        background: colors.mintCream,
+        foreground: colors.deepBlue,
+        card: {
+          DEFAULT: colors.mintCream,
+          foreground: colors.deepBlue,
+        },
+        popover: {
+          DEFAULT: colors.mintCream2,
+          foreground: colors.deepBlue,
+        },
+        primary: {
+          DEFAULT: colors.emerald,
+          foreground: colors.mintCream,
+        },
+        secondary: {
+          DEFAULT: colors.cambridgeBlue,
+          foreground: colors.deepBlue,
+        },
+        muted: {
+          DEFAULT: colors.mintCream2,
+          foreground: colors.cambridgeBlue,
+        },
+        accent: {
+          DEFAULT: colors.softYellow,
+          foreground: colors.deepBlue,
+        },
+        destructive: {
+          DEFAULT: colors.softRed,
+          foreground: colors.mintCream,
+        },
+        border: colors.cambridgeBlue,
+        input: colors.cambridgeBlue,
+        ring: colors.emerald,
+        chart: {
+          1: colors.deepBlue,
+          2: colors.emerald,
+          3: colors.softYellow,
+          4: colors.mintCream2,
+          5: colors.cambridgeBlue,
+        },
+        sidebar: {
+          DEFAULT: colors.mintCream2,
+          foreground: colors.deepBlue,
+          primary: colors.emerald,
+          "primary-foreground": colors.mintCream,
+          accent: colors.cambridgeBlue,
+          "accent-foreground": colors.mintCream,
+          border: colors.cambridgeBlue,
+          ring: colors.emerald,
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+    },
   },
   plugins: [require("tailwindcss-animate")],
 };
+
 export default config;
