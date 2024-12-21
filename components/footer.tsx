@@ -10,7 +10,7 @@ export function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
-            <Image src="/logo.png" alt="NoteMeet Logo" width={80} height={80} className='rounded'/>
+            <Image src="/logo.png" alt="NoteMeet Logo" width={80} height={80} className='rounded scale-150'/>
             <h3 className="font-bold text-lg mb-4">Product</h3>
             <ul className="space-y-2">
               <li><Link href="/features" className="hover:underline">Features</Link></li>
