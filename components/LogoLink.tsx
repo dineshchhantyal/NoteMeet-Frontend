@@ -8,7 +8,7 @@ interface LogoLinkProps {
 const LogoLink = ({ showText = true }: LogoLinkProps) => {
     return (
         <Link href="/" className="flex items-center space-x-2">
-            <Image src="/logo.png" alt="NoteMeet Logo" width={40} height={40} className='scale-x-150'/>
+            <Image src="/logo.png" alt="NoteMeet Logo" width={40} height={40} className='scale-150'/>
             {showText && (
                 <span className="text-2xl text-foreground"><span className="font-bold">note</span>meet</span>
             )}
