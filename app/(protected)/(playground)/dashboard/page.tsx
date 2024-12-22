@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AppSidebar } from './components/app-sidebar';
 import { MeetingInfo } from './components/meeting-info';
 import { VideoPlayer } from './components/video-player';
@@ -18,80 +18,20 @@ export default function DashboardPage() {
 		useState<MeetingInterface | null>(null);
 	const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-	const [meetings, setMeetings] = useState<MeetingInterface[]>([
-		{
-			id: '1',
-			title: 'Team Standup',
-			date: '2024-03-15',
-			duration: '30m',
-			recordingUrl: 'https://example.com/recording1',
-			transcript: 'This is a mock transcript for team standup...',
-			summary: {
-				keyTopics: [
-					'Discussed sprint progress',
-					'Identified blockers',
-					'Set priorities',
-				],
-				actionItems: ['Review PR #123', 'Update documentation'],
-				participants: ['John', 'Alice', 'Bob'],
-			},
-			status: 'Completed',
-			meetingLink: 'https://meet.example.com/standup',
-			participants: ['John', 'Alice', 'Bob'],
-			notifications: {
-				sendSummary: true,
-				sendTranscript: true,
-			},
-		},
-		{
-			id: '2',
-			title: 'Project Review',
-			date: '2024-03-16',
-			duration: '1h',
-			recordingUrl: 'https://example.com/recording2',
-			transcript: 'This is a mock transcript for project review...',
-			summary: {
-				keyTopics: [
-					'Project status update',
-					'Resource allocation',
-					'Timeline review',
-				],
-				actionItems: ['Update roadmap', 'Schedule follow-up'],
-				participants: ['Sarah', 'Mike', 'Emma'],
-			},
-			status: 'In Progress',
-			meetingLink: '',
-			participants: [],
-			notifications: {
-				sendTranscript: false,
-				sendSummary: false,
-			},
-		},
-		{
-			id: '3',
-			title: 'Client Meeting',
-			date: '2024-03-17',
-			duration: '45m',
-			recordingUrl: 'https://example.com/recording3',
-			transcript: 'This is a mock transcript for client meeting...',
-			summary: {
-				keyTopics: [
-					'Requirements gathering',
-					'Feature discussion',
-					'Next steps',
-				],
-				actionItems: ['Send proposal', 'Schedule demo'],
-				participants: ['Client A', 'David', 'Lisa'],
-			},
-			status: 'Scheduled',
-			meetingLink: '',
-			participants: [],
-			notifications: {
-				sendTranscript: false,
-				sendSummary: false,
-			},
-		},
-	]);
+	const [meetings, setMeetings] = useState<MeetingInterface[]>([]);
+	useEffect(() => {
+		const fetchMeetings = async () => {
+			try {
+				const response = await fetch('/api/meetings');
+				const data = await response.json();
+				setMeetings(data.data);
+			} catch (error) {
+				console.error('Error fetching meetings:', error);
+			}
+		};
+
+		fetchMeetings();
+	}, []);
 
 	return (
 		<SidebarProvider defaultOpen={true} open={!isSidebarCollapsed}>
