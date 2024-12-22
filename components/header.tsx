@@ -25,7 +25,7 @@ export const Header = async ({ label }: HeaderProps) => {
 								<Button variant={'outline'}>Sign In</Button>
 							</LoginButton>
 							<LoginButton mode="modal" asChild>
-								<Button variant={'secondary'}>Sign Up</Button>
+								<Button>Sign Up</Button>
 							</LoginButton>
 						</>
 					)}

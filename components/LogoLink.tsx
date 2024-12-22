@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import Logo from './ui/Logo';
 
 interface LogoLinkProps {
 	showText?: boolean;
@@ -8,13 +8,13 @@ interface LogoLinkProps {
 const LogoLink = ({ showText = true }: LogoLinkProps) => {
 	return (
 		<Link href="/" className="flex items-center space-x-2">
-			<Image
-				src="/logo.png"
+			{/* <Image
+				src="/logo.svg"
 				alt="NoteMeet Logo"
 				width={40}
 				height={40}
-				className="scale-150"
-			/>
+			/> */}
+			<Logo className="h-14 w-14" />
 			{showText && (
 				<span className="text-2xl text-foreground">
 					<span className="font-bold">note</span>meet
