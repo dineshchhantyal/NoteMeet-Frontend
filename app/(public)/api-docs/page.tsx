@@ -12,7 +12,9 @@ export const metadata: Metadata = {
 export default function ApiDocsPage() {
 	return (
 		<div className="container mx-auto px-4 py-16">
-			<h1 className="text-4xl font-bold mb-8 text-center">API Documentation</h1>
+			<h1 className="text-4xl font-bold mb-8 text-center text-primary">
+				API Documentation
+			</h1>
 
 			<div className="mb-8">
 				<p className="text-lg mb-4">

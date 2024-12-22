@@ -88,13 +88,13 @@ export default function AboutPage() {
 						{[
 							{
 								name: 'Jane Doe',
-								role: 'CEO &amp; Co-founder',
+								role: 'CEO & Co-founder',
 								image: '/team/jane-doe.jpg',
 								linkedin: '#',
 							},
 							{
 								name: 'John Smith',
-								role: 'CTO &amp; Co-founder',
+								role: 'CTO & Co-founder',
 								image: '/team/john-smith.jpg',
 								linkedin: '#',
 							},

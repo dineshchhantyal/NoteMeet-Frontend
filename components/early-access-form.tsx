@@ -178,7 +178,7 @@ export function EarlyAccessForm() {
 							<div className="mb-4">
 								<FormLabel className="text-base">Desired Features</FormLabel>
 								<FormDescription>
-									Select the features you're most interested in trying.
+									Select the features you&apos;re most interested in trying.
 								</FormDescription>
 							</div>
 							{[
