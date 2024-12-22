@@ -13,9 +13,9 @@ export function Footer() {
             <Image src="/logo.png" alt="NoteMeet Logo" width={80} height={80} className='rounded scale-150'/>
             <h3 className="font-bold text-lg mb-4">Product</h3>
             <ul className="space-y-2">
-              <li><Link href="/features" className="hover:underline">Features</Link></li>
+              {/* <li><Link href="/features" className="hover:underline">Features</Link></li> */}
               <li><Link href="/pricing" className="hover:underline">Pricing</Link></li>
-              <li><Link href="/integrations" className="hover:underline">Integrations</Link></li>
+              {/* <li><Link href="/integrations" className="hover:underline">Integrations</Link></li> */}
             </ul>
           </div>
           <div>
@@ -31,7 +31,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li><Link href="/blog" className="hover:underline">Blog</Link></li>
               <li><Link href="/help" className="hover:underline">Help Center</Link></li>
-              <li><Link href="/api" className="hover:underline">API Documentation</Link></li>
+              <li><Link href="/api-docs" className="hover:underline">API Documentation</Link></li>
             </ul>
           </div>
           <div>

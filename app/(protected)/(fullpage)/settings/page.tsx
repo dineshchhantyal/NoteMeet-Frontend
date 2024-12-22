@@ -34,7 +34,6 @@ import { settings } from "@/actions/settings";
 import { SettingsSchema } from "@/schemas";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { UserRole } from "@prisma/client";
-import { Header } from "@/components/header";
 
 export default function SettingsPage() {
   const user = useCurrentUser();
@@ -73,7 +72,6 @@ export default function SettingsPage() {
     });
   };
   return ( <div className="flex flex-col min-h-screen">
-        <Header label='Home' />
     <Card className="w-[600px] mx-auto my-12"> 
       <CardHeader>
         <p className="font-bold text-center">Settings</p>

@@ -1,4 +1,4 @@
-import { VideoPlayer } from '@/app/(protected)/dashboard/components/video-player'
+import { VideoPlayer } from '@/app/(protected)/(playground)/dashboard/components/video-player'
 
 export function ProductDemo() {
   return (

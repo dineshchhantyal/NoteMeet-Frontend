@@ -9,13 +9,9 @@ import { SummarySection } from './components/summary-section'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { MeetingInterface } from '@/interfaces'
-import { NotificationDropdown } from './components/notification-dropdown'
-import { UserButton } from '@/components/auth/user-button'
-import LogoLink from '@/components/LogoLink';
-import { NewMeetingDialog } from './components/new-meeting-dialog';
 import { VideoPlayerPlaceholder } from './components/video-player-placeholder';
+import DashboardHeader from './components/dashboard-header';
 
 
 
@@ -86,9 +82,7 @@ export default function DashboardPage() {
     }
   ])
 
-  const handleMeetingCreated = (newMeeting: MeetingInterface) => {
-    setMeetings([...meetings, newMeeting])
-  }
+ 
 
   return (
 
@@ -100,23 +94,7 @@ export default function DashboardPage() {
           meetings={meetings}
         />
         <SidebarInset className="flex flex-col">
-          <div className="flex h-16 items-center gap-4 border-b bg-background px-6">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-              aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            >
-              {isSidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-            </Button>
-            <LogoLink showText={true} />
-
-            <div className="ml-auto flex items-center gap-4">
-              <NewMeetingDialog onMeetingCreated={handleMeetingCreated} />
-            </div>
-            <NotificationDropdown />
-            <UserButton />
-          </div>
+          <DashboardHeader isSidebarCollapsed={isSidebarCollapsed} setIsSidebarCollapsed={setIsSidebarCollapsed} setMeetings={setMeetings} meetings={meetings} />
           <main className="flex-grow overflow-auto p-6 space-y-6">
             {selectedMeeting ? (
               <>

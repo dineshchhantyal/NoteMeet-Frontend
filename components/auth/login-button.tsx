@@ -1,7 +1,4 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-
+import Link from "next/link";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { LoginForm } from "@/components/auth/login-form";
 
@@ -15,12 +12,6 @@ export const LoginButton = ({
   children,
   mode = "redirect",
 }: LoginButtonProps) => {
-  const router = useRouter();
-
-  const onClick = () => {
-    router.push("auth/login");
-  };
-
   if (mode === "modal") {
     return (
       <Dialog>
@@ -33,8 +24,8 @@ export const LoginButton = ({
   }
 
   return (
-    <span onClick={onClick} className="cursor-pointer">
+    <Link href="/auth/login" className="cursor-pointer">
       {children}
-    </span>
+    </Link>
   );
 };

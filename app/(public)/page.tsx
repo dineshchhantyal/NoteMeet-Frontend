@@ -6,15 +6,13 @@ import { ProductDemo } from '@/components/product-demo'
 import { IntegrationsHighlight } from '@/components/integrations-highlight'
 import { KeyFeatures } from '@/components/key-features'
 import { PricingSection } from '@/components/pricing-section'
-import { Footer } from '@/components/footer'
-import { Header } from "@/components/header";
+
 
 export default function HomePage() {
   
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header label='Home' />
+    <div className="flex flex-col min-h-screen bg-primary">
 
       <main className="flex-grow">
         <HeroSection />
@@ -25,7 +23,7 @@ export default function HomePage() {
         <ProductDemo />
         <IntegrationsHighlight />
       </main>
-      <Footer />
+      
     </div>
   )
 }
