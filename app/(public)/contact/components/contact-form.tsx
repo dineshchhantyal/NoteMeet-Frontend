@@ -20,12 +20,32 @@ export function ContactForm() {
 		event.preventDefault();
 		setIsSubmitting(true);
 
-		// Here you would typically send the form data to your server
-		// For now, we'll just simulate a delay
-		await new Promise((resolve) => setTimeout(resolve, 2000));
+		const formData = new FormData(event.currentTarget);
+		const data = {
+			name: formData.get('name'),
+			email: formData.get('email'),
+			subject: formData.get('subject'),
+			message: formData.get('message'),
+		};
 
-		setIsSubmitting(false);
-		alert('Message sent successfully!');
+		try {
+			const res = await fetch('/api/contact', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(data),
+			});
+
+			if (!res.ok) {
+				const { error } = await res.json();
+				throw new Error(error);
+			}
+
+			alert('Message sent successfully!');
+		} catch (error) {
+			alert('Failed to send message.');
+		} finally {
+			setIsSubmitting(false);
+		}
 	};
 
 	return (

@@ -100,3 +100,16 @@ model TwoFactorConfirmation {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  subject   String
+  message   String
+  isRead    Boolean  @default(false)
+
+  @@unique([email, isRead])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
