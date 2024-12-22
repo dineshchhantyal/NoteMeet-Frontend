@@ -104,7 +104,7 @@ export function NewMeetingDialog({ onMeetingCreated }: NewMeetingDialogProps) {
 			}
 
 			const createdMeeting = await res.json();
-			onMeetingCreated(createdMeeting);
+			onMeetingCreated(createdMeeting.data);
 			setOpen(false);
 			setParticipants([]);
 		} catch (error) {
