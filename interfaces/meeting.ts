@@ -5,10 +5,18 @@ export interface Meeting {
   title: string
   date: string
   duration: string
-  recordingUrl: string
-  transcript: string
-  summary: Summary
+  recordingUrl?: string
+  transcript?: string
+  summary?: Summary
   status?: 'Completed' | 'Scheduled' | 'In Progress'
   time?: string
   timezone?: string
+  description?: string
+  provider?: 'zoom' | 'teams' | 'google-meet'
+  meetingLink: string
+  participants: string[]
+  notifications: {
+    sendTranscript: boolean
+    sendSummary: boolean
+  }
 }

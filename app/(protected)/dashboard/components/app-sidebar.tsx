@@ -13,68 +13,25 @@ import {
 } from '@/components/ui/sidebar'
 import { MeetingInterface } from '@/interfaces'
 
-const MOCK_MEETINGS: MeetingInterface[] = [
-  {
-    id: '1',
-    title: 'Team Standup',
-    date: '2024-03-15',
-    duration: '30m',
-    recordingUrl: 'https://example.com/recording1',
-    transcript: 'This is a mock transcript for team standup...',
-    summary: {
-      keyTopics: ['Discussed sprint progress', 'Identified blockers', 'Set priorities'],
-      actionItems: ['Review PR #123', 'Update documentation'],
-      participants: ['John', 'Alice', 'Bob']
-    },
-    status: 'Completed'
-  },
-  {
-    id: '2',
-    title: 'Project Review',
-    date: '2024-03-16',
-    duration: '1h',
-    recordingUrl: 'https://example.com/recording2',
-    transcript: 'This is a mock transcript for project review...',
-    summary: {
-      keyTopics: ['Project status update', 'Resource allocation', 'Timeline review'],
-      actionItems: ['Update roadmap', 'Schedule follow-up'],
-      participants: ['Sarah', 'Mike', 'Emma']
-    },
-    status: 'In Progress'
-  },
-  {
-    id: '3',
-    title: 'Client Meeting',
-    date: '2024-03-17',
-    duration: '45m',
-    recordingUrl: 'https://example.com/recording3',
-    transcript: 'This is a mock transcript for client meeting...',
-    summary: {
-      keyTopics: ['Requirements gathering', 'Feature discussion', 'Next steps'],
-      actionItems: ['Send proposal', 'Schedule demo'],
-      participants: ['Client A', 'David', 'Lisa']
-    },
-    status: 'Scheduled'
-
-  }
-]
 
 interface AppSidebarProps {
   onSelectMeeting: (value: SetStateAction<MeetingInterface | null>) => void
-  isCollapsed: boolean
+  isCollapsed: boolean,
+  meetings: MeetingInterface[]
 }
 
 
-export function AppSidebar({ onSelectMeeting, isCollapsed }: AppSidebarProps) {
+export function AppSidebar({ onSelectMeeting, isCollapsed, meetings }: AppSidebarProps) {
   const [searchTerm, setSearchTerm] = useState('')
 
-  const filteredMeetings = MOCK_MEETINGS.filter(meeting =>
+  const filteredMeetings = meetings.filter(meeting =>
     meeting.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     meeting.date.includes(searchTerm) ||
     meeting.status?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  const nextMeeting = MOCK_MEETINGS.find(meeting => meeting.status === 'Scheduled')
+  const nextMeeting = meetings.find(meeting => meeting.status === 'Scheduled')
+
 
   return (
     <Sidebar collapsible={isCollapsed ? 'icon' : 'offcanvas'}>
