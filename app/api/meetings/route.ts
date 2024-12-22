@@ -3,6 +3,8 @@ import { currentUser } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 
+import AWS from 'aws-sdk';
+
 export async function GET() {
 	const user = await currentUser();
 	if (!user) {
@@ -31,6 +33,8 @@ export async function POST(req: Request) {
 	if (!userId) {
 		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 	}
+
+	const scheduler = new AWS.Scheduler();
 
 	const userIdString = Array.isArray(userId) ? userId[0] : userId;
 	const body: MeetingInterface = await req.json();
@@ -68,6 +72,32 @@ export async function POST(req: Request) {
 					sendSummary: notifications.sendSummary,
 				},
 			},
+		},
+	});
+	// Schedule AWS Lambda function
+	const lambdaArn = process.env.MEETING_RECORDING_LAMBDA_FUNCTION_ARN; // Set this in your environment variables
+	const jobName = `Meeting-${meeting.id}`;
+	const scheduleExpression = `at(${date}T${time})`;
+
+	const params = {
+		Name: jobName,
+		ScheduleExpression: scheduleExpression,
+		Target: {
+			Arn: lambdaArn,
+			RoleArn: process.env.MEETING_RECORDING_AWS_ROLE_ARN, // Set this in your environment variables
+			Input: JSON.stringify({ meetingId: meeting.id }),
+		},
+		FlexibleTimeWindow: { Mode: 'OFF' },
+	};
+
+	const schedulerResponse = await scheduler.createSchedule(params).promise();
+
+	// Update the meeting with AWS Scheduler details
+	await db.meeting.update({
+		where: { id: meeting.id },
+		data: {
+			awsSchedulerArn: schedulerResponse.ScheduleArn,
+			awsJobId: jobName,
 		},
 	});
 
