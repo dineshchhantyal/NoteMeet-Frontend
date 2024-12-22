@@ -112,13 +112,18 @@ model Meeting {
   description   String?
   provider      String
   meetingLink   String
-  status        String      @default("Scheduled")
+  notification Notification? 
+  status        String      @default("Scheduled") // Possible values: "Scheduled", "In Progress", "Completed", "Cancelled"
   participants  Participant[]
+  awsSchedulerArn String?  // ARN of the AWS Scheduler job
+  awsJobId        String?  // Unique ID of the AWS Scheduler job
+  recordingUrl    String?
+  transcript      String?
+  summary         Json?
   createdBy     User        @relation(fields: [userId], references: [id])
   userId        String
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
-  notification Notification? 
 }
 
 model Participant {
