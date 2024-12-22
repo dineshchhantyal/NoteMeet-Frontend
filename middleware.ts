@@ -23,6 +23,6 @@ export const config = {
 		'/dashboard/:path*',
 		'/profile/:path*',
 		// Skip authentication check for public routes
-		'/((?!api|_next/static|_next/image|favicon.ico).*)',
+		// '/((?!api|_next/static|_next/image|favicon.ico).*)',
 	],
 };
