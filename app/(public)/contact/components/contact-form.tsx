@@ -47,6 +47,7 @@ export function ContactForm() {
 			});
 		} catch (error) {
 			alert('Failed to send message.');
+			console.error('Error sending message:', error);
 		} finally {
 			setIsSubmitting(false);
 		}
