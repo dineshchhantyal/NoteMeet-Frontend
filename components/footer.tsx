@@ -46,6 +46,11 @@ export function Footer() {
 						<h3 className="font-bold text-lg mb-4">Resources</h3>
 						<ul className="space-y-2">
 							<li>
+								<Link href="/early-access" className="hover:underline">
+									Early Access
+								</Link>
+							</li>
+							<li>
 								<Link href="/blog" className="hover:underline">
 									Blog
 								</Link>

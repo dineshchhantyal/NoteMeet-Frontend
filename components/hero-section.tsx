@@ -18,17 +18,23 @@ export function HeroSection() {
 						<Button
 							size="lg"
 							className="bg-white text-primary font-semibold hover:bg-primary hover:text-white"
+							asChild
 						>
-							Get Started
-							<ArrowRight className="ml-2 h-5 w-5" />
+							<a href="/early-access">
+								Get Started
+								<ArrowRight className="ml-2 h-5 w-5" />
+							</a>
 						</Button>
 						<Button
 							size="lg"
 							variant="outline"
 							className="bg-white/10 text-white border-white hover:bg-white hover:text-primary font-semibold"
+							asChild
 						>
-							Schedule a Demo
-							<Calendar className="ml-2 h-5 w-5" />
+							<a href="/early-access">
+								Schedule a Demo
+								<Calendar className="ml-2 h-5 w-5" />
+							</a>
 						</Button>
 					</div>
 				</div>
