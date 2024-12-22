@@ -26,7 +26,9 @@ export function FreeTrial() {
 				</ul>
 			</CardContent>
 			<CardFooter className="justify-center">
-				<Button size="lg">Start Your Free Trial</Button>
+				<Button size="lg" asChild>
+					<a href="/early-access">Start Your Free Trial</a>
+				</Button>
 			</CardFooter>
 		</Card>
 	);

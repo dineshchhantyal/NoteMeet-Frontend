@@ -16,7 +16,7 @@ const tiers = [
 		price: '$0',
 		description: 'For small teams or individuals testing the platform',
 		features: [
-			'5 meetings per month (up to 60 minutes each)',
+			'2 meetings (up to 60 minutes each)',
 			'Basic video recording and transcript generation',
 			'Limited cloud storage (2 GB)',
 			'Access to summary and action item generation for 3 meetings',
@@ -86,8 +86,11 @@ export function PricingSection() {
 								<Button
 									className="w-full"
 									variant={tier.name === 'Pro' ? 'default' : 'outline'}
+									asChild
 								>
-									{tier.name === 'Free' ? 'Get Started' : 'Choose Plan'}
+									<a href="/early-access">
+										{tier.name === 'Free' ? 'Get Started' : 'Choose Plan'}
+									</a>
 								</Button>
 							</CardFooter>
 						</Card>
@@ -98,7 +101,7 @@ export function PricingSection() {
 						Need a custom solution for your enterprise?
 					</p>
 					<Link href="/contact" passHref>
-						<Button variant="outline" size="lg">
+						<Button variant="outline" size="lg" asChild>
 							Contact Sales
 						</Button>
 					</Link>
