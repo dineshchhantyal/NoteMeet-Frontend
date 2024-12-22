@@ -1,17 +1,16 @@
-import { MeetingHeader } from '@/components/meeting-header'
-import { MeetingFooter } from '@/components/meeting-footer'
+import { MeetingHeader } from '@/components/meeting-header';
+import { MeetingFooter } from '@/components/meeting-footer';
 
 export default function MeetingLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode
+	children: React.ReactNode;
 }) {
-  return (
-    <div className="flex flex-col min-h-screen">
-      <MeetingHeader />
-      <main className="flex-grow">{children}</main>
-      <MeetingFooter />
-    </div>
-  )
+	return (
+		<div className="flex flex-col min-h-screen">
+			<MeetingHeader />
+			<main className="flex-grow">{children}</main>
+			<MeetingFooter />
+		</div>
+	);
 }
-

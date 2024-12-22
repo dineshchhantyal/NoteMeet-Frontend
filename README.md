@@ -5,6 +5,7 @@
 Designed to enhance productivity, it allows users to create, organize, and share notes effortlessly while collaborating with team members in real-time. With a user-friendly interface, NoteMeet provides a smooth experience for managing meeting agendas, taking meeting notes, and tracking action items.
 
 Key capabilities:
+
 - Real-time collaboration on notes and meetings
 - Easy note organization with tags and categories
 - Efficient search functionality
