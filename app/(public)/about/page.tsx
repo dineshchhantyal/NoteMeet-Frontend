@@ -87,10 +87,10 @@ export default function AboutPage() {
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-12">
 						{[
 							{
-								name: 'Jane Doe',
+								name: 'Dinesh Chhantyal',
 								role: 'CEO & Co-founder',
 								image: '/team/jane-doe.jpg',
-								linkedin: '#',
+								linkedin: 'www.linkedin.com/in/dineshchhantyal',
 							},
 							{
 								name: 'John Smith',
