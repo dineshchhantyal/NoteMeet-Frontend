@@ -12,6 +12,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
+import { toast } from '@/hooks/use-toast';
 
 export function ContactForm() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,7 +41,10 @@ export function ContactForm() {
 				throw new Error(error);
 			}
 
-			alert('Message sent successfully!');
+			toast({
+				title: 'Message sent!',
+				description: 'We will get back to you as soon as possible.',
+			});
 		} catch (error) {
 			alert('Failed to send message.');
 		} finally {
