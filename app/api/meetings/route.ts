@@ -75,7 +75,20 @@ export async function POST(req: Request) {
 		},
 	});
 	// Schedule AWS Lambda function
-	const lambdaArn = process.env.MEETING_RECORDING_LAMBDA_FUNCTION_ARN; // Set this in your environment variables
+	const lambdaArn = process.env.MEETING_RECORDING_LAMBDA_FUNCTION_ARN;
+	const roleArn = process.env.MEETING_RECORDING_AWS_ROLE_ARN;
+
+	if (!lambdaArn || !roleArn) {
+		// throw new Error('Required AWS ARNs are not configured');
+		return NextResponse.json(
+			{
+				error:
+					'Although the meeting was created, the AWS ARNs are not configured',
+			},
+			{ status: 500 },
+		);
+	}
+
 	const jobName = `Meeting-${meeting.id}`;
 	const scheduleExpression = `at(${date}T${time})`;
 
@@ -84,7 +97,7 @@ export async function POST(req: Request) {
 		ScheduleExpression: scheduleExpression,
 		Target: {
 			Arn: lambdaArn,
-			RoleArn: process.env.MEETING_RECORDING_AWS_ROLE_ARN, // Set this in your environment variables
+			RoleArn: roleArn,
 			Input: JSON.stringify({ meetingId: meeting.id }),
 		},
 		FlexibleTimeWindow: { Mode: 'OFF' },
