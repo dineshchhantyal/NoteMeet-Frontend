@@ -91,14 +91,29 @@ export function NewMeetingDialog({ onMeetingCreated }: NewMeetingDialogProps) {
 			status: 'Scheduled',
 		};
 
-		// In a real application, you would make an API call here
-		// For now, we'll simulate an API call with a timeout
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		try {
+			const res = await fetch('/api/meetings', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(meetingData),
+			});
 
-		onMeetingCreated(meetingData);
-		setIsSubmitting(false);
-		setOpen(false);
-		setParticipants([]);
+			if (!res.ok) {
+				const error = await res.json();
+				throw new Error(error.message || 'Failed to create meeting');
+			}
+
+			const createdMeeting = await res.json();
+			onMeetingCreated(createdMeeting);
+			setOpen(false);
+			setParticipants([]);
+		} catch (error) {
+			alert(
+				error instanceof Error ? error.message : 'Failed to create meeting',
+			);
+		} finally {
+			setIsSubmitting(false);
+		}
 	}
 
 	return (

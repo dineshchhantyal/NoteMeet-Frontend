@@ -28,9 +28,9 @@ export function AppSidebar({
 
 	const filteredMeetings = meetings.filter(
 		(meeting) =>
-			meeting.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			meeting.date.includes(searchTerm) ||
-			meeting.status?.toLowerCase().includes(searchTerm.toLowerCase()),
+			meeting.title?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+			meeting.date?.includes(searchTerm) ||
+			meeting.status?.toLowerCase().includes(searchTerm?.toLowerCase()),
 	);
 
 	const nextMeeting = meetings.find(

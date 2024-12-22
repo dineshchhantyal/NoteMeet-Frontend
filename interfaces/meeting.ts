@@ -9,10 +9,10 @@ export interface Meeting {
 	transcript?: string;
 	summary?: Summary;
 	status?: 'Completed' | 'Scheduled' | 'In Progress';
-	time?: string;
+	time: string;
 	timezone?: string;
 	description?: string;
-	provider?: 'zoom' | 'teams' | 'google-meet';
+	provider: 'zoom' | 'teams' | 'google-meet';
 	meetingLink: string;
 	participants: string[];
 	notifications: {
