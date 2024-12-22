@@ -113,3 +113,19 @@ model ContactMessage {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
+
+model EarlyAccessForm {
+  id             String   @id @default(cuid())
+  name           String
+  email          String   @unique
+  company        String
+  subscription   String   // Options: starter, pro, enterprise
+  paymentMethod  String   // Options: credit_card, paypal, bank_transfer
+  features       String[] @default([]) // Array of features
+  message        String?  // Optional field
+  agreeTerms     Boolean
+  isVerified     Boolean  @default(false) // Admin-specific
+  status         String   @default("pending") // Options: pending, approved, rejected
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}

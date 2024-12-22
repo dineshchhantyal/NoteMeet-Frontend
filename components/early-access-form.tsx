@@ -36,7 +36,7 @@ const formSchema = z.object({
 	company: z.string().min(2, {
 		message: 'Company name must be at least 2 characters.',
 	}),
-	subscription: z.enum(['starter', 'pro', 'enterprise'], {
+	subscription: z.enum(['starter', 'pro', 'business', 'enterprise'], {
 		required_error: 'Please select a subscription plan.',
 	}),
 	paymentMethod: z.enum(['credit_card', 'paypal', 'bank_transfer'], {
@@ -68,20 +68,37 @@ export function EarlyAccessForm() {
 		},
 	});
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	const onSubmit = (values: z.infer<typeof formSchema>) => {
 		setIsSubmitting(true);
-		// In a real application, you would send this data to your server
-		console.log(values);
-		setTimeout(() => {
-			setIsSubmitting(false);
-			toast({
-				title: 'Application Submitted',
-				description:
-					'Thank you for your interest. We will contact you shortly.',
+		fetch('/api/early-access-form', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(values),
+		})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error('Failed to submit application');
+				}
+				toast({
+					title: 'Application Submitted',
+					description:
+						'Thank you for your interest. We will contact you shortly.',
+				});
+				alert('Application submitted successfully!');
+				form.reset();
+			})
+			.catch((error) => {
+				toast({
+					variant: 'destructive',
+					title: 'Submission Failed',
+					description:
+						error instanceof Error ? error.message : 'Something went wrong.',
+				});
+			})
+			.finally(() => {
+				setIsSubmitting(false);
 			});
-			form.reset();
-		}, 2000);
-	}
+	};
 
 	return (
 		<Form {...form}>
