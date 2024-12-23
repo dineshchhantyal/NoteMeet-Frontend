@@ -100,11 +100,11 @@ export function PricingSection() {
 					<p className="text-lg mb-4">
 						Need a custom solution for your enterprise?
 					</p>
-					<Link href="/contact" passHref>
-						<Button variant="outline" size="lg" asChild>
+					<Button variant="outline" size="lg" asChild>
+						<Link href="/contact" passHref>
 							Contact Sales
-						</Button>
-					</Link>
+						</Link>
+					</Button>
 				</div>
 			</div>
 		</section>
