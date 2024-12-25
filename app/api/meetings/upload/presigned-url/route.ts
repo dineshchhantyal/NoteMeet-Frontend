@@ -42,6 +42,7 @@ export async function GET(request: NextRequest) {
 			},
 		});
 	} catch (error) {
+		console.error(error);
 		return Response.json({ message: 'Meeting not found' }, { status: 404 });
 	}
 
