@@ -56,7 +56,7 @@ export async function POST(req: Request) {
 			title,
 			date: new Date(date),
 			time,
-			duration,
+			duration: Number.parseFloat(duration),
 			description,
 			provider,
 			meetingLink,

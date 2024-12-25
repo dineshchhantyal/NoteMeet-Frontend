@@ -108,7 +108,7 @@ model Meeting {
   title         String
   date          DateTime
   time          String
-  duration      String
+  duration      Float @default(30) // in minutes
   description   String?
   provider      String
   meetingLink   String
