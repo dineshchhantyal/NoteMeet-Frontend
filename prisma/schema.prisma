@@ -113,7 +113,7 @@ model Meeting {
   provider      String
   meetingLink   String
   notification Notification? 
-  status        String      @default("Scheduled") // Possible values: "Scheduled", "In Progress", "Completed", "Cancelled"
+  status        Int      @default(1) // Possible values: 1 - "Scheduled", 2 - "In Progress", 3 - "Completed", 4 - "Cancelled"
   participants  Participant[]
   awsSchedulerArn String?  // ARN of the AWS Scheduler job
   awsJobId        String?  // Unique ID of the AWS Scheduler job

@@ -18,6 +18,10 @@ export async function GET() {
 	const userIdString = Array.isArray(userId) ? userId[0] : userId;
 	const meetings = await db.meeting.findMany({
 		where: { userId: userIdString },
+		orderBy: {
+			status: 'asc',
+			date: 'desc',
+		},
 	});
 
 	return NextResponse.json({ data: meetings }, { status: 200 });

@@ -3,6 +3,7 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { NextRequest } from 'next/server';
 import { db } from '@/lib/db';
 import { currentUser } from '@/lib/auth';
+import { MeetingStatus } from '@/interfaces/meeting';
 
 const client = new S3Client({
 	region: process.env.AWS_S3_RAW_RECORDINGS_BUCKET_REGION!,
@@ -38,7 +39,7 @@ export async function GET(request: NextRequest) {
 				userId: userId,
 			},
 			data: {
-				status: 'In Progress',
+				status: MeetingStatus.InProgress,
 			},
 		});
 	} catch (error) {

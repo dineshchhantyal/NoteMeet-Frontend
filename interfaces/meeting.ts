@@ -8,7 +8,7 @@ export interface Meeting {
 	recordingUrl?: string;
 	transcript?: string;
 	summary?: Summary;
-	status?: 'Completed' | 'Scheduled' | 'In Progress';
+	status?: MeetingStatus;
 	time: string;
 	timezone?: string;
 	description?: string;
@@ -19,4 +19,11 @@ export interface Meeting {
 		sendTranscript: boolean;
 		sendSummary: boolean;
 	};
+}
+
+export enum MeetingStatus {
+	Scheduled = 1,
+	InProgress = 2,
+	Completed = 3,
+	Cancelled = 4,
 }

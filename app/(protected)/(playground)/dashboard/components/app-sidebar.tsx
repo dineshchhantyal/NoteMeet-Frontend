@@ -12,6 +12,7 @@ import {
 	SidebarMenuButton,
 } from '@/components/ui/sidebar';
 import { MeetingInterface } from '@/interfaces';
+import { MeetingStatus } from '@/interfaces/meeting';
 
 interface AppSidebarProps {
 	onSelectMeeting: (value: SetStateAction<MeetingInterface | null>) => void;
@@ -30,11 +31,13 @@ export function AppSidebar({
 		(meeting) =>
 			meeting.title?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
 			meeting.date?.includes(searchTerm) ||
-			meeting.status?.toLowerCase().includes(searchTerm?.toLowerCase()),
+			MeetingStatus[meeting.status ?? 0]
+				?.toLowerCase()
+				.includes(searchTerm?.toLowerCase()),
 	);
 
 	const nextMeeting = meetings.find(
-		(meeting) => meeting.status === 'Scheduled',
+		(meeting) => meeting.status === MeetingStatus.Scheduled,
 	);
 
 	return (

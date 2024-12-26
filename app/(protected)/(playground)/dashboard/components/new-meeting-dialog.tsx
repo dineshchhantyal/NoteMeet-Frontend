@@ -25,6 +25,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { MeetingInterface } from '@/interfaces';
+import { MeetingStatus } from '@/interfaces/meeting';
 
 interface NewMeetingDialogProps {
 	onMeetingCreated: (meeting: MeetingInterface) => void;
@@ -88,7 +89,7 @@ export function NewMeetingDialog({ onMeetingCreated }: NewMeetingDialogProps) {
 				sendTranscript: formData.get('sendTranscript') === 'on',
 				sendSummary: formData.get('sendSummary') === 'on',
 			},
-			status: 'Scheduled',
+			status: MeetingStatus.Scheduled,
 		};
 
 		try {
