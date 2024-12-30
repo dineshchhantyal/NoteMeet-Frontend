@@ -1,4 +1,3 @@
-import { currentUser } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { checkMeetingUserAuthorization } from '@/lib/meeting';
 import { deleteS3Object, S3BucketType } from '@/lib/s3';

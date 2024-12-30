@@ -1,5 +1,3 @@
-import { db } from '@/lib/db';
-import { currentUser } from '@/lib/auth';
 import { generetePresigedGetUrl } from '@/lib/presigned-url';
 import { S3BucketType } from '@/lib/s3';
 import { NextRequest } from 'next/server';
