@@ -5,12 +5,16 @@ import { Pause, Play, SkipBack, SkipForward } from 'lucide-react';
 // import { Play, Pause, SkipBack, SkipForward } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react';
 
-interface VideoPlayerProps {
+interface VideoPlayerProps extends React.HTMLAttributes<HTMLVideoElement> {
 	src: string;
 	showControls?: boolean;
 }
 
-export function VideoPlayer({ src, showControls = true }: VideoPlayerProps) {
+export function VideoPlayer({
+	src,
+	showControls = true,
+	...args
+}: VideoPlayerProps) {
 	const [isPlaying, setIsPlaying] = useState(false);
 
 	const [currentTime, setCurrentTime] = useState(0);
@@ -68,7 +72,7 @@ export function VideoPlayer({ src, showControls = true }: VideoPlayerProps) {
 		<Card>
 			<CardContent className="p-0 relative">
 				<div className="aspect-video relative">
-					<video ref={videoRef} src={src} className="w-full h-full">
+					<video ref={videoRef} src={src} className="w-full h-full" {...args}>
 						Your browser does not support the video tag.
 					</video>
 					{!src && (

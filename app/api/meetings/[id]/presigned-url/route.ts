@@ -3,38 +3,14 @@ import { currentUser } from '@/lib/auth';
 import { generetePresigedGetUrl } from '@/lib/presigned-url';
 import { S3BucketType } from '@/lib/s3';
 import { NextRequest } from 'next/server';
+import { checkMeetingUserAuthorization } from '@/lib/meeting';
 
 export async function GET(req: NextRequest) {
 	try {
-		const meetingId = req.nextUrl.pathname.split('/')[2];
+		const path = req.nextUrl.pathname.split('/');
+		const meetingId = path[path.length - 2];
 
-		const user = await currentUser();
-		if (!user) {
-			return Response.json({ message: 'Unauthorized' }, { status: 401 });
-		}
-
-		if (!user.isEarlyAccess) {
-			return Response.json(
-				{ message: 'You do not have access to this feature' },
-				{ status: 403 },
-			);
-		}
-
-		const userId = user.id;
-
-		if (!meetingId) {
-			return Response.json(
-				{ error: 'File query parameter is required' },
-				{ status: 400 },
-			);
-		}
-
-		const meeting = await db.meeting.findFirst({
-			where: {
-				id: meetingId,
-				userId,
-			},
-		});
+		const meeting = await checkMeetingUserAuthorization(meetingId);
 
 		if (!meeting) {
 			return Response.json({ message: 'Meeting not found' }, { status: 404 });
