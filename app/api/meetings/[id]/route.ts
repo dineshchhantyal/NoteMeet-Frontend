@@ -1,96 +1,122 @@
 import { db } from '@/lib/db';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
-	const { id } = req.query;
-	const userId = req.headers['user-id'];
-
-	if (typeof id !== 'string') {
-		return res.status(400).json({ error: 'Invalid meeting ID' });
+async function checkAuthorization(id: string, userId: string | null) {
+	if (!id) {
+		throw new Error('Invalid meeting ID');
 	}
 
-	if (!userId || typeof userId !== 'string') {
-		return res.status(401).json({ error: 'Unauthorized' });
+	if (!userId) {
+		throw new Error('Unauthorized');
 	}
 
+	const user = await db.user.findUnique({
+		where: { id: userId },
+	});
+
+	if (!user) {
+		throw new Error('Unauthorized');
+	}
+
+	const meeting = await db.meeting.findUnique({
+		where: { id },
+		include: { createdBy: true },
+	});
+
+	if (!meeting || meeting.userId !== userId) {
+		throw new Error('Access denied');
+	}
+
+	return meeting;
+}
+
+export async function GET(req: NextRequest) {
 	try {
-		const meeting = await db.meeting.findUnique({
-			where: { id },
-			include: { createdBy: true },
-		});
+		const id = req.nextUrl.pathname.split('/').pop();
+		const userId = req.headers.get('user-id');
 
-		if (!meeting || meeting.userId !== userId) {
-			return res.status(403).json({ error: 'Access denied' });
-		}
-
-		return res.status(200).json(meeting);
+		const meeting = await checkAuthorization(id!, userId);
+		return NextResponse.json(meeting);
 	} catch (error) {
-		console.error(error);
-		return res.status(500).json({ error: 'Something went wrong' });
+		console.error('GET Meeting Error:', error);
+		if (error instanceof Error) {
+			return NextResponse.json(
+				{ error: error.message },
+				{ status: getErrorStatus(error.message) },
+			);
+		}
+		return NextResponse.json(
+			{ error: 'Internal server error' },
+			{ status: 500 },
+		);
 	}
 }
 
-export async function PUT(req: NextApiRequest, res: NextApiResponse) {
-	const { id } = req.query;
-	const userId = req.headers['user-id'];
-
-	if (typeof id !== 'string') {
-		return res.status(400).json({ error: 'Invalid meeting ID' });
-	}
-
-	if (!userId || typeof userId !== 'string') {
-		return res.status(401).json({ error: 'Unauthorized' });
-	}
-
+export async function PUT(req: NextRequest) {
 	try {
-		const existingMeeting = await db.meeting.findUnique({
-			where: { id },
+		const id = req.nextUrl.pathname.split('/').pop();
+		const userId = req.headers.get('user-id');
+		const body = await req.json();
+
+		await checkAuthorization(id!, userId);
+
+		const updatedMeeting = await db.meeting.update({
+			where: { id: id! },
+			data: body,
 		});
 
-		if (!existingMeeting || existingMeeting.userId !== userId) {
-			return res.status(403).json({ error: 'Access denied' });
-		}
-
-		const meeting = await db.meeting.update({
-			where: { id },
-			data: req.body,
-		});
-
-		return res.status(200).json(meeting);
+		return NextResponse.json(updatedMeeting);
 	} catch (error) {
-		console.error(error);
-		return res.status(500).json({ error: 'Something went wrong' });
+		console.error('PUT Meeting Error:', error);
+		if (error instanceof Error) {
+			return NextResponse.json(
+				{ error: error.message },
+				{ status: getErrorStatus(error.message) },
+			);
+		}
+		return NextResponse.json(
+			{ error: 'Internal server error' },
+			{ status: 500 },
+		);
 	}
 }
 
-export async function DELETE(req: NextApiRequest, res: NextApiResponse) {
-	const { id } = req.query;
-	const userId = req.headers['user-id'];
-
-	if (typeof id !== 'string') {
-		return res.status(400).json({ error: 'Invalid meeting ID' });
-	}
-
-	if (!userId || typeof userId !== 'string') {
-		return res.status(401).json({ error: 'Unauthorized' });
-	}
-
+export async function DELETE(req: NextRequest) {
 	try {
-		const existingMeeting = await db.meeting.findUnique({
-			where: { id },
-		});
+		const id = req.nextUrl.pathname.split('/').pop();
+		const userId = req.headers.get('user-id');
 
-		if (!existingMeeting || existingMeeting.userId !== userId) {
-			return res.status(403).json({ error: 'Access denied' });
-		}
+		await checkAuthorization(id!, userId);
 
 		await db.meeting.delete({
-			where: { id },
+			where: { id: id! },
 		});
 
-		return res.status(200).json({ message: 'Meeting deleted successfully' });
+		return NextResponse.json({ message: 'Meeting deleted successfully' });
 	} catch (error) {
-		console.error(error);
-		return res.status(500).json({ error: 'Something went wrong' });
+		console.error('DELETE Meeting Error:', error);
+		if (error instanceof Error) {
+			return NextResponse.json(
+				{ error: error.message },
+				{ status: getErrorStatus(error.message) },
+			);
+		}
+		return NextResponse.json(
+			{ error: 'Internal server error' },
+			{ status: 500 },
+		);
+	}
+}
+
+function getErrorStatus(message: string): number {
+	switch (message) {
+		case 'Invalid meeting ID':
+			return 400;
+		case 'Unauthorized':
+			return 401;
+		case 'Access denied':
+			return 403;
+		default:
+			return 500;
 	}
 }
