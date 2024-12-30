@@ -55,6 +55,22 @@ export default function DashboardPage() {
 		} else setVideoUrl(null);
 	}, [selectedMeeting]);
 
+	const onMeetingDelete = async (meetingId: string) => {
+		setMeetings((prevMeetings) =>
+			prevMeetings.filter((meeting) => meeting.id !== meetingId),
+		);
+		const res = await fetch(`/api/meetings/${meetingId}`, {
+			method: 'DELETE',
+		});
+
+		const data = await res.json();
+		if (data.error) {
+			console.error('Error deleting meeting:', data.error);
+		}
+
+		setSelectedMeeting(null);
+	};
+
 	return (
 		<SidebarProvider defaultOpen={true} open={!isSidebarCollapsed}>
 			<div className="flex h-screen">
@@ -74,7 +90,10 @@ export default function DashboardPage() {
 					<main className="flex-grow overflow-auto p-6 space-y-6">
 						{selectedMeeting ? (
 							<>
-								<MeetingInfo meeting={selectedMeeting} />
+								<MeetingInfo
+									meeting={selectedMeeting}
+									onMeetingDelete={onMeetingDelete}
+								/>
 								{!videoUrl ? (
 									<VideoPlayerPlaceholder>
 										<p className="text-muted-foreground">No video available</p>

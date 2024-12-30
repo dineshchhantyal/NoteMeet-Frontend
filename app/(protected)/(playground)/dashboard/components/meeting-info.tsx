@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Download, Share2, PlayCircle } from 'lucide-react';
+import { Download, Share2, PlayCircle, DeleteIcon } from 'lucide-react';
 import {
 	Tooltip,
 	TooltipContent,
@@ -9,12 +9,24 @@ import {
 	TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { MeetingInterface } from '@/types';
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface MeetingInfoProps {
 	meeting: MeetingInterface;
+	onMeetingDelete: (meetingId: string) => void;
 }
 
-export function MeetingInfo({ meeting }: MeetingInfoProps) {
+export function MeetingInfo({ meeting, onMeetingDelete }: MeetingInfoProps) {
 	return (
 		<Card>
 			<CardHeader>
@@ -84,6 +96,37 @@ export function MeetingInfo({ meeting }: MeetingInfoProps) {
 							</TooltipContent>
 						</Tooltip>
 					</TooltipProvider>
+					<AlertDialog>
+						<AlertDialogTrigger asChild>
+							<Button
+								variant="outline"
+								size="sm"
+								className="text-red-500 outline-red-600"
+							>
+								<DeleteIcon className="mr-2 h-4 w-4" />
+								Delete Meeting
+							</Button>
+						</AlertDialogTrigger>
+						<AlertDialogContent>
+							<AlertDialogHeader>
+								<AlertDialogTitle>Delete Meeting</AlertDialogTitle>
+								<AlertDialogDescription>
+									Are you sure you want to delete this meeting? This action
+									cannot be undone. All meeting data including transcripts and
+									recordings will be permanently removed.
+								</AlertDialogDescription>
+							</AlertDialogHeader>
+							<AlertDialogFooter>
+								<AlertDialogCancel>Cancel</AlertDialogCancel>
+								<AlertDialogAction
+									onClick={() => onMeetingDelete(meeting.id)}
+									className="bg-red-600 hover:bg-red-700"
+								>
+									Delete
+								</AlertDialogAction>
+							</AlertDialogFooter>
+						</AlertDialogContent>
+					</AlertDialog>
 				</div>
 			</CardContent>
 		</Card>

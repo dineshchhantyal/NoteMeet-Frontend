@@ -4,33 +4,7 @@ import {
 	S3Client,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-
-// Define bucket configurations type
-type S3BucketConfig = {
-	region: string;
-	credentials: {
-		accessKeyId: string;
-		secretAccessKey: string;
-	};
-	bucketName: string;
-};
-
-// S3 credentials configuration
-const s3Configs: Record<string, S3BucketConfig> = {
-	RAW_RECORDINGS_BUCKET: {
-		region: process.env.AWS_S3_RAW_RECORDINGS_BUCKET_REGION!,
-		credentials: {
-			accessKeyId: process.env.AWS_S3_RAW_RECORDINGS_BUCKET_ACCESS_KEY!,
-			secretAccessKey: process.env.AWS_S3_RAW_RECORDINGS_BUCKET_SECRET_KEY!,
-		},
-		bucketName: process.env.AWS_S3_RAW_RECORDINGS_BUCKET_NAME!,
-	},
-	// Add more bucket configurations as needed, also update S3BucketType enum
-};
-
-export enum S3BucketType {
-	RAW_RECORDINGS_BUCKET = 'RAW_RECORDINGS_BUCKET',
-}
+import { S3BucketType, s3Configs } from './s3';
 
 interface PresignedUrlParams {
 	key: string;

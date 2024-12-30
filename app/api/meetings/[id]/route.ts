@@ -1,4 +1,5 @@
 import { db } from '@/lib/db';
+import { deleteS3Object, S3BucketType } from '@/lib/s3';
 import { NextRequest, NextResponse } from 'next/server';
 
 async function checkAuthorization(id: string, userId: string | null) {
@@ -87,6 +88,20 @@ export async function DELETE(req: NextRequest) {
 		const userId = req.headers.get('user-id');
 
 		await checkAuthorization(id!, userId);
+		const meeting = await db.meeting.findUnique({
+			where: { id },
+		});
+
+		if (!meeting) {
+			throw new Error('Meeting not found');
+		}
+
+		if (meeting.videoKey) {
+			await deleteS3Object(
+				meeting.videoKey,
+				S3BucketType.RAW_RECORDINGS_BUCKET,
+			);
+		}
 
 		await db.meeting.delete({
 			where: { id: id! },

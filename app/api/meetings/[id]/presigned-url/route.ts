@@ -1,12 +1,8 @@
 import { db } from '@/lib/db';
 import { currentUser } from '@/lib/auth';
-import { MeetingStatus } from '@/types/meeting';
-import {
-	generatePresignedUrl,
-	generetePresigedGetUrl,
-	S3BucketType,
-} from '@/lib/presigned-url';
+import { generetePresigedGetUrl } from '@/lib/presigned-url';
 import { NextApiRequest } from 'next';
+import { S3BucketType } from '@/lib/s3';
 
 export async function GET(req: NextApiRequest) {
 	try {
