@@ -11,8 +11,8 @@ import {
 	SidebarMenuItem,
 	SidebarMenuButton,
 } from '@/components/ui/sidebar';
-import { MeetingInterface } from '@/interfaces';
-import { MeetingStatus } from '@/interfaces/meeting';
+import { MeetingInterface } from '@/types';
+import { MeetingStatus } from '@/types/meeting';
 
 interface AppSidebarProps {
 	onSelectMeeting: (value: SetStateAction<MeetingInterface | null>) => void;

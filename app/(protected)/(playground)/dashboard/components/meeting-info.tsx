@@ -8,7 +8,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { MeetingInterface } from '@/interfaces';
+import { MeetingInterface } from '@/types';
 
 interface MeetingInfoProps {
 	meeting: MeetingInterface;

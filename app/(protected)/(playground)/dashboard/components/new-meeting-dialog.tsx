@@ -24,8 +24,8 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { MeetingInterface } from '@/interfaces';
-import { MeetingStatus } from '@/interfaces/meeting';
+import { MeetingInterface } from '@/types';
+import { MeetingStatus } from '@/types/meeting';
 
 interface NewMeetingDialogProps {
 	onMeetingCreated: (meeting: MeetingInterface) => void;

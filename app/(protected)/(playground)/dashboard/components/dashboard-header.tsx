@@ -1,6 +1,6 @@
 import LogoLink from '@/components/LogoLink';
 import { Button } from '@/components/ui/button';
-import { MeetingInterface } from '@/interfaces';
+import { MeetingInterface } from '@/types';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { NewMeetingDialog } from './new-meeting-dialog';
 import { NotificationDropdown } from './notification-dropdown';

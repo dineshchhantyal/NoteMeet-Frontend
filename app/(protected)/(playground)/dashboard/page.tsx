@@ -9,7 +9,7 @@ import { SummarySection } from './components/summary-section';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { MeetingInterface } from '@/interfaces';
+import { MeetingInterface } from '@/types';
 import { VideoPlayerPlaceholder } from './components/video-player-placeholder';
 import DashboardHeader from './components/dashboard-header';
 

@@ -1,4 +1,4 @@
-import { MeetingInterface } from '@/interfaces';
+import { MeetingInterface } from '@/types';
 import { currentUser } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
