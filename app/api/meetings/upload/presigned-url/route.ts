@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
 		if (!user) {
 			return Response.json({ message: 'Unauthorized' }, { status: 401 });
 		}
-
+		console.log('user', user);
 		if (!user.isEarlyAccess) {
 			return Response.json(
 				{ message: 'You do not have access to this feature' },
@@ -37,6 +37,8 @@ export async function GET(request: NextRequest) {
 				provider: 'Externsion',
 			},
 		});
+
+		console.log('meeting', meeting);
 
 		if (!meeting) {
 			return Response.json(

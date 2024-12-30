@@ -27,6 +27,13 @@ export async function PATCH(request: Request) {
 				isVerified,
 			},
 		});
+		const updateProfile = await db.user.update({
+			where: { email: updatedEntry.email },
+			data: {
+				isEarlyAccess: status === 'approved',
+			},
+		});
+
 		return NextResponse.json({ success: true, data: updatedEntry });
 	} catch (error) {
 		console.error(error);
