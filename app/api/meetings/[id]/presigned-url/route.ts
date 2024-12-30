@@ -1,11 +1,13 @@
-import { NextRequest } from 'next/server';
 import { db } from '@/lib/db';
 import { currentUser } from '@/lib/auth';
 import { MeetingStatus } from '@/types/meeting';
 import { generatePresignedUrl, S3BucketType } from '@/lib/presigned-url';
+import { NextApiRequest } from 'next';
 
-export async function GET(request: NextRequest) {
-	const { searchParams } = request.nextUrl;
+export async function GET(req: NextApiRequest) {
+	const meetingId = Array.isArray(req.query.id)
+		? req.query.id[0]
+		: req.query.id;
 
 	const user = await currentUser();
 	if (!user) {
@@ -20,8 +22,6 @@ export async function GET(request: NextRequest) {
 	}
 
 	const userId = user.id;
-
-	const meetingId = searchParams.get('meeting-id');
 
 	if (!meetingId) {
 		return Response.json(
