@@ -27,7 +27,7 @@ export async function PATCH(request: Request) {
 				isVerified,
 			},
 		});
-		const updateProfile = await db.user.update({
+		await db.user.update({
 			where: { email: updatedEntry.email },
 			data: {
 				isEarlyAccess: status === 'approved',

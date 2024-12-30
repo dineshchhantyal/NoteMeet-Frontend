@@ -1,11 +1,11 @@
-import { NextRequest } from 'next/server';
 import { db } from '@/lib/db';
 import { currentUser } from '@/lib/auth';
 import { MeetingStatus } from '@/types/meeting';
-import { generatePresignedUrl, S3BucketType } from '@/lib/presigned-url';
+import { generatePresignedUrl } from '@/lib/presigned-url';
 import { v4 as uuidv4 } from 'uuid';
+import { S3BucketType } from '@/lib/s3';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
 	try {
 		const user = await currentUser();
 		if (!user) {

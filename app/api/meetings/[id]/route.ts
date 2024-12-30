@@ -1,19 +1,13 @@
+import { currentUser } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { deleteS3Object, S3BucketType } from '@/lib/s3';
 import { NextRequest, NextResponse } from 'next/server';
 
-async function checkAuthorization(id: string, userId: string | null) {
+async function checkAuthorization(id: string) {
 	if (!id) {
 		throw new Error('Invalid meeting ID');
 	}
-
-	if (!userId) {
-		throw new Error('Unauthorized');
-	}
-
-	const user = await db.user.findUnique({
-		where: { id: userId },
-	});
+	const user = await currentUser();
 
 	if (!user) {
 		throw new Error('Unauthorized');
@@ -24,7 +18,7 @@ async function checkAuthorization(id: string, userId: string | null) {
 		include: { createdBy: true },
 	});
 
-	if (!meeting || meeting.userId !== userId) {
+	if (!meeting || meeting.userId !== user.id) {
 		throw new Error('Access denied');
 	}
 
@@ -36,7 +30,7 @@ export async function GET(req: NextRequest) {
 		const id = req.nextUrl.pathname.split('/').pop();
 		const userId = req.headers.get('user-id');
 
-		const meeting = await checkAuthorization(id!, userId);
+		const meeting = await checkAuthorization(id!);
 		return NextResponse.json(meeting);
 	} catch (error) {
 		console.error('GET Meeting Error:', error);
@@ -59,7 +53,7 @@ export async function PUT(req: NextRequest) {
 		const userId = req.headers.get('user-id');
 		const body = await req.json();
 
-		await checkAuthorization(id!, userId);
+		await checkAuthorization(id!);
 
 		const updatedMeeting = await db.meeting.update({
 			where: { id: id! },
@@ -85,9 +79,10 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
 	try {
 		const id = req.nextUrl.pathname.split('/').pop();
-		const userId = req.headers.get('user-id');
 
-		await checkAuthorization(id!, userId);
+		console.log('id', id);
+
+		await checkAuthorization(id!);
 		const meeting = await db.meeting.findUnique({
 			where: { id },
 		});

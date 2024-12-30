@@ -1,14 +1,12 @@
 import { db } from '@/lib/db';
 import { currentUser } from '@/lib/auth';
 import { generetePresigedGetUrl } from '@/lib/presigned-url';
-import { NextApiRequest } from 'next';
 import { S3BucketType } from '@/lib/s3';
+import { NextRequest } from 'next/server';
 
-export async function GET(req: NextApiRequest) {
+export async function GET(req: NextRequest) {
 	try {
-		const meetingId = Array.isArray(req.query.id)
-			? req.query.id[0]
-			: req.query.id;
+		const meetingId = req.nextUrl.pathname.split('/')[2];
 
 		const user = await currentUser();
 		if (!user) {
