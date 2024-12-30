@@ -17,10 +17,13 @@ export default function DashboardPage() {
 	const [selectedMeeting, setSelectedMeeting] =
 		useState<MeetingInterface | null>(null);
 	const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+	const [loading, setLoading] = useState(true);
+	const [videoUrl, setVideoUrl] = useState<string | null>(null);
 
 	const [meetings, setMeetings] = useState<MeetingInterface[]>([]);
 	useEffect(() => {
 		const fetchMeetings = async () => {
+			setLoading(true);
 			try {
 				const response = await fetch('/api/meetings');
 				const data = await response.json();
@@ -28,10 +31,29 @@ export default function DashboardPage() {
 			} catch (error) {
 				console.error('Error fetching meetings:', error);
 			}
+			setLoading(false);
 		};
 
 		fetchMeetings();
 	}, []);
+
+	useEffect(() => {
+		if (selectedMeeting) {
+			const fetchVideoUrl = async () => {
+				try {
+					const response = await fetch(
+						`/api/meetings/${selectedMeeting.id}/presigned-url`,
+					);
+					const data = await response.json();
+					setVideoUrl(data.presignedUrl);
+				} catch (error) {
+					console.error('Error fetching video url:', error);
+				}
+			};
+
+			fetchVideoUrl();
+		} else setVideoUrl(null);
+	}, [selectedMeeting]);
 
 	return (
 		<SidebarProvider defaultOpen={true} open={!isSidebarCollapsed}>
@@ -40,6 +62,7 @@ export default function DashboardPage() {
 					onSelectMeeting={setSelectedMeeting}
 					isCollapsed={isSidebarCollapsed}
 					meetings={meetings}
+					loading={loading}
 				/>
 				<SidebarInset className="flex flex-col">
 					<DashboardHeader
@@ -52,12 +75,12 @@ export default function DashboardPage() {
 						{selectedMeeting ? (
 							<>
 								<MeetingInfo meeting={selectedMeeting} />
-								{!selectedMeeting.recordingUrl ? (
+								{!videoUrl ? (
 									<VideoPlayerPlaceholder>
 										<p className="text-muted-foreground">No video available</p>
 									</VideoPlayerPlaceholder>
 								) : (
-									<VideoPlayer src={selectedMeeting.recordingUrl} />
+									<VideoPlayer src={videoUrl} />
 								)}
 								<Tabs defaultValue="transcript" className="w-full">
 									<TabsList className="w-full justify-start">

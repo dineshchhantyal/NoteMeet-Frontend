@@ -118,8 +118,8 @@ model Meeting {
   participants  Participant[]
   awsSchedulerArn String?  // ARN of the AWS Scheduler job
   awsJobId        String?  // Unique ID of the AWS Scheduler job
-  recordingUrl    String?
   transcript      String?
+  videoKey        String?
   summary         Json?
   createdBy     User        @relation(fields: [userId], references: [id])
   userId        String

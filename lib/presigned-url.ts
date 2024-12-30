@@ -1,4 +1,8 @@
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+	GetObjectCommand,
+	PutObjectCommand,
+	S3Client,
+} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 // Define bucket configurations type
@@ -63,6 +67,42 @@ export async function generatePresignedUrl({
 		});
 
 		const command = new PutObjectCommand({
+			Bucket: config.bucketName,
+			Key: key,
+		});
+
+		const url = await getSignedUrl(client, command, { expiresIn });
+		const expiresAt = new Date(Date.now() + expiresIn * 1000);
+
+		return {
+			url,
+			expiresAt,
+		};
+	} catch (error) {
+		throw new Error(
+			`Failed to generate presigned URL: ${error instanceof Error ? error.message : 'Unknown error'}`,
+		);
+	}
+}
+
+export async function generetePresigedGetUrl({
+	key,
+	expiresIn,
+	bucketType,
+}: PresignedUrlParams): Promise<PresignedUrlResult> {
+	if (!s3Configs[bucketType]) {
+		throw new Error(`Invalid bucket type: ${bucketType}`);
+	}
+
+	const config = s3Configs[bucketType];
+
+	try {
+		const client = new S3Client({
+			region: config.region,
+			credentials: config.credentials,
+		});
+
+		const command = new GetObjectCommand({
 			Bucket: config.bucketName,
 			Key: key,
 		});

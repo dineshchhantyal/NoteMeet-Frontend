@@ -23,9 +23,10 @@ export async function GET(request: NextRequest) {
 		if (!userId) {
 			return Response.json({ message: 'User ID not found' }, { status: 400 });
 		}
+		const uid = uuidv4();
 		const meeting = await db.meeting.create({
 			data: {
-				id: uuidv4(),
+				id: uid,
 				userId: userId,
 				status: MeetingStatus.InProgress,
 				date: new Date(),
@@ -35,10 +36,9 @@ export async function GET(request: NextRequest) {
 				title: 'On demand meeting: ' + new Date().toISOString(),
 				description: 'On demand meeting: ' + new Date().toISOString(),
 				provider: 'Externsion',
+				videoKey: uid,
 			},
 		});
-
-		console.log('meeting', meeting);
 
 		if (!meeting) {
 			return Response.json(

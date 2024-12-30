@@ -5,7 +5,7 @@ export interface Meeting {
 	title: string;
 	date: string;
 	duration: string;
-	recordingUrl?: string;
+	videoKey?: string;
 	transcript?: string;
 	summary?: Summary;
 	status?: MeetingStatus;

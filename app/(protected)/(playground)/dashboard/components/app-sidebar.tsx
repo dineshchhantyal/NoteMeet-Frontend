@@ -13,17 +13,20 @@ import {
 } from '@/components/ui/sidebar';
 import { MeetingInterface } from '@/types';
 import { MeetingStatus } from '@/types/meeting';
+import { Loader2 } from 'lucide-react';
 
 interface AppSidebarProps {
 	onSelectMeeting: (value: SetStateAction<MeetingInterface | null>) => void;
 	isCollapsed: boolean;
 	meetings: MeetingInterface[];
+	loading?: boolean;
 }
 
 export function AppSidebar({
 	onSelectMeeting,
 	isCollapsed,
 	meetings,
+	loading,
 }: AppSidebarProps) {
 	const [searchTerm, setSearchTerm] = useState('');
 
@@ -39,7 +42,13 @@ export function AppSidebar({
 	const nextMeeting = meetings.find(
 		(meeting) => meeting.status === MeetingStatus.Scheduled,
 	);
-
+	if (loading) {
+		return (
+			<div className="flex items-center justify-center min-h-screen">
+				<Loader2 className="animate-spin" size={32} />
+			</div>
+		);
+	}
 	return (
 		<Sidebar collapsible={isCollapsed ? 'icon' : 'offcanvas'}>
 			<SidebarHeader>
