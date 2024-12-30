@@ -36,10 +36,10 @@ export function MeetingInfo({ meeting, onMeetingDelete }: MeetingInfoProps) {
 				<div className="flex justify-between items-center mb-4">
 					<div>
 						<p className="text-sm text-muted-foreground">
-							Date: {meeting.date}
+							Date: {new Date(meeting.date).toLocaleDateString()}
 						</p>
 						<p className="text-sm text-muted-foreground">
-							Time: {meeting.duration}
+							Time: {meeting.time}
 						</p>
 						<p className="text-sm text-muted-foreground">Duration: 1 hour</p>
 					</div>

@@ -38,7 +38,7 @@ export default function DashboardPage() {
 	}, []);
 
 	useEffect(() => {
-		if (selectedMeeting) {
+		if (selectedMeeting && selectedMeeting.videoKey) {
 			const fetchVideoUrl = async () => {
 				try {
 					const response = await fetch(
