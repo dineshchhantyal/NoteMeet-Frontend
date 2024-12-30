@@ -21,6 +21,13 @@ export async function GET(request: NextRequest) {
 		return Response.json({ message: 'Unauthorized' }, { status: 401 });
 	}
 
+	if (!user.isEarlyAccess) {
+		return Response.json(
+			{ message: 'You do not have access to this feature' },
+			{ status: 403 },
+		);
+	}
+
 	const userId = user.id;
 
 	const meetingId = searchParams.get('meeting-id');
