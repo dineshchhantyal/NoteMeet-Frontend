@@ -25,16 +25,16 @@ export const UserButton = async () => {
 				</Avatar>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-40" align="end">
+				<DropdownMenuItem>
+					<SettingsIcon className="h-4 w-4" />
+					<a href="/settings">Settings</a>
+				</DropdownMenuItem>
 				<LogoutButton>
 					<DropdownMenuItem>
 						<ExitIcon className="h-4 w-4" />
 						Logout
 					</DropdownMenuItem>
 				</LogoutButton>
-				<DropdownMenuItem>
-					<SettingsIcon className="h-4 w-4" />
-					<a href="/settings">Settings</a>
-				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
