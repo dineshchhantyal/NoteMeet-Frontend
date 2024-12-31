@@ -8,10 +8,7 @@ export function ProductDemo() {
 					See NoteMeet in Action
 				</h2>
 				<div className="relative aspect-video max-w-4xl mx-auto">
-					<VideoPlayer
-						src="https://www.youtube.com/watch?v=cbj_bmFflrE"
-						showControls={false}
-					/>
+					<VideoPlayer src="/NoteMeetAction.mp4" showControls={true} />
 				</div>
 				<p className="mt-8 text-lg">Simplify Meetings Today!</p>
 			</div>

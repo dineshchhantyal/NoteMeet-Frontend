@@ -47,7 +47,7 @@ export function HeroSection() {
             className="w-full h-auto"
           /> */}
 					<VideoPlayer
-						src="/hero.mp4"
+						src="/NoteMeetIntro.mp4"
 						width={600}
 						height={400}
 						autoPlay={true}
