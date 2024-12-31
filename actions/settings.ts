@@ -9,6 +9,7 @@ import { getUserByEmail, getUserById } from '@/data/user';
 import { currentUser } from '@/lib/auth';
 import { generateVerificationToken } from '@/lib/tokens';
 import { sendVerificationEmail } from '@/lib/mail';
+import { UserRole } from '@prisma/client';
 
 export const settings = async (values: z.infer<typeof SettingsSchema>) => {
 	const user = await currentUser();
@@ -24,6 +25,12 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
 			(values.password = undefined),
 			(values.newPassword = undefined),
 			(values.isTwoFactorEnabled = undefined);
+	}
+
+	if (values.role && values.role !== dbUser?.role) {
+		if (values?.role === UserRole.ADMIN && dbUser?.role !== UserRole.ADMIN) {
+			return { error: 'Cannot change role of admin!' };
+		}
 	}
 
 	if (values.email && values.email !== user.email) {
