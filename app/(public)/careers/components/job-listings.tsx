@@ -1,33 +1,20 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-
-const jobs = [
-	{
-		title: 'Senior Full Stack Developer',
-		department: 'Engineering',
-		location: 'Remote',
-		type: 'Full-time',
-	},
-	{
-		title: 'AI Research Scientist',
-		department: 'Research & Development',
-		location: 'San Francisco, CA',
-		type: 'Full-time',
-	},
-	{
-		title: 'Product Marketing Manager',
-		department: 'Marketing',
-		location: 'New York, NY',
-		type: 'Full-time',
-	},
-	{
-		title: 'UX/UI Designer',
-		department: 'Design',
-		location: 'Remote',
-		type: 'Full-time',
-	},
-];
+import {
+	Collapsible,
+	CollapsibleTrigger,
+	CollapsibleContent,
+} from '@/components/ui/collapsible'; // Assuming the library is available
+import JobDescription from './job-description';
+import jobs from './jobs';
+import { Separator } from '@/components/ui/separator';
 
 export function JobListings() {
 	return (
@@ -35,9 +22,9 @@ export function JobListings() {
 			<h2 className="text-2xl font-semibold mb-8">Open Positions</h2>
 			<div className="grid gap-6">
 				{jobs.map((job, index) => (
-					<Card key={index}>
+					<Card key={index} className="p-4">
 						<CardHeader>
-							<CardTitle>{job.title}</CardTitle>
+							<CardTitle className="text-lg">{job.title}</CardTitle>
 						</CardHeader>
 						<CardContent>
 							<div className="flex flex-wrap gap-2 mb-4">
@@ -45,7 +32,24 @@ export function JobListings() {
 								<Badge variant="outline">{job.location}</Badge>
 								<Badge>{job.type}</Badge>
 							</div>
-							<Button>Apply Now</Button>
+							<Collapsible>
+								<CollapsibleTrigger asChild>
+									<Button variant="link" className="text-sm">
+										Read job description
+									</Button>
+								</CollapsibleTrigger>
+								<CollapsibleContent>
+									<CardDescription className="text-base text-gray-500">
+										{job.description}
+									</CardDescription>
+									<Separator className="my-4" />
+									<CardDescription className="text-base text-gray-500">
+										{job.responsibilities.map((responsibility, index) => (
+											<li key={index}>{responsibility}</li>
+										))}
+									</CardDescription>
+								</CollapsibleContent>
+							</Collapsible>
 						</CardContent>
 					</Card>
 				))}
