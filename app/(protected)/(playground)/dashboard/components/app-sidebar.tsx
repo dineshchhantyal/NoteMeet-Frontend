@@ -82,49 +82,35 @@ export function AppSidebar({
 			<SidebarContent>
 				{nextMeeting && (
 					<div className="px-4 py-2 mb-4 bg-primary/10 rounded-md">
-						<h3 className="font-semibold text-sm">Next Meeting</h3>
+						<h3 className="font-semibold text-sm text-primary">Next Meeting</h3>
 						<p className="text-sm">{nextMeeting.title}</p>
 						<p className="text-xs text-muted-foreground">
-							{nextMeeting.date} - {nextMeeting.time}
+							{new Date(nextMeeting.date).toLocaleDateString()} -{' '}
+							{new Date(nextMeeting.date).toLocaleTimeString([], {
+								hour: '2-digit',
+								minute: '2-digit',
+							})}
 						</p>
 					</div>
 				)}
 				<SidebarMenu>
 					{filteredMeetings.map((meeting) => (
-						<SidebarMenuItem key={meeting.id || Math.random()}>
+						<SidebarMenuItem key={meeting.id || Math.random()} className="py-2">
 							<SidebarMenuButton
 								onClick={() => onSelectMeeting(meeting)}
-								className="w-full"
+								className="w-full bg-white py-2 hover:bg-gray-100 transition-colors rounded-md hover:text-primary"
 							>
-								<div className="flex flex-col items-start w-full overflow-hidden">
-									<span className="font-medium truncate w-full">
+								<div className="flex flex-col justify-between w-full overflow-hidden">
+									<span className="font-semibold text-gray-900 truncate">
 										{meeting.title}
 									</span>
-									<div className="flex items-center gap-2 text-xs text-muted-foreground">
-										<span>
-											{meeting.date} - {meeting.time}
-										</span>
-									</div>
-									<div className="flex items-center gap-2 mt-1">
-										{meeting.participants && (
-											<TooltipProvider>
-												<Tooltip>
-													<TooltipTrigger asChild>
-														<Badge
-															variant="secondary"
-															className="flex items-center gap-1"
-														>
-															<Users className="h-3 w-3" />
-															{meeting.participants.length}
-														</Badge>
-													</TooltipTrigger>
-													<TooltipContent>
-														<p>Participants</p>
-													</TooltipContent>
-												</Tooltip>
-											</TooltipProvider>
-										)}
-									</div>
+									<p className="text-xs text-gray-700">
+										{new Date(meeting.date).toLocaleDateString()} -{' '}
+										{new Date(meeting.date).toLocaleTimeString([], {
+											hour: '2-digit',
+											minute: '2-digit',
+										})}
+									</p>
 								</div>
 							</SidebarMenuButton>
 						</SidebarMenuItem>

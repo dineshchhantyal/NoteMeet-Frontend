@@ -6,6 +6,7 @@ import { ProductDemo } from '@/components/product-demo';
 import { IntegrationsHighlight } from '@/components/integrations-highlight';
 import { KeyFeatures } from '@/components/key-features';
 import { PricingSection } from '@/components/pricing-section';
+import { InteractiveHowItWorks } from '@/components/home/how-it-works';
 
 export default function HomePage() {
 	return (
@@ -14,6 +15,7 @@ export default function HomePage() {
 				<HeroSection />
 				<WhyNoteMeet />
 				<KeyFeatures />
+				<InteractiveHowItWorks />
 				<PricingSection />
 				<CustomerTestimonials />
 				<ProductDemo />
