@@ -2,7 +2,10 @@
 
 import { currentRole } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { JobApplicationStatus } from '@/schemas/job-application';
+import {
+	JobApplicationInterface,
+	JobApplicationStatus,
+} from '@/schemas/job-application';
 import { UserRole } from '@prisma/client';
 
 export const getAdminJobApplications = async () => {
