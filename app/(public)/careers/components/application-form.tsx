@@ -49,15 +49,17 @@ export function ApplicationForm() {
 		setSuccess('');
 
 		startTransition(() => {
-			createJobApplication(data).then((data) => {
-				if (data?.error) {
-					setError(data.error);
-				}
+			createJobApplication(data)
+				.then((data) => {
+					if (data?.error) {
+						setError(data.error);
+					}
 
-				if (data?.success) {
-					setSuccess(data.success);
-				}
-			});
+					if (data?.success) {
+						setSuccess(data.success);
+					}
+				})
+				.catch(() => setError('Something went wrong'));
 		});
 	};
 
@@ -114,6 +116,9 @@ export function ApplicationForm() {
 						<FormError message={errors.coverLetter.message} />
 					)}
 				</div>
+
+				<FormError message={error} />
+				<FormSuccess message={success} />
 
 				<Button type="submit" disabled={isSubmitting}>
 					{isSubmitting ? 'Submitting...' : 'Submit Application'}
