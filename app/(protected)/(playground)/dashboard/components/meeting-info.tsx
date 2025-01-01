@@ -56,7 +56,7 @@ export function MeetingInfo({ meeting, onMeetingDelete }: MeetingInfoProps) {
 						))}
 					</div>
 				</div>
-				<div className="flex space-x-2">
+				<div className="grid grid-cols-2 md:grid-cols-4 gap-2">
 					<TooltipProvider>
 						<Tooltip>
 							<TooltipTrigger asChild>
