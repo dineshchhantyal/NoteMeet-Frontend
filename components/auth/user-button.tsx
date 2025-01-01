@@ -9,7 +9,9 @@ import { LogoutButton } from '@/components/auth/logout-button';
 import { FaUser } from 'react-icons/fa';
 import { ExitIcon } from '@radix-ui/react-icons';
 import { SettingsIcon } from 'lucide-react';
+import { RiAdminLine } from 'react-icons/ri';
 import { currentUser } from '@/lib/auth';
+import { UserRole } from '@prisma/client';
 
 export const UserButton = async () => {
 	const user = await currentUser();
@@ -35,6 +37,12 @@ export const UserButton = async () => {
 						Logout
 					</DropdownMenuItem>
 				</LogoutButton>
+				{user?.role === UserRole.ADMIN && (
+					<DropdownMenuItem>
+						<RiAdminLine className="h-4 w-4" />
+						<a href="/admin">Admin</a>
+					</DropdownMenuItem>
+				)}
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
