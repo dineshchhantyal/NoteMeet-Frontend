@@ -5,6 +5,19 @@ import { ChevronDown } from 'lucide-react';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
+const FORM_ROUTES = [
+	{
+		route: '/admin/forms/early-access-submissions',
+		label: 'Early Access Submissions',
+		description: 'View and manage early access submissions',
+	},
+	{
+		route: '/admin/forms/job-applications',
+		label: 'Job Applications',
+		description: 'View and manage job applications',
+	},
+];
+
 const NavigationMenu = React.forwardRef<
 	React.ElementRef<typeof NavigationMenuPrimitive.Root>,
 	React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Root>
@@ -126,18 +139,27 @@ const AdminSubHeader = () => {
 							<NavigationMenuItem>
 								<NavigationMenuTrigger>Forms</NavigationMenuTrigger>
 								<NavigationMenuContent>
-									<NavigationMenuLink asChild>
-										<Link href="/admin/forms/early-access-submissions">
-											{' '}
-											Early Access Submissions
-										</Link>
-									</NavigationMenuLink>
-									<NavigationMenuLink asChild>
-										<Link href="/admin/forms/form2">Form 2</Link>
-									</NavigationMenuLink>
-									<NavigationMenuLink asChild>
-										<Link href="/admin/forms/form3">Form 3</Link>
-									</NavigationMenuLink>
+									<ul className="flex flex-row p-2">
+										{FORM_ROUTES.map((route) => (
+											<li
+												key={route.route}
+												className="flex flex-col p-2 hover:bg-gray-100 rounded-md group"
+											>
+												<NavigationMenuLink asChild>
+													<Link href={route.route}>
+														<div className="flex flex-col">
+															<p className="text-sm font-bold group-hover:text-blue-500">
+																{route.label}
+															</p>
+															<p className="text-sm text-gray-500 group-hover:text-blue-500">
+																{route.description}
+															</p>
+														</div>
+													</Link>
+												</NavigationMenuLink>
+											</li>
+										))}
+									</ul>
 								</NavigationMenuContent>
 							</NavigationMenuItem>
 							<NavigationMenuItem>
