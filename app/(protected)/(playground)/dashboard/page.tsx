@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { MeetingInterface } from '@/types';
 import { VideoPlayerPlaceholder } from './components/video-player-placeholder';
 import DashboardHeader from './components/dashboard-header';
+import { NewMeetingDialog } from './components/new-meeting-dialog';
 
 export default function DashboardPage() {
 	const [selectedMeeting, setSelectedMeeting] =
@@ -71,6 +72,10 @@ export default function DashboardPage() {
 		setSelectedMeeting(null);
 	};
 
+	const handleMeetingCreated = (newMeeting: MeetingInterface) => {
+		setMeetings([...meetings, newMeeting]);
+	};
+
 	return (
 		<SidebarProvider>
 			<div className="flex flex-col h-screen overflow-hidden">
@@ -80,7 +85,11 @@ export default function DashboardPage() {
 						meetings={meetings}
 						loading={loading}
 					/>
-					<DashboardHeader setMeetings={setMeetings} meetings={meetings} />
+					<DashboardHeader
+						setMeetings={setMeetings}
+						meetings={meetings}
+						handleMeetingCreated={handleMeetingCreated}
+					/>
 				</header>
 				{selectedMeeting ? (
 					<main className="flex-grow overflow-auto p-6 space-y-6">
@@ -113,22 +122,20 @@ export default function DashboardPage() {
 						</Tabs>
 					</main>
 				) : (
-					<div className="text-center text-muted-foreground">
-						<p className="text-lg mb-4">
+					<div className="flex flex-col items-center justify-center h-full p-6 bg-gray-50 rounded-lg shadow-md">
+						<p className="text-xl font-semibold text-gray-800 mb-4">
 							Select a meeting from the sidebar to view details.
 						</p>
-						<Button
-							onClick={() => {
-								const sidebarButton = document.querySelector(
-									'button[aria-label="Open sidebar"]',
-								);
-								if (sidebarButton instanceof HTMLButtonElement) {
-									sidebarButton.click();
-								}
-							}}
-						>
-							View Meetings
-						</Button>
+						{loading ? (
+							<p className="text-gray-600">Loading...</p>
+						) : (
+							<>
+								<p className="mt-4 mb-2 text-gray-600">
+									If you don't see any meetings, consider creating one!
+								</p>
+								<NewMeetingDialog onMeetingCreated={handleMeetingCreated} />
+							</>
+						)}
 					</div>
 				)}
 			</div>

@@ -9,13 +9,14 @@ import { UserButtonClient } from './user-button-client';
 interface DashboardHeaderProps {
 	setMeetings: (meetings: MeetingInterface[]) => void;
 	meetings: MeetingInterface[];
+	handleMeetingCreated: (newMeeting: MeetingInterface) => void;
 }
 
-const DashboardHeader = ({ setMeetings, meetings }: DashboardHeaderProps) => {
-	const handleMeetingCreated = (newMeeting: MeetingInterface) => {
-		setMeetings([...meetings, newMeeting]);
-	};
-
+const DashboardHeader = ({
+	setMeetings,
+	meetings,
+	handleMeetingCreated,
+}: DashboardHeaderProps) => {
 	return (
 		<div className="flex flex-1 h-16 items-center gap-4 border-b bg-background px-6">
 			<LogoLink showText={true} />
