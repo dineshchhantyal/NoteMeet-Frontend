@@ -49,9 +49,6 @@ export function HeroSection() {
           /> */}
 					<Video
 						src={NoteMeetIntro}
-						autoPlay={true}
-						loop={true}
-						muted={true}
 						className="w-full h-auto aspect-video"
 						blurDataURL="/logo.png"
 					/>
