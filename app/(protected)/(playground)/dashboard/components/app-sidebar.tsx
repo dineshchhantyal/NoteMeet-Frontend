@@ -1,7 +1,7 @@
 'use client';
 
-import { SetStateAction, useState } from 'react';
-import { Search } from 'lucide-react';
+import { SetStateAction, useEffect, useState } from 'react';
+import { Menu, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
 	Sidebar,
@@ -14,21 +14,37 @@ import {
 import { MeetingInterface } from '@/types';
 import { MeetingStatus } from '@/types/meeting';
 import { Loader2 } from 'lucide-react';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Badge } from '@/components/ui/badge';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface AppSidebarProps {
 	onSelectMeeting: (value: SetStateAction<MeetingInterface | null>) => void;
-	isCollapsed: boolean;
 	meetings: MeetingInterface[];
 	loading?: boolean;
 }
 
 export function AppSidebar({
 	onSelectMeeting,
-	isCollapsed,
 	meetings,
 	loading,
 }: AppSidebarProps) {
 	const [searchTerm, setSearchTerm] = useState('');
+	const [isMobile, setIsMobile] = useState(false);
+
+	useEffect(() => {
+		const checkIsMobile = () => setIsMobile(window.innerWidth < 768);
+		checkIsMobile();
+		window.addEventListener('resize', checkIsMobile);
+		return () => window.removeEventListener('resize', checkIsMobile);
+	}, []);
 
 	const filteredMeetings = meetings.filter(
 		(meeting) =>
@@ -49,8 +65,8 @@ export function AppSidebar({
 			</div>
 		);
 	}
-	return (
-		<Sidebar collapsible={isCollapsed ? 'icon' : 'offcanvas'}>
+	const SidebarContents = () => (
+		<>
 			<SidebarHeader>
 				<div className="relative px-2 py-2">
 					<Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
@@ -75,28 +91,67 @@ export function AppSidebar({
 				)}
 				<SidebarMenu>
 					{filteredMeetings.map((meeting) => (
-						<SidebarMenuItem key={meeting.id} className="mb-2">
+						<SidebarMenuItem key={meeting.id || Math.random()}>
 							<SidebarMenuButton
 								onClick={() => onSelectMeeting(meeting)}
 								className="w-full"
-								size={'lg'}
 							>
 								<div className="flex flex-col items-start w-full overflow-hidden">
 									<span className="font-medium truncate w-full">
 										{meeting.title}
 									</span>
-									<span className="text-xs text-muted-foreground truncate w-full">
-										{meeting.date} - {meeting.time}
-									</span>
-									{/* <Badge variant="outline" className={`mt-1 ${getStatusColor(meeting.status)}`}>
-                    {meeting.status}
-                  </Badge> */}
+									<div className="flex items-center gap-2 text-xs text-muted-foreground">
+										<span>
+											{meeting.date} - {meeting.time}
+										</span>
+									</div>
+									<div className="flex items-center gap-2 mt-1">
+										{meeting.participants && (
+											<TooltipProvider>
+												<Tooltip>
+													<TooltipTrigger asChild>
+														<Badge
+															variant="secondary"
+															className="flex items-center gap-1"
+														>
+															<Users className="h-3 w-3" />
+															{meeting.participants.length}
+														</Badge>
+													</TooltipTrigger>
+													<TooltipContent>
+														<p>Participants</p>
+													</TooltipContent>
+												</Tooltip>
+											</TooltipProvider>
+										)}
+									</div>
 								</div>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					))}
 				</SidebarMenu>
 			</SidebarContent>
+		</>
+	);
+
+	if (isMobile) {
+		return (
+			<Sheet>
+				<SheetTrigger asChild>
+					<Button variant="outline" size="icon" className="md:hidden">
+						<Menu className="h-4 w-4" />
+					</Button>
+				</SheetTrigger>
+				<SheetContent side="left" className="w-[300px] sm:w-[400px]">
+					<SidebarContents />
+				</SheetContent>
+			</Sheet>
+		);
+	}
+
+	return (
+		<Sidebar className="hidden md:block">
+			<SidebarContents />
 		</Sidebar>
 	);
 }

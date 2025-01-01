@@ -16,7 +16,6 @@ import DashboardHeader from './components/dashboard-header';
 export default function DashboardPage() {
 	const [selectedMeeting, setSelectedMeeting] =
 		useState<MeetingInterface | null>(null);
-	const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const [videoUrl, setVideoUrl] = useState<string | null>(null);
 
@@ -73,66 +72,65 @@ export default function DashboardPage() {
 	};
 
 	return (
-		<SidebarProvider defaultOpen={true} open={!isSidebarCollapsed}>
-			<div className="flex h-screen">
-				<AppSidebar
-					onSelectMeeting={setSelectedMeeting}
-					isCollapsed={isSidebarCollapsed}
-					meetings={meetings}
-					loading={loading}
-				/>
-				<SidebarInset className="flex flex-col">
-					<DashboardHeader
-						isSidebarCollapsed={isSidebarCollapsed}
-						setIsSidebarCollapsed={setIsSidebarCollapsed}
-						setMeetings={setMeetings}
+		<SidebarProvider>
+			<div className="flex flex-col h-screen overflow-hidden">
+				<header className="flex h-16 items-center gap-4 border-b bg-background px-6">
+					<AppSidebar
+						onSelectMeeting={setSelectedMeeting}
 						meetings={meetings}
+						loading={loading}
 					/>
+					<DashboardHeader setMeetings={setMeetings} meetings={meetings} />
+				</header>
+				{selectedMeeting ? (
 					<main className="flex-grow overflow-auto p-6 space-y-6">
-						{selectedMeeting ? (
-							<>
-								<MeetingInfo
-									meeting={selectedMeeting}
-									onMeetingDelete={onMeetingDelete}
-								/>
-								{!videoUrl ? (
-									<VideoPlayerPlaceholder>
-										<p className="text-muted-foreground">No video available</p>
-									</VideoPlayerPlaceholder>
-								) : (
-									<VideoPlayer src={videoUrl} />
-								)}
-								<Tabs defaultValue="transcript" className="w-full">
-									<TabsList className="w-full justify-start">
-										<TabsTrigger value="transcript" className="flex-1">
-											Transcript
-										</TabsTrigger>
-										<TabsTrigger value="summary" className="flex-1">
-											Summary
-										</TabsTrigger>
-									</TabsList>
-									<TabsContent value="transcript" className="mt-4">
-										<TranscriptViewer
-											transcript={selectedMeeting?.transcript}
-										/>
-									</TabsContent>
-									<TabsContent value="summary" className="mt-4">
-										<SummarySection summary={selectedMeeting?.summary} />
-									</TabsContent>
-								</Tabs>
-							</>
+						<MeetingInfo
+							meeting={selectedMeeting}
+							onMeetingDelete={onMeetingDelete}
+						/>
+						{!videoUrl ? (
+							<VideoPlayerPlaceholder>
+								<p className="text-muted-foreground">No video available</p>
+							</VideoPlayerPlaceholder>
 						) : (
-							<div className="text-center text-muted-foreground">
-								<p className="text-lg mb-4">
-									Select a meeting from the sidebar to view details.
-								</p>
-								<Button onClick={() => setIsSidebarCollapsed(false)}>
-									{isSidebarCollapsed ? 'Expand Sidebar' : 'View Meetings'}
-								</Button>
-							</div>
+							<VideoPlayer src={videoUrl} />
 						)}
+						<Tabs defaultValue="transcript" className="w-full">
+							<TabsList className="w-full justify-start">
+								<TabsTrigger value="transcript" className="flex-1">
+									Transcript
+								</TabsTrigger>
+								<TabsTrigger value="summary" className="flex-1">
+									Summary
+								</TabsTrigger>
+							</TabsList>
+							<TabsContent value="transcript" className="mt-4">
+								<TranscriptViewer transcript={selectedMeeting?.transcript} />
+							</TabsContent>
+							<TabsContent value="summary" className="mt-4">
+								<SummarySection summary={selectedMeeting?.summary} />
+							</TabsContent>
+						</Tabs>
 					</main>
-				</SidebarInset>
+				) : (
+					<div className="text-center text-muted-foreground">
+						<p className="text-lg mb-4">
+							Select a meeting from the sidebar to view details.
+						</p>
+						<Button
+							onClick={() => {
+								const sidebarButton = document.querySelector(
+									'button[aria-label="Open sidebar"]',
+								);
+								if (sidebarButton instanceof HTMLButtonElement) {
+									sidebarButton.click();
+								}
+							}}
+						>
+							View Meetings
+						</Button>
+					</div>
+				)}
 			</div>
 		</SidebarProvider>
 	);
