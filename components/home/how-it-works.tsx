@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import Image from 'next/image';
+import { colors } from '@/tailwind.config';
 
 const headlessMethod = [
 	{
@@ -151,7 +151,7 @@ const browserExtensionMethod = [
 	},
 ];
 
-const methods = [
+export const methods = [
 	{
 		title: 'Browser Extension Method',
 		icon: Calendar,
@@ -182,13 +182,13 @@ export function InteractiveHowItWorks() {
 	return (
 		<section className="py-20 bg-gradient-to-b from-gray-50 to-white">
 			<div className="container mx-auto px-4">
-				<h2 className="text-4xl font-bold text-center mb-12">How It Works</h2>
+				<h2 className="text-center text-xl font-bold mb-12">How It Works</h2>
 				<Tabs defaultValue="browser-extension">
 					<TabsList className="grid w-full grid-cols-2">
-						<TabsTrigger value="headless">Headless Method</TabsTrigger>
 						<TabsTrigger value="browser-extension">
 							Browser Extension Method
 						</TabsTrigger>
+						<TabsTrigger value="headless">Headless Method</TabsTrigger>
 					</TabsList>
 					<TabsContent value="browser-extension">
 						<HowItWorksStep steps={browserExtensionMethod} />
@@ -206,7 +206,7 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 	const [hoveredStep, setHoveredStep] = useState<number | null>(null);
 
 	return (
-		<div className="relative w-full h-[700px]">
+		<div className="relative w-full h-[710px]">
 			<svg viewBox="0 0 800 700" className="w-full h-full">
 				<defs>
 					<linearGradient
@@ -225,7 +225,7 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 					cy="350"
 					r="300"
 					fill="none"
-					stroke="#e2e8f0"
+					stroke={colors.cambridgeBlue}
 					strokeWidth="2"
 				/>
 				{steps.map((step, index) => {
@@ -247,9 +247,9 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 								cx={x}
 								cy={y}
 								r="40"
-								fill="url(#circleGradient)"
+								fill={colors.emerald}
 								initial={{ scale: 1 }}
-								whileHover={{ scale: 1.1, fill: '#3b82f6' }} // Updated hover color
+								whileHover={{ scale: 1.1, fill: colors.deepBlue }}
 							/>
 							<foreignObject x={x - 20} y={y - 20} width="40" height="40">
 								<div className="flex items-center justify-center w-full h-full text-white">
@@ -269,7 +269,7 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 								<path
 									d={`M${x} ${y} Q${400} ${350} ${nextX} ${nextY}`}
 									fill="none"
-									stroke="#60a5fa"
+									stroke={colors.softRed}
 									strokeWidth="2"
 									strokeDasharray="5,5"
 								>
@@ -286,7 +286,7 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 					);
 				})}
 				<g transform="translate(400, 350)">
-					<circle cx="0" cy="0" r="80" fill="#3b82f6" />
+					<circle cx="0" cy="0" r="80" fill={colors.deepBlue} />
 					<text
 						x="0"
 						y="4"

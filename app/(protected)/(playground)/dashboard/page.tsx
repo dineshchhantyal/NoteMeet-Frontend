@@ -7,8 +7,7 @@ import { VideoPlayer } from './components/video-player';
 import { TranscriptViewer } from './components/transcript-viewer';
 import { SummarySection } from './components/summary-section';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
-import { Button } from '@/components/ui/button';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { MeetingInterface } from '@/types';
 import { VideoPlayerPlaceholder } from './components/video-player-placeholder';
 import DashboardHeader from './components/dashboard-header';
@@ -85,11 +84,7 @@ export default function DashboardPage() {
 						meetings={meetings}
 						loading={loading}
 					/>
-					<DashboardHeader
-						setMeetings={setMeetings}
-						meetings={meetings}
-						handleMeetingCreated={handleMeetingCreated}
-					/>
+					<DashboardHeader handleMeetingCreated={handleMeetingCreated} />
 				</header>
 				{selectedMeeting ? (
 					<main className="flex-grow overflow-auto p-6 space-y-6">
@@ -131,7 +126,7 @@ export default function DashboardPage() {
 						) : (
 							<>
 								<p className="mt-4 mb-2 text-gray-600">
-									If you don't see any meetings, consider creating one!
+									If you don&apos;t see any meetings, consider creating one!
 								</p>
 								<NewMeetingDialog onMeetingCreated={handleMeetingCreated} />
 							</>
