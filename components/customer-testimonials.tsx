@@ -58,7 +58,7 @@ export function CustomerTestimonials() {
 				>
 					<CarouselContent>
 						{testimonials.map((testimonial, index) => (
-							<CarouselItem key={index} className="md:basis-1/3 basis-full">
+							<CarouselItem key={index}>
 								<Card className="bg-gray-50">
 									<CardContent className="flex flex-col md:flex-row items-center text-center md:text-left p-6">
 										<div className="md:w-1/3 mb-6 md:mb-0">
@@ -98,7 +98,7 @@ export function CustomerTestimonials() {
 						))}
 					</CarouselContent>
 					<CarouselPrevious />
-					<CarouselNext className="hidden md:block" />
+					<CarouselNext className="hidden md:flex" />
 				</Carousel>
 			</div>
 		</section>
