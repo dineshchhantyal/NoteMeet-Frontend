@@ -1,5 +1,6 @@
 import Video from 'next-video';
 import NoteMeetAction from '/videos/NoteMeetAction.mp4';
+import { isProd } from '@/lib/prod';
 
 export function ProductDemo() {
 	return (

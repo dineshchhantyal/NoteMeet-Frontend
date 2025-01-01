@@ -1,9 +1,23 @@
 {
-	"status": "sourced",
+	"status": "ready",
 	"originalFilePath": "videos/NoteMeetAction.mp4",
 	"provider": "mux",
-	"providerMetadata": {},
-	"createdAt": 1735758539625,
-	"updatedAt": 1735758539625,
-	"size": 12792363
+	"providerMetadata": {
+		"mux": {
+			"uploadId": "vYv3dAd5MXl37k5ZKgjp6XiVXjyu9902uOEwq4aiJKtM",
+			"assetId": "MZ5CS0001sk2yjbRCj28w2sKtPoNVYW00V4kUQiSlR7XGg",
+			"playbackId": "lrKek7Sr4KGwRRlhdp4sdI1zXqCCFMIiTsyqh9Kv99I"
+		}
+	},
+	"createdAt": 1735760674235,
+	"updatedAt": 1735760730435,
+	"size": 12792363,
+	"sources": [
+		{
+			"src": "https://stream.mux.com/lrKek7Sr4KGwRRlhdp4sdI1zXqCCFMIiTsyqh9Kv99I.m3u8",
+			"type": "application/x-mpegURL"
+		}
+	],
+	"poster": "https://image.mux.com/lrKek7Sr4KGwRRlhdp4sdI1zXqCCFMIiTsyqh9Kv99I/thumbnail.webp",
+	"blurDataURL": "data:image/webp;base64,UklGRpwAAABXRUJQVlA4IJAAAACwAgCdASoQAAkAAQAcJYwCdBPAf0aMADhOLQL5+XQA/vg8syqqvzOYnJp/qYPE3V5ygRiewP3n6c05OxV/+XwjP4uZfQLOR1LAsoR4G49E3tXUc1nfo8d3juFzXn2xkclChIF/qmgeG/+y7Kvp9yt1ea5QCGKyAzZZkxHH8hbvHt1TD7vJR9CJA5lAILtQoAA="
 }
