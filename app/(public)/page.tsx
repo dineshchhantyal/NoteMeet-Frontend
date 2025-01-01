@@ -1,12 +1,14 @@
 'use client';
 import { HeroSection } from '@/components/hero-section';
 import { WhyNoteMeet } from '@/components/why-notemeet';
+import { KeyFeatures } from '@/components/key-features';
+import { InteractiveHowItWorks } from '@/components/home/how-it-works';
+import BrowserExtension from '@/components/home/browser-extension';
+import BrowserSupport from '@/components/home/browser-support';
+import { PricingSection } from '@/components/pricing-section';
 import { CustomerTestimonials } from '@/components/customer-testimonials';
 import { ProductDemo } from '@/components/product-demo';
 import { IntegrationsHighlight } from '@/components/integrations-highlight';
-import { KeyFeatures } from '@/components/key-features';
-import { PricingSection } from '@/components/pricing-section';
-import { InteractiveHowItWorks } from '@/components/home/how-it-works';
 
 export default function HomePage() {
 	return (
@@ -16,6 +18,8 @@ export default function HomePage() {
 				<WhyNoteMeet />
 				<KeyFeatures />
 				<InteractiveHowItWorks />
+				<BrowserExtension />
+				<BrowserSupport />
 				<PricingSection />
 				<CustomerTestimonials />
 				<ProductDemo />
