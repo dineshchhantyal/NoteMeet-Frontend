@@ -1,7 +1,9 @@
 'use server';
 
-import { currentRole } from '@/lib/auth';
+import { currentRole, currentUser } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { generetePresigedGetUrl } from '@/lib/presigned-url';
+import { S3BucketType } from '@/lib/s3';
 import {
 	JobApplicationInterface,
 	JobApplicationStatus,
@@ -22,10 +24,27 @@ export const getAdminJobApplications = async () => {
 
 export const getAdminJobApplicationById = async (id: number) => {
 	try {
-		await checkAdmin();
-		const jobApplication = await db.jobApplication.findUnique({
+		const user = await checkAdmin();
+
+		const jobApplication = await db.jobApplication.update({
 			where: { id },
+			data: {
+				isRead: true,
+				modifiedBy: user.id,
+			},
 		});
+
+		if (jobApplication) {
+			const { url } = await generetePresigedGetUrl({
+				key: jobApplication.resume,
+				expiresIn: 60 * 60 * 2,
+				bucketType: S3BucketType.MAIN_BUCKET,
+				contentType: 'application/pdf',
+				download: false,
+			});
+
+			jobApplication.resume = url;
+		}
 
 		return jobApplication;
 	} catch (error) {
@@ -39,10 +58,14 @@ export const updateAdminJobApplicationStatus = async (
 	status: JobApplicationStatus,
 ) => {
 	try {
-		await checkAdmin();
+		const user = await checkAdmin();
 		const jobApplication = await db.jobApplication.update({
 			where: { id },
-			data: { status },
+			data: {
+				status,
+				updatedAt: new Date(),
+				modifiedBy: user.id,
+			},
 		});
 
 		return jobApplication;
@@ -79,9 +102,11 @@ export const deleteAdminManyJobApplications = async (ids: number[]) => {
 };
 
 const checkAdmin = async () => {
-	const role = await currentRole();
+	const user = await currentUser();
 
-	if (!role || role !== UserRole.ADMIN) {
+	if (!user || user.role !== UserRole.ADMIN) {
 		throw new Error('Unauthorized');
 	}
+
+	return user;
 };

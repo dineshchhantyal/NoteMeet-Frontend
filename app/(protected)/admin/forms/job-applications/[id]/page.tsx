@@ -11,7 +11,6 @@ import {
 	Card,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
@@ -28,6 +27,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import {
+	deleteAdminJobApplication,
 	getAdminJobApplicationById,
 	updateAdminJobApplicationStatus,
 } from '@/data/job-application';
@@ -63,7 +63,17 @@ export default function ApplicationDetailPage() {
 				toast.success('Application status updated successfully');
 			}
 		} catch (error) {
+			console.error('Error updating application status:', error);
 			toast.error('Failed to update application status');
+		}
+	};
+
+	const handleDeleteApplication = async (id: number) => {
+		const deleted = await deleteAdminJobApplication(id);
+
+		if (deleted) {
+			toast.success('Application deleted successfully');
+			router.push('/admin/forms/job-applications');
 		}
 	};
 
@@ -84,7 +94,7 @@ export default function ApplicationDetailPage() {
 			<Button
 				variant="ghost"
 				className="mb-6"
-				onClick={() => router.push('/admin/applications')}
+				onClick={() => router.push('/admin/forms/job-applications')}
 			>
 				<ArrowLeft className="mr-2 h-4 w-4" />
 				Back to Applications
@@ -173,6 +183,13 @@ export default function ApplicationDetailPage() {
 								</SelectContent>
 							</Select>
 						</div>
+						<Separator />
+						<Button
+							variant="destructive"
+							onClick={() => handleDeleteApplication(application.id)}
+						>
+							Delete Application
+						</Button>
 					</CardContent>
 				</Card>
 
@@ -182,17 +199,30 @@ export default function ApplicationDetailPage() {
 						<CardDescription>Application documents</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4">
-						<div className="flex items-center justify-between p-4 border rounded-lg">
-							<div className="flex items-center space-x-4">
-								<div>
-									<p className="font-medium">Resume</p>
-									<p className="text-sm text-muted-foreground">PDF Document</p>
+						<div className="flex flex-col gap-4 border rounded-lg">
+							<div className="flex items-center justify-between p-4 ">
+								<div className="flex items-center space-x-4">
+									<div>
+										<p className="font-medium">Resume</p>
+										<p className="text-sm text-muted-foreground">
+											PDF Document
+										</p>
+									</div>
 								</div>
+								{/* <Link href={application.resume} target="_blank">
+									<Button variant="secondary">
+										<Download className="mr-2 h-4 w-4" />
+										Download
+									</Button>
+								</Link> */}
 							</div>
-							<Button variant="secondary">
-								<Download className="mr-2 h-4 w-4" />
-								Download
-							</Button>
+							<embed
+								src={application.resume}
+								width="100%"
+								height="500px"
+								title="Resume Preview"
+								type="application/pdf"
+							></embed>
 						</div>
 						{application.coverLetter && (
 							<div className="flex items-center justify-between p-4 border rounded-lg">
@@ -204,6 +234,7 @@ export default function ApplicationDetailPage() {
 										</p>
 									</div>
 								</div>
+
 								<Button variant="secondary">
 									<Download className="mr-2 h-4 w-4" />
 									Download

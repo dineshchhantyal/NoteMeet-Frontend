@@ -10,6 +10,8 @@ interface PresignedUrlParams {
 	key: string;
 	expiresIn: number; // in seconds
 	bucketType: S3BucketType;
+	download?: boolean;
+	contentType?: string;
 }
 
 interface PresignedUrlResult {
@@ -63,6 +65,8 @@ export async function generetePresigedGetUrl({
 	key,
 	expiresIn,
 	bucketType,
+	download = false,
+	contentType,
 }: PresignedUrlParams): Promise<PresignedUrlResult> {
 	if (!s3Configs[bucketType]) {
 		throw new Error(`Invalid bucket type: ${bucketType}`);
@@ -79,6 +83,8 @@ export async function generetePresigedGetUrl({
 		const command = new GetObjectCommand({
 			Bucket: config.bucketName,
 			Key: key,
+			ResponseContentDisposition: download ? 'attachment' : 'inline',
+			ResponseContentType: contentType ?? 'application/pdf',
 		});
 
 		const url = await getSignedUrl(client, command, { expiresIn });
