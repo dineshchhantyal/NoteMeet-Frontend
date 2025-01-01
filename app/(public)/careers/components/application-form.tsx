@@ -32,7 +32,7 @@ export function ApplicationForm() {
 		defaultValues: {
 			name: '',
 			email: '',
-			resume: '',
+			resume: undefined,
 			coverLetter: '',
 			position: '',
 		},

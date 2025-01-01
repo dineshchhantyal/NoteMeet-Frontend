@@ -8,7 +8,7 @@ export const JobApplicationSchema = z.object({
 	email: z.string().email({
 		message: 'Email is required',
 	}),
-	resume: z.string().min(1, {
+	resume: z.instanceof(File, {
 		message: 'Resume is required',
 	}),
 	coverLetter: z.string().optional(),
