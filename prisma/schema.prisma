@@ -171,3 +171,17 @@ model EarlyAccessForm {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
+
+
+model JobApplication {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  resume    String
+  coverLetter String
+  position String
+
+  @@unique([email, position])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
