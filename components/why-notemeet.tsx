@@ -5,17 +5,20 @@ const benefits = [
 	{
 		icon: Clock,
 		title: 'Save Time',
-		description: 'Reduce post-meeting admin tasks by 50%.',
+		description:
+			'Cut down administrative tasks by 50% with automated recording, transcription, and summarization.',
 	},
 	{
 		icon: Users,
-		title: 'Improve Collaboration',
-		description: 'Share actionable insights instantly.',
+		title: 'Boost Collaboration',
+		description:
+			'Share key insights and action items instantly, enabling faster decision-making and team alignment.',
 	},
 	{
 		icon: Workflow,
 		title: 'Streamline Workflow',
-		description: 'Integrated with the tools you already love.',
+		description:
+			'Effortlessly integrate with your favorite tools, making meeting management seamless and efficient.',
 	},
 ];
 

@@ -4,26 +4,27 @@ import { Calendar, Mic, FileText, ListTodo } from 'lucide-react';
 const features = [
 	{
 		icon: Calendar,
-		title: 'Smart Scheduling',
+		title: 'Effortless Scheduling',
 		description:
-			'Effortlessly plan and organize your meetings with our intuitive scheduling tool.',
+			'Easily schedule meetings and set reminders with our intuitive calendar.',
 	},
 	{
 		icon: Mic,
-		title: 'Automated Recording',
+		title: 'Automatic Recording',
 		description:
-			'Never miss a detail with our automatic meeting recording feature.',
+			'Record meetings automatically and get real-time transcriptions effortlessly.',
 	},
 	{
 		icon: FileText,
-		title: 'Intelligent Transcription',
+		title: 'Actionable Summaries',
 		description:
-			'Get accurate, searchable transcripts of your meetings in real-time.',
+			'Receive concise summaries post-meeting, highlighting key insights and action items.',
 	},
 	{
 		icon: ListTodo,
-		title: 'Action-Oriented Summaries',
-		description: 'Receive concise, actionable summaries after each meeting.',
+		title: 'Seamless Sharing',
+		description:
+			'Share recordings and summaries easily to enhance team collaboration.',
 	},
 ];
 

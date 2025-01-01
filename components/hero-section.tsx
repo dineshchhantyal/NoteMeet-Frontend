@@ -21,7 +21,7 @@ export function HeroSection() {
 							asChild
 						>
 							<a href="/early-access">
-								Get Started
+								Early Access
 								<ArrowRight className="ml-2 h-5 w-5" />
 							</a>
 						</Button>
@@ -32,7 +32,7 @@ export function HeroSection() {
 							asChild
 						>
 							<a href="/early-access">
-								Schedule a Demo
+								See It in Action
 								<Calendar className="ml-2 h-5 w-5" />
 							</a>
 						</Button>
