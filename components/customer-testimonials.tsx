@@ -8,26 +8,28 @@ import {
 } from '@/components/ui/carousel';
 import { Quote } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import Autoplay from 'embla-carousel-autoplay';
 
 const testimonials = [
 	{
-		name: 'Sarah Thompson',
-		role: 'Team Lead',
-		company: 'TechCorp',
-		image: '/testimonial-1.jpg',
-		quote:
-			'NoteMeet completely transformed how our team handles meetings. The summaries and action items are lifesavers!',
-	},
-	{
-		name: 'Michael Chen',
-		role: 'Product Manager',
-		company: 'InnovateCo',
+		name: 'Dinesh Chhantyal',
+		role: 'Founder',
+		company: 'NoteMeet',
 		image: '/testimonial-2.jpg',
 		quote:
 			"The time we've saved with NoteMeet has allowed us to focus on what really matters - building great products.",
 	},
 	{
-		name: 'Emily Rodriguez',
+		name: 'Sujan Mangarati',
+		role: 'Marketing Head',
+		company: 'TechCorp',
+		image: '/testimonial-1.jpg',
+		quote:
+			'NoteMeet completely transformed how our team handles meetings. The summaries and action items are lifesavers!',
+	},
+
+	{
+		name: 'Bishwash Kunwar',
 		role: 'HR Director',
 		company: 'GlobalHR',
 		image: '/testimonial-3.jpg',
@@ -43,10 +45,20 @@ export function CustomerTestimonials() {
 				<h2 className="text-center mb-12 text-xl font-semibold">
 					What Our Customers Say
 				</h2>
-				<Carousel className="w-full max-w-4xl mx-auto">
+				<Carousel
+					className="w-full max-w-4xl mx-auto"
+					plugins={[
+						Autoplay({
+							delay: 2000,
+						}),
+					]}
+					opts={{
+						loop: true,
+					}}
+				>
 					<CarouselContent>
 						{testimonials.map((testimonial, index) => (
-							<CarouselItem key={index}>
+							<CarouselItem key={index} className="md:basis-1/3 basis-full">
 								<Card className="bg-gray-50">
 									<CardContent className="flex flex-col md:flex-row items-center text-center md:text-left p-6">
 										<div className="md:w-1/3 mb-6 md:mb-0">
@@ -86,7 +98,7 @@ export function CustomerTestimonials() {
 						))}
 					</CarouselContent>
 					<CarouselPrevious />
-					<CarouselNext />
+					<CarouselNext className="hidden md:block" />
 				</Carousel>
 			</div>
 		</section>

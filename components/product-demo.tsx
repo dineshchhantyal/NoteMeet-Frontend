@@ -1,4 +1,5 @@
-import { VideoPlayer } from '@/app/(protected)/(playground)/dashboard/components/video-player';
+import Video from 'next-video';
+import NoteMeetAction from '/videos/NoteMeetAction.mp4';
 
 export function ProductDemo() {
 	return (
@@ -8,7 +9,7 @@ export function ProductDemo() {
 					See NoteMeet in Action
 				</h2>
 				<div className="relative aspect-video max-w-4xl mx-auto">
-					<VideoPlayer src="/NoteMeetAction.mp4" showControls={true} />
+					<Video src={NoteMeetAction} blurDataURL="/logo.png" />
 				</div>
 				<p className="mt-8 text-lg">Simplify Meetings Today!</p>
 			</div>

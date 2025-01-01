@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Calendar } from 'lucide-react';
-import { VideoPlayer } from './video-player';
+import Video from 'next-video';
+import NoteMeetIntro from '/videos/NoteMeetIntro.mp4';
 
 export function HeroSection() {
 	return (
@@ -46,13 +47,13 @@ export function HeroSection() {
             height={400}
             className="w-full h-auto"
           /> */}
-					<VideoPlayer
-						src="/NoteMeetIntro.mp4"
-						width={600}
-						height={400}
+					<Video
+						src={NoteMeetIntro}
 						autoPlay={true}
 						loop={true}
 						muted={true}
+						className="w-full h-auto aspect-video"
+						blurDataURL="/logo.png"
 					/>
 				</div>
 			</div>
