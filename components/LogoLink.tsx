@@ -16,7 +16,7 @@ const LogoLink = ({ showText = true }: LogoLinkProps) => {
 			/> */}
 			<Logo className="h-14 w-14" />
 			{showText && (
-				<span className="text-2xl text-foreground">
+				<span className="hidden md:block text-2xl text-foreground ">
 					<span className="font-bold">note</span>meet
 				</span>
 			)}
