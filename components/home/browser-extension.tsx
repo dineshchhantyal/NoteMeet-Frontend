@@ -27,7 +27,7 @@ export default function BrowserExtension() {
 					</Button>
 					<p className="text-sm">Supports Chromium based browsers</p>
 				</div>
-				<div className="relative h-[400px]">
+				<div className="hidden md:block relative h-[400px]">
 					<Image
 						src="/logo.png"
 						alt="Browser Extension Banner"

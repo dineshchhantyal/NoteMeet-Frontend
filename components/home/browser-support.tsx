@@ -20,7 +20,7 @@ const supportedBrowsers = [
 
 export default function BrowserSupport() {
 	return (
-		<div className="container mx-auto px-4 py-12 border-t bg-white rounded-t-lg">
+		<div className="container mx-auto px-4 py-12 border-0 md:border-t bg-white md:rounded-t-lg">
 			<h3 className="text-xl font-semibold text-center mb-8">
 				Supported Browsers
 			</h3>
