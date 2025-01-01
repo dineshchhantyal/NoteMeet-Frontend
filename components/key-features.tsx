@@ -1,30 +1,30 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calendar, Mic, FileText, ListTodo } from 'lucide-react';
+import { FileText, ListTodo, SparkleIcon } from 'lucide-react';
 
 const features = [
 	{
-		icon: Calendar,
-		title: 'Effortless Scheduling',
-		description:
-			'Easily schedule meetings and set reminders with our intuitive calendar.',
-	},
-	{
-		icon: Mic,
-		title: 'Automatic Recording',
-		description:
-			'Record meetings automatically and get real-time transcriptions effortlessly.',
-	},
-	{
 		icon: FileText,
-		title: 'Actionable Summaries',
+		title: 'Effortless Automatic Recording',
 		description:
-			'Receive concise summaries post-meeting, highlighting key insights and action items.',
+			'NoteMeet automatically records your meetings and provides real-time transcriptions, making it easy to capture everything without lifting a finger.',
+	},
+	{
+		icon: ListTodo,
+		title: 'Actionable Meeting Insights',
+		description:
+			"After each meeting, you'll receive a clear, concise summary with key points, follow-up tasks, and action items, saving you time and effort.",
+	},
+	{
+		icon: SparkleIcon,
+		title: 'Ask NoteMeet AI',
+		description:
+			'Have questions about your meetings? Simply ask NoteMeet AI, and get detailed, accurate answers instantly.',
 	},
 	{
 		icon: ListTodo,
 		title: 'Seamless Sharing',
 		description:
-			'Share recordings and summaries easily to enhance team collaboration.',
+			'Share meeting recordings and summaries with your team easily. You can choose to share the entire meeting or just specific sections to keep everyone aligned.',
 	},
 ];
 
