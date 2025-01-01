@@ -12,7 +12,6 @@ import {
 	CollapsibleTrigger,
 	CollapsibleContent,
 } from '@/components/ui/collapsible'; // Assuming the library is available
-import JobDescription from './job-description';
 import jobs from './jobs';
 import { Separator } from '@/components/ui/separator';
 

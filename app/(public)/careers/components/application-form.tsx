@@ -19,10 +19,16 @@ import { useForm } from 'react-hook-form';
 import { FormError } from '@/components/form-error';
 import { FormSuccess } from '@/components/form-success';
 import { z } from 'zod';
-import { createJobApplication } from '@/actions/job-application';
+import {
+	FormControl,
+	FormField,
+	FormLabel,
+	FormItem,
+	FormMessage,
+	Form,
+} from '@/components/ui/form';
 
 export function ApplicationForm() {
-	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState<string | undefined>('');
 	const [success, setSuccess] = useState<string | undefined>('');
 	const [isPending, startTransition] = useTransition();
@@ -43,13 +49,22 @@ export function ApplicationForm() {
 		handleSubmit: handleFormSubmit,
 		formState: { errors },
 	} = form;
-
-	const handleSubmit = async (data: z.infer<typeof JobApplicationSchema>) => {
+	const onSubmit = async (data: z.infer<typeof JobApplicationSchema>) => {
 		setError('');
 		setSuccess('');
+		const formData = new FormData();
+		formData.append('name', data.name);
+		formData.append('email', data.email);
+		formData.append('position', data.position);
+		formData.append('resume', data.resume);
+		formData.append('coverLetter', data.coverLetter || '');
 
 		startTransition(() => {
-			createJobApplication(data)
+			fetch('/api/job-application', {
+				method: 'POST',
+				body: formData,
+			})
+				.then((res) => res.json())
 				.then((data) => {
 					if (data?.error) {
 						setError(data.error);
@@ -59,71 +74,130 @@ export function ApplicationForm() {
 						setSuccess(data.success);
 					}
 				})
-				.catch(() => setError('Something went wrong'));
+				.catch((e) => setError(e.message));
 		});
 	};
 
 	return (
 		<section className="mb-16">
 			<h2 className="text-2xl font-semibold mb-8">Apply Now</h2>
-			<form onSubmit={handleFormSubmit(handleSubmit)} className="space-y-6">
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-					<div>
-						<Label htmlFor="name">Full Name</Label>
-						<Input id="name" {...register('name')} required />
-						{errors.name && <FormError message={errors.name.message} />}
+			<Form {...form}>
+				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<FormField
+							control={form.control}
+							name="name"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel htmlFor="name">Full Name</FormLabel>
+									<FormControl>
+										<Input id="name" {...field} required />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+							disabled={isPending}
+						/>
+						<FormField
+							control={form.control}
+							name="email"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel htmlFor="email">Email</FormLabel>
+									<FormControl>
+										<Input id="email" type="email" {...field} required />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+							disabled={isPending}
+						/>
 					</div>
+
 					<div>
-						<Label htmlFor="email">Email</Label>
-						<Input id="email" type="email" {...register('email')} required />
-						{errors.email && <FormError message={errors.email.message} />}
+						<FormField
+							control={form.control}
+							name="position"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Position</FormLabel>
+									<Select
+										{...field}
+										onValueChange={field.onChange}
+										defaultValue={field.value}
+									>
+										<FormControl>
+											<SelectTrigger>
+												<SelectValue placeholder="Select a position" />
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											{jobs.map((job) => (
+												<SelectItem key={job.title} value={job.title}>
+													{job.title}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+									<FormMessage />
+								</FormItem>
+							)}
+							disabled={isPending}
+						/>
 					</div>
-				</div>
 
-				<div>
-					<Label htmlFor="position">Position</Label>
-					<Select {...register('position')} required>
-						<SelectTrigger>
-							<SelectValue placeholder="Select a position" />
-						</SelectTrigger>
-						<SelectContent>
-							{jobs.map((job) => (
-								<SelectItem key={job.title} value={job.title}>
-									{job.title}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-					{errors.position && <FormError message={errors.position.message} />}
-				</div>
+					<div>
+						<FormField
+							control={form.control}
+							name="resume"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel htmlFor="resume">Resume</FormLabel>
+									<FormControl>
+										<Input
+											id="resume"
+											type="file"
+											accept=".pdf,.doc,.docx"
+											onChange={(e) => {
+												if (e.target.files) {
+													field.onChange(e.target.files[0]);
+												}
+											}}
+											required
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+							disabled={isPending}
+						/>
+					</div>
 
-				<div>
-					<Label htmlFor="resume">Resume</Label>
-					<Input
-						id="resume"
-						type="file"
-						accept=".pdf,.doc,.docx"
-						{...register('resume')}
-						required
-					/>
-					{errors.resume && <FormError message={errors.resume.message} />}
-				</div>
+					<div>
+						<FormField
+							control={form.control}
+							name="coverLetter"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel htmlFor="cover-letter">Cover Letter</FormLabel>
+									<FormControl>
+										<Textarea id="cover-letter" {...field} rows={5} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+							disabled={isPending}
+						/>
+					</div>
 
-				<div>
-					<Label htmlFor="cover-letter">Cover Letter</Label>
-					<Textarea id="cover-letter" {...register('coverLetter')} rows={5} />
-					{errors.coverLetter && (
-						<FormError message={errors.coverLetter.message} />
-					)}
-				</div>
+					<FormError message={error} />
+					<FormSuccess message={success} />
 
-				<FormError message={error} />
-				<FormSuccess message={success} />
-
-				<Button type="submit" disabled={isSubmitting}>
-					{isSubmitting ? 'Submitting...' : 'Submit Application'}
-				</Button>
-			</form>
+					<Button type="submit" disabled={isPending}>
+						{isPending ? 'Submitting...' : 'Submit Application'}
+					</Button>
+				</form>
+			</Form>
 		</section>
 	);
 }

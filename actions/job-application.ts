@@ -1,26 +1,33 @@
-'use server';
-
 import { db } from '@/lib/db';
-import { S3BucketType } from '@/lib/s3';
+import { deleteS3Object, S3BucketType } from '@/lib/s3';
 import { uploadS3Object } from '@/lib/s3';
 import { JobApplicationSchema } from '@/schemas/job-application';
 import { z } from 'zod';
+
 export const createJobApplication = async (
 	data: z.infer<typeof JobApplicationSchema>,
 ) => {
+	console.log(data);
 	const validatedFields = JobApplicationSchema.safeParse(data);
 
+	console.log(validatedFields.error);
 	if (!validatedFields.success) {
 		return { error: 'Invalid fields!' };
 	}
 
 	const { name, email, resume, coverLetter, position } = validatedFields.data;
 
+	console.log(validatedFields.data);
+
 	if (resume.size === 0) {
 		return { error: 'Resume is required!' };
 	}
 
-	// TODO: Upload resume to S3
+	// Check if db.jobApplication is defined
+	if (!db.jobApplication) {
+		console.error('Job application model is not defined in the database.');
+		return { error: 'Internal server error: Job application model not found.' };
+	}
 
 	const resumeKey = `resumes/${name}-${email}-${position}-${Date.now()}.pdf`;
 	await uploadS3Object(
@@ -30,7 +37,7 @@ export const createJobApplication = async (
 	);
 
 	try {
-		await db.jobApplication.create({
+		const jobApplication = await db.jobApplication.create({
 			data: {
 				name,
 				email,
@@ -40,8 +47,10 @@ export const createJobApplication = async (
 			},
 		});
 
-		return { success: 'Application submitted successfully!' };
-	} catch {
+		return { success: 'Application submitted successfully!', jobApplication };
+	} catch (error) {
+		console.error(error);
+		await deleteS3Object(resumeKey, S3BucketType.MAIN_BUCKET);
 		return { error: 'Failed to submit application!' };
 	}
 };
