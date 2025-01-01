@@ -20,14 +20,14 @@ const supportedBrowsers = [
 
 export default function BrowserSupport() {
 	return (
-		<div className="container mx-auto px-4 py-12 border-t border-white text-white">
+		<div className="container mx-auto px-4 py-12 border-t bg-white rounded-t-lg">
 			<h3 className="text-xl font-semibold text-center mb-8">
 				Supported Browsers
 			</h3>
 			<div className="flex justify-center gap-8 flex-wrap">
 				{supportedBrowsers.map((browser) => (
 					<div key={browser.name} className="flex items-center gap-2">
-						<browser.icon className="h-6 w-6 text-white" />
+						<browser.icon className="h-6 w-6 " />
 						<div>
 							<p className="font-medium">{browser.name}</p>
 							<p className="text-sm">Version {browser.version}</p>
