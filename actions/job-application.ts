@@ -17,16 +17,8 @@ export const createJobApplication = async (
 
 	const { name, email, resume, coverLetter, position } = validatedFields.data;
 
-	console.log(validatedFields.data);
-
 	if (resume.size === 0) {
 		return { error: 'Resume is required!' };
-	}
-
-	// Check if db.jobApplication is defined
-	if (!db.jobApplication) {
-		console.error('Job application model is not defined in the database.');
-		return { error: 'Internal server error: Job application model not found.' };
 	}
 
 	const resumeKey = `resumes/${name}-${email}-${position}-${Date.now()}.pdf`;

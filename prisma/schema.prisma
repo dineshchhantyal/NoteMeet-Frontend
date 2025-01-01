@@ -181,7 +181,7 @@ model JobApplication {
   coverLetter String
   position String
 
-  status Int @default(0) // Options: 0 - pending, 1 - approved, 2 - rejected
+  status JobApplicationStatus @default(PENDING)
   isVerified Boolean @default(false) // Admin-specific
   isRead Boolean @default(false) // Admin-specific
   modifiedBy String? // Admin-specific
@@ -189,4 +189,10 @@ model JobApplication {
   @@unique([email, position])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum JobApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

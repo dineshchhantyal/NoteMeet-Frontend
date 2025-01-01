@@ -2,6 +2,7 @@
 
 import { currentRole } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { JobApplicationStatus } from '@/schemas/job-application';
 import { UserRole } from '@prisma/client';
 
 export const getAdminJobApplications = async () => {
@@ -32,7 +33,7 @@ export const getAdminJobApplicationById = async (id: number) => {
 
 export const updateAdminJobApplicationStatus = async (
 	id: number,
-	status: number,
+	status: JobApplicationStatus,
 ) => {
 	try {
 		await checkAdmin();

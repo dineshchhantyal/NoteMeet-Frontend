@@ -14,3 +14,24 @@ export const JobApplicationSchema = z.object({
 	coverLetter: z.string().optional(),
 	position: z.enum(jobs.map((job) => job.title) as [string, ...string[]]),
 });
+
+export enum JobApplicationStatus {
+	PENDING = 'PENDING',
+	APPROVED = 'APPROVED',
+	REJECTED = 'REJECTED',
+}
+
+export interface JobApplicationInterface {
+	id: number;
+	name: string;
+	email: string;
+	resume: string;
+	coverLetter?: string;
+	position: string;
+	status: JobApplicationStatus;
+	isVerified: boolean;
+	isRead: boolean;
+	modifiedBy?: string;
+	createdAt: Date;
+	updatedAt: Date;
+}
