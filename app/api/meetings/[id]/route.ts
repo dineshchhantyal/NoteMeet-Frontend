@@ -75,10 +75,32 @@ export async function DELETE(req: NextRequest) {
 		}
 
 		if (meeting.videoKey) {
-			await deleteS3Object(
-				meeting.videoKey,
-				S3BucketType.RAW_RECORDINGS_BUCKET,
-			);
+			try {
+				await deleteS3Object(
+					meeting.videoKey,
+					S3BucketType.RAW_RECORDINGS_BUCKET,
+				);
+			} catch (error) {
+				console.error('Error deleting video key:', error);
+			}
+			try {
+				if (Number(meeting.status) >= 3) {
+					await deleteS3Object(
+						'recordings/video/' + meeting.videoKey + '.mp4',
+						S3BucketType.MAIN_BUCKET,
+					);
+				}
+			} catch (error) {
+				console.error('Error deleting video key:', error);
+			}
+			try {
+				await deleteS3Object(
+					'recordings/thumbnail/' + meeting.videoKey + '.jpg',
+					S3BucketType.MAIN_BUCKET,
+				);
+			} catch (error) {
+				console.error('Error deleting thumbnail key:', error);
+			}
 		}
 
 		await db.meeting.delete({
