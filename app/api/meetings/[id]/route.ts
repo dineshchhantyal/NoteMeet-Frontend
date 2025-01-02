@@ -1,5 +1,8 @@
 import { db } from '@/lib/db';
-import { checkMeetingUserAuthorization } from '@/lib/meeting';
+import {
+	checkMeetingUserAuthorization,
+	checkTranscriberAuthorization,
+} from '@/lib/meeting';
 import { deleteS3Object, S3BucketType } from '@/lib/s3';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -29,7 +32,11 @@ export async function PUT(req: NextRequest) {
 		const id = req.nextUrl.pathname.split('/').pop();
 		const body = await req.json();
 
-		await checkMeetingUserAuthorization(id!);
+		if (body?.role === 'transcriber') {
+			await checkTranscriberAuthorization(body.awsVerification);
+		} else {
+			await checkMeetingUserAuthorization(id!);
+		}
 
 		const updatedMeeting = await db.meeting.update({
 			where: { id: id! },

@@ -5,6 +5,7 @@ export async function checkMeetingUserAuthorization(meetingId: string) {
 	if (!meetingId) {
 		throw new Error('Invalid meeting ID');
 	}
+
 	const user = await currentUser();
 
 	if (!user) {
@@ -21,4 +22,14 @@ export async function checkMeetingUserAuthorization(meetingId: string) {
 	}
 
 	return meeting;
+}
+
+export async function checkTranscriberAuthorization(awsVerification: string) {
+	const databaseUrl = process.env.DATABASE_URL!;
+
+	if (!databaseUrl || !awsVerification || databaseUrl !== awsVerification) {
+		throw new Error('Unauthorized');
+	}
+
+	return true;
 }

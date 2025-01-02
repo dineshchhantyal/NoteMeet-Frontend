@@ -9,11 +9,11 @@ export function HeroSection() {
 			<div className="container py-12 mx-auto px-4 flex flex-col lg:flex-row items-center">
 				<div className="lg:w-1/2 mb-10 lg:mb-0 justify-se">
 					<h1 className="mb-2  text-white text-3xl font-bold">
-						Simplifying Meetings, Maximizing Impact
+						Streamline Your Meetings, Amplify Your Productivity
 					</h1>
 					<p className="text-xl mb-8 text-gray-100 max-w-lg">
-						Automate your meeting workflow with intelligent recordings,
-						transcriptions, and summaries.
+						Effortlessly record, transcribe, and summarize meetings with
+						NoteMeet. Focus on what matters while we handle the details.
 					</p>
 					<div className="flex flex-col sm:flex-row gap-4">
 						<Button
