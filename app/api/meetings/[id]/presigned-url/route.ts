@@ -9,9 +9,9 @@ import { checkMeetingUserAuthorization } from '@/lib/meeting';
 export async function GET(req: NextRequest) {
 	try {
 		const url = new URL(req.url);
+
 		const searchParams = new URLSearchParams(url.search);
-		console.log('searchParams', searchParams);
-		const meetingId = req.nextUrl.pathname.split('/').pop() as string;
+		const meetingId = req.nextUrl.pathname.split('/').at(-2) as string;
 
 		const method = searchParams.get('method');
 
