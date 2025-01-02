@@ -1,12 +1,7 @@
-import {
-	generatePresignedUrl,
-	generetePresigedGetUrl,
-} from '@/lib/presigned-url';
+import { generetePresigedGetUrl } from '@/lib/presigned-url';
 import { S3BucketType } from '@/lib/s3';
 import { NextRequest } from 'next/server';
 import { checkMeetingUserAuthorization } from '@/lib/meeting';
-import { db } from '@/lib/db';
-import { MeetingStatus } from '@/types/meeting';
 
 export async function GET(req: NextRequest) {
 	try {

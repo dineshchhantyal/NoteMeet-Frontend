@@ -61,8 +61,8 @@ model User {
   sessions      Session[]
   isTwoFactorEnabled    Boolean @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
-  subscription        Subscription? @relation(fields: [subscriptionId], references: [id])
   subscriptionId      String?
+  status            SubscriptionStatus @default(ACTIVE) // Options: ACTIVE, CANCELED, EXPIRED
 
   @@unique([email, subscriptionId])
 
@@ -209,9 +209,8 @@ model Subscription {
   billingCycle      String   // Billing cycle of the subscription plan
   billingFrequency  String   // Billing frequency of the subscription plan
   description       String?  // Description of the subscription plan
-  
+
   plan              SubscriptionPlan
-  status            SubscriptionStatus @default(ACTIVE) // Options: ACTIVE, CANCELED, EXPIRED
   startDate         DateTime @default(now())
   endDate           DateTime? // Nullable for ongoing subscriptions
   meetingsAllowed   Int      // Number of meetings allowed per month
@@ -220,8 +219,8 @@ model Subscription {
   customLimits      Json?    // Optional JSON field for custom limits set by admin
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  features          String[] @default([]) // Array of features
 
-  User User[]
 }
 
 enum SubscriptionPlan {
@@ -237,3 +236,4 @@ enum SubscriptionStatus {
   CANCELED
   EXPIRED
 }
+
