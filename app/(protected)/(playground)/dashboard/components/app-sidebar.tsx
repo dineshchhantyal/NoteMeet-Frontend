@@ -15,12 +15,6 @@ import {
 import { MeetingInterface } from '@/types';
 import { MeetingStatus } from '@/types/meeting';
 
-const PROVIDER_NAMES = {
-	'google-meet': 'Google Meet',
-	'ms-teams': 'Microsoft Teams',
-	zoom: 'Zoom',
-};
-
 interface AppSidebarProps {
 	onSelectMeeting: (meeting: MeetingInterface) => void;
 	meetings: MeetingInterface[];

@@ -7,7 +7,6 @@ import { VideoPlayer } from './components/video-player';
 import { TranscriptViewer } from './components/transcript-viewer';
 import { SummarySection } from './components/summary-section';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { SidebarProvider } from '@/components/ui/sidebar';
 import { MeetingInterface } from '@/types';
 import { VideoPlayerPlaceholder } from './components/video-player-placeholder';
 import DashboardHeader from './components/dashboard-header';
