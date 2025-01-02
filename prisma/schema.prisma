@@ -115,7 +115,7 @@ model Meeting {
   meetingLink   String
   notification Notification? 
   status        Int      @default(1) // Possible values: 1 - "Scheduled", 2 - "In Progress", 3 - "Transcoded", 4 - "Transcribed", 5 - "Completed", 6 -  "Cancelled"
-  participants  Participant[]
+  participants  Participant[] // Participants can be deleted without affecting the Meeting
   awsSchedulerArn String?  // ARN of the AWS Scheduler job
   awsJobId        String?  // Unique ID of the AWS Scheduler job
   transcript      String?
@@ -130,15 +130,15 @@ model Meeting {
 model Participant {
   id        String   @id @default(cuid())
   email     String
-  meeting   Meeting  @relation(fields: [meetingId], references: [id])
-  meetingId String
+  meeting   Meeting? @relation(fields: [meetingId], references: [id], onDelete: Cascade) // Allow meeting to exist without participants
+  meetingId String?
 }
 
 model Notification {
   id             String   @id @default(cuid())
   sendTranscript Boolean
   sendSummary    Boolean
-  meeting        Meeting  @relation(fields: [meetingId], references: [id])
+  meeting        Meeting  @relation(fields: [meetingId], references: [id], onDelete: Cascade)
   meetingId      String @unique
   }
 

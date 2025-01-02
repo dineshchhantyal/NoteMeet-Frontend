@@ -103,6 +103,14 @@ export async function DELETE(req: NextRequest) {
 			}
 		}
 
+		await db.participant.deleteMany({
+			where: { meetingId: id! },
+		});
+
+		await db.notification.delete({
+			where: { meetingId: id! },
+		});
+
 		await db.meeting.delete({
 			where: { id: id! },
 		});

@@ -13,6 +13,8 @@ export async function GET(req: NextRequest) {
 		const searchParams = new URLSearchParams(url.search);
 		const meetingId = req.nextUrl.pathname.split('/').at(-2) as string;
 
+		console.log('meetingId', meetingId);
+
 		const method = searchParams.get('type');
 
 		const meeting = await checkMeetingUserAuthorization(meetingId);
