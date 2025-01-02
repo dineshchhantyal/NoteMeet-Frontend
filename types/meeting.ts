@@ -20,10 +20,11 @@ export interface Meeting {
 		sendSummary: boolean;
 	};
 }
-
 export enum MeetingStatus {
 	Scheduled = 1,
 	InProgress = 2,
-	Completed = 3,
-	Cancelled = 4,
+	Transcoded = 3,
+	Transcribed = 4,
+	Completed = 5,
+	Cancelled = 6,
 }

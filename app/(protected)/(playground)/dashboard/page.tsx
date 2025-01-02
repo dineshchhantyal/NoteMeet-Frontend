@@ -12,6 +12,8 @@ import { MeetingInterface } from '@/types';
 import { VideoPlayerPlaceholder } from './components/video-player-placeholder';
 import DashboardHeader from './components/dashboard-header';
 import { NewMeetingDialog } from './components/new-meeting-dialog';
+import { Button } from '@/components/ui/button';
+import { Menu } from 'lucide-react';
 
 export default function DashboardPage() {
 	const [selectedMeeting, setSelectedMeeting] =
@@ -23,6 +25,7 @@ export default function DashboardPage() {
 			type: string;
 		}[]
 	>([]);
+	const [sidebarOpen, setSidebarOpen] = useState(false);
 
 	const [meetings, setMeetings] = useState<MeetingInterface[]>([]);
 	useEffect(() => {
@@ -81,14 +84,24 @@ export default function DashboardPage() {
 	};
 
 	return (
-		<SidebarProvider>
-			<div className="flex flex-col h-screen overflow-hidden">
+		<div className="flex h-screen overflow-hidden">
+			<AppSidebar
+				onSelectMeeting={setSelectedMeeting}
+				meetings={meetings}
+				isOpen={sidebarOpen}
+				onClose={() => setSidebarOpen(false)}
+			/>
+			<div className="flex flex-1 flex-col overflow-hidden">
 				<header className="flex h-16 items-center gap-4 border-b bg-background px-6">
-					<AppSidebar
-						onSelectMeeting={setSelectedMeeting}
-						meetings={meetings}
-						loading={loading}
-					/>
+					<Button
+						variant="ghost"
+						size="icon"
+						onClick={() => setSidebarOpen(!sidebarOpen)}
+						className="md:hidden"
+					>
+						<Menu className="h-6 w-6" />
+					</Button>
+
 					<DashboardHeader handleMeetingCreated={handleMeetingCreated} />
 				</header>
 				{selectedMeeting ? (
@@ -139,6 +152,6 @@ export default function DashboardPage() {
 					</div>
 				)}
 			</div>
-		</SidebarProvider>
+		</div>
 	);
 }
