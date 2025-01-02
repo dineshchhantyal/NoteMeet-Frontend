@@ -18,6 +18,66 @@ const FORM_ROUTES = [
 	},
 ];
 
+const SUBSCRIPTION_ROUTES = [
+	{
+		route: '/admin/subscriptions/plans',
+		label: 'Plans',
+		description: 'View and manage plans',
+	},
+];
+
+const BILLING_ROUTES = [
+	{
+		route: '/admin/billings/invoices',
+		label: 'Invoices',
+		description: 'View and manage invoices',
+	},
+	{
+		route: '/admin/billings/payments',
+		label: 'Payments',
+		description: 'View and manage payments',
+	},
+];
+
+const USER_ROUTES = [
+	{
+		route: '/admin/users/list',
+		label: 'User List',
+		description: 'View and manage users',
+	},
+];
+
+const ALL_ROUTES = [
+	{
+		route: '/admin/all/overview',
+		label: 'Overview',
+		description: 'View and manage all',
+	},
+];
+
+const LINKS = [
+	{
+		label: 'Forms',
+		routes: FORM_ROUTES,
+	},
+	{
+		label: 'Users',
+		routes: USER_ROUTES,
+	},
+	{
+		label: 'Billing',
+		routes: BILLING_ROUTES,
+	},
+	{
+		label: 'Subscriptions',
+		routes: SUBSCRIPTION_ROUTES,
+	},
+	{
+		label: 'All',
+		routes: ALL_ROUTES,
+	},
+];
+
 const NavigationMenu = React.forwardRef<
 	React.ElementRef<typeof NavigationMenuPrimitive.Root>,
 	React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Root>
@@ -136,83 +196,32 @@ const AdminSubHeader = () => {
 					<h1 className="text-2xl font-semibold text-gray-900">Admin</h1>
 					<NavigationMenu>
 						<NavigationMenuList>
-							<NavigationMenuItem>
-								<NavigationMenuTrigger>Forms</NavigationMenuTrigger>
-								<NavigationMenuContent>
-									<ul className="flex flex-row p-2">
-										{FORM_ROUTES.map((route) => (
-											<li
-												key={route.route}
-												className="flex flex-col p-2 hover:bg-gray-100 rounded-md group"
-											>
-												<NavigationMenuLink asChild>
-													<Link href={route.route}>
-														<div className="flex flex-col">
-															<p className="text-sm font-bold group-hover:text-blue-500">
+							{LINKS.map((link) => (
+								<NavigationMenuItem key={link.label}>
+									<NavigationMenuTrigger>{link.label}</NavigationMenuTrigger>
+									<NavigationMenuContent>
+										<ul className="flex flex-row p-2">
+											{link.routes.map((route) => (
+												<li
+													key={route.route}
+													className="flex flex-col p-2 hover:bg-gray-100 rounded-md group"
+												>
+													<NavigationMenuLink asChild>
+														<Link href={route.route}>
+															<p className="text-sm font-medium">
 																{route.label}
 															</p>
-															<p className="text-sm text-gray-500 group-hover:text-blue-500">
+															<p className="text-xs text-muted-foreground">
 																{route.description}
 															</p>
-														</div>
-													</Link>
-												</NavigationMenuLink>
-											</li>
-										))}
-									</ul>
-								</NavigationMenuContent>
-							</NavigationMenuItem>
-							<NavigationMenuItem>
-								<NavigationMenuTrigger>Users</NavigationMenuTrigger>
-								<NavigationMenuContent>
-									<NavigationMenuLink asChild>
-										<Link href="/admin/users/list">User List</Link>
-									</NavigationMenuLink>
-									<NavigationMenuLink asChild>
-										<Link href="/admin/users/roles">User Roles</Link>
-									</NavigationMenuLink>
-									<NavigationMenuLink asChild>
-										<Link href="/admin/users/permissions">
-											User Permissions
-										</Link>
-									</NavigationMenuLink>
-								</NavigationMenuContent>
-							</NavigationMenuItem>
-							<NavigationMenuItem>
-								<NavigationMenuTrigger>Billings</NavigationMenuTrigger>
-								<NavigationMenuContent>
-									<NavigationMenuLink asChild>
-										<Link href="/admin/billings/invoices">Invoices</Link>
-									</NavigationMenuLink>
-									<NavigationMenuLink asChild>
-										<Link href="/admin/billings/payments">Payments</Link>
-									</NavigationMenuLink>
-								</NavigationMenuContent>
-							</NavigationMenuItem>
-							<NavigationMenuItem>
-								<NavigationMenuTrigger>Subscriptions</NavigationMenuTrigger>
-								<NavigationMenuContent>
-									<NavigationMenuLink asChild>
-										<Link href="/admin/subscriptions/plans">Plans</Link>
-									</NavigationMenuLink>
-									<NavigationMenuLink asChild>
-										<Link href="/admin/subscriptions/active">
-											Active Subscriptions
-										</Link>
-									</NavigationMenuLink>
-								</NavigationMenuContent>
-							</NavigationMenuItem>
-							<NavigationMenuItem>
-								<NavigationMenuTrigger>All</NavigationMenuTrigger>
-								<NavigationMenuContent>
-									<NavigationMenuLink asChild>
-										<Link href="/admin/all/overview">Overview</Link>
-									</NavigationMenuLink>
-									<NavigationMenuLink asChild>
-										<Link href="/admin/all/reports">Reports</Link>
-									</NavigationMenuLink>
-								</NavigationMenuContent>
-							</NavigationMenuItem>
+														</Link>
+													</NavigationMenuLink>
+												</li>
+											))}
+										</ul>
+									</NavigationMenuContent>
+								</NavigationMenuItem>
+							))}
 						</NavigationMenuList>
 					</NavigationMenu>
 				</div>
