@@ -30,98 +30,106 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-	const user = await currentUser();
-	if (!user) {
-		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-	}
-	const userId = user.id;
+	try {
+		const user = await currentUser();
+		if (!user) {
+			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+		}
+		const userId = user.id;
 
-	if (!userId) {
-		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-	}
+		if (!userId) {
+			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+		}
 
-	const scheduler = new AWS.Scheduler();
+		// const scheduler = new AWS.Scheduler();
 
-	const userIdString = Array.isArray(userId) ? userId[0] : userId;
-	const body: MeetingInterface = await req.json();
+		const userIdString = Array.isArray(userId) ? userId[0] : userId;
+		const body: MeetingInterface = await req.json();
 
-	const {
-		title,
-		date,
-		time,
-		duration,
-		description,
-		provider,
-		meetingLink,
-		participants,
-		notifications,
-	} = body;
-
-	const meeting = await db.meeting.create({
-		data: {
+		const {
 			title,
-			date: new Date(date),
+			date,
 			time,
-			duration: Number.parseFloat(duration),
+			duration,
 			description,
 			provider,
 			meetingLink,
-			userId: userIdString,
-			participants: {
-				create: participants.map((participant: string) => ({
-					email: participant,
-				})),
-			},
-			notification: {
-				create: {
-					sendTranscript: notifications.sendTranscript,
-					sendSummary: notifications.sendSummary,
+			participants,
+			notifications,
+		} = body;
+
+		const meeting = await db.meeting.create({
+			data: {
+				title,
+				date: new Date(date),
+				time,
+				duration: Number.parseFloat(duration),
+				description,
+				provider,
+				meetingLink,
+				userId: userIdString,
+				participants: {
+					create: participants.map((participant: string) => ({
+						email: participant,
+					})),
+				},
+				notification: {
+					create: {
+						sendTranscript: notifications.sendTranscript,
+						sendSummary: notifications.sendSummary,
+					},
 				},
 			},
-		},
-	});
-	// Schedule AWS Lambda function
-	const lambdaArn = process.env.MEETING_RECORDING_LAMBDA_FUNCTION_ARN;
-	const roleArn = process.env.MEETING_RECORDING_AWS_ROLE_ARN;
+		});
+		// Schedule AWS Lambda function
+		// const lambdaArn = process.env.MEETING_RECORDING_LAMBDA_FUNCTION_ARN;
+		// const roleArn = process.env.MEETING_RECORDING_AWS_ROLE_ARN;
 
-	if (!lambdaArn || !roleArn) {
+		// if (!lambdaArn || !roleArn) {
 		// throw new Error('Required AWS ARNs are not configured');
+		// return NextResponse.json(
+		// {
+		// error:
+		// 'Although the meeting was created, the AWS ARNs are not configured',
+		// },
+		// { status: 500 },
+		// );
+		// }
+
+		const jobName = `Meeting-${meeting.id}`;
+		const scheduleExpression = `at(${date}T${time})`;
+
+		// const params = {
+		// 	Name: jobName,
+		// 	ScheduleExpression: scheduleExpression,
+		// 	Target: {
+		// 		Arn: lambdaArn,
+		// 		RoleArn: roleArn,
+		// 		Input: JSON.stringify({ meetingId: meeting.id }),
+		// 	},
+		// 	FlexibleTimeWindow: { Mode: 'OFF' },
+		// };
+
+		// const schedulerResponse = await scheduler.createSchedule(params).promise();
+
+		// Update the meeting with AWS Scheduler details
+		// await db.meeting.update({
+		// 	where: { id: meeting.id },
+		// 	data: {
+		// 		awsSchedulerArn: schedulerResponse.ScheduleArn,
+		// 		awsJobId: jobName,
+		// 	},
+		// });
+
 		return NextResponse.json(
-			{
-				error:
-					'Although the meeting was created, the AWS ARNs are not configured',
-			},
+			{ data: meeting, message: 'Meeting created successfully' },
+			{ status: 200 },
+		);
+	} catch (error) {
+		console.error('Error creating meeting:', error);
+		return NextResponse.json(
+			{ error: 'Failed to create meeting' },
 			{ status: 500 },
 		);
 	}
-
-	const jobName = `Meeting-${meeting.id}`;
-	const scheduleExpression = `at(${date}T${time})`;
-
-	const params = {
-		Name: jobName,
-		ScheduleExpression: scheduleExpression,
-		Target: {
-			Arn: lambdaArn,
-			RoleArn: roleArn,
-			Input: JSON.stringify({ meetingId: meeting.id }),
-		},
-		FlexibleTimeWindow: { Mode: 'OFF' },
-	};
-
-	const schedulerResponse = await scheduler.createSchedule(params).promise();
-
-	// Update the meeting with AWS Scheduler details
-	await db.meeting.update({
-		where: { id: meeting.id },
-		data: {
-			awsSchedulerArn: schedulerResponse.ScheduleArn,
-			awsJobId: jobName,
-		},
-	});
-
-	return NextResponse.json(
-		{ data: meeting, message: 'Meeting created successfully' },
-		{ status: 200 },
-	);
 }
