@@ -17,7 +17,12 @@ export default function DashboardPage() {
 	const [selectedMeeting, setSelectedMeeting] =
 		useState<MeetingInterface | null>(null);
 	const [loading, setLoading] = useState(true);
-	const [videoUrl, setVideoUrl] = useState<string | null>(null);
+	const [sources, setSources] = useState<
+		{
+			src: { url: string; expiresAt: string };
+			type: string;
+		}[]
+	>([]);
 
 	const [meetings, setMeetings] = useState<MeetingInterface[]>([]);
 	useEffect(() => {
@@ -44,15 +49,15 @@ export default function DashboardPage() {
 						`/api/meetings/${selectedMeeting.id}/presigned-url`,
 					);
 					const data = await response.json();
-					console.log('data', data.presignedUrl.url);
-					setVideoUrl(data.presignedUrl.url);
+					console.log('data', data.sources);
+					setSources(data.sources);
 				} catch (error) {
 					console.error('Error fetching video url:', error);
 				}
 			};
 
 			fetchVideoUrl();
-		} else setVideoUrl(null);
+		} else setSources([]);
 	}, [selectedMeeting]);
 
 	const onMeetingDelete = async (meetingId: string) => {
@@ -92,12 +97,12 @@ export default function DashboardPage() {
 							meeting={selectedMeeting}
 							onMeetingDelete={onMeetingDelete}
 						/>
-						{!videoUrl ? (
+						{!sources.length ? (
 							<VideoPlayerPlaceholder>
 								<p className="text-muted-foreground">No video available</p>
 							</VideoPlayerPlaceholder>
 						) : (
-							<VideoPlayer src={videoUrl} />
+							<VideoPlayer sources={sources} />
 						)}
 						<Tabs defaultValue="transcript" className="w-full">
 							<TabsList className="w-full justify-start">

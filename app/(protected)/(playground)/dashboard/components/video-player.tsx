@@ -6,12 +6,12 @@ import { Pause, Play, SkipBack, SkipForward } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
 interface VideoPlayerProps extends React.HTMLAttributes<HTMLVideoElement> {
-	src: string;
+	sources: { src: { url: string; expiresAt: string }; type: string }[];
 	showControls?: boolean;
 }
 
 export function VideoPlayer({
-	src,
+	sources,
 	showControls = true,
 	...args
 }: VideoPlayerProps) {
@@ -72,10 +72,17 @@ export function VideoPlayer({
 		<Card>
 			<CardContent className="p-0 relative">
 				<div className="aspect-video relative">
-					<video ref={videoRef} src={src} className="w-full h-full" {...args}>
+					<video ref={videoRef} className="w-full h-full" {...args}>
+						{sources.map((source) => (
+							<source
+								src={source.src.url}
+								type={source.type}
+								key={source.src.url}
+							/>
+						))}
 						Your browser does not support the video tag.
 					</video>
-					{!src && (
+					{!sources.length && (
 						<div className="absolute inset-0 flex items-center justify-center bg-gray-100">
 							<p className="text-muted-foreground">No video available</p>
 						</div>

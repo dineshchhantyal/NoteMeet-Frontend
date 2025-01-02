@@ -18,14 +18,30 @@ export async function GET(req: NextRequest) {
 			return Response.json({ message: 'Video not found' }, { status: 404 });
 		}
 
-		const presignedUrl = await generetePresigedGetUrl({
+		const sources = [];
+		if (Number(meeting.status) >= 3) {
+			const mp4PresignedUrl = await generetePresigedGetUrl({
+				bucketType: S3BucketType.MAIN_BUCKET,
+				key: 'recordings/video/' + meeting.videoKey + '.mp4',
+				expiresIn: 60 * 60,
+				contentType: 'video/mp4',
+			});
+			sources.push({ src: mp4PresignedUrl, type: 'video/mp4' });
+		}
+
+		const webmPresignedUrl = await generetePresigedGetUrl({
 			bucketType: S3BucketType.RAW_RECORDINGS_BUCKET,
-			key: meeting.videoKey,
+			key: meeting.videoKey + '.webm',
 			expiresIn: 60 * 60,
+			contentType: 'video/webm',
 		});
+		sources.push({ src: webmPresignedUrl, type: 'video/webm' });
 
 		return Response.json(
-			{ presignedUrl, message: 'Presigned url get successfully.' },
+			{
+				sources,
+				message: 'Presigned url get successfully.',
+			},
 			{ status: 200 },
 		);
 	} catch (error) {
