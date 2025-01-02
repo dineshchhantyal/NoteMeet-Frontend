@@ -4,6 +4,7 @@ import { MeetingStatus } from '@/types/meeting';
 import { generatePresignedUrl } from '@/lib/presigned-url';
 import { v4 as uuidv4 } from 'uuid';
 import { S3BucketType } from '@/lib/s3';
+import { format } from 'date-fns';
 
 export async function GET() {
 	try {
@@ -33,8 +34,10 @@ export async function GET() {
 				time: new Date().getHours() + ':' + new Date().getMinutes(),
 				duration: 60,
 				meetingLink: 'N/A',
-				title: 'On demand meeting: ' + new Date().toISOString(),
-				description: 'On demand meeting: ' + new Date().toISOString(),
+				title:
+					'Instant Meeting Session ' +
+					format(new Date(), 'MM/dd/yyyy/HH/mm/ss'),
+				description: 'This meeting is recorded on demand by browser extension.',
 				provider: 'Externsion',
 				videoKey: uid,
 			},
@@ -56,6 +59,7 @@ export async function GET() {
 		return Response.json({
 			presignedUrl: url,
 			meeting: meeting,
+			maxMeetingDuration: 1 * 60 * 60, // 1 hours
 		});
 	} catch (error) {
 		console.error(error);
