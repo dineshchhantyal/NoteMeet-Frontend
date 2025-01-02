@@ -14,7 +14,7 @@ export async function checkMeetingUserAuthorization(meetingId: string) {
 
 	const meeting = await db.meeting.findUnique({
 		where: { id: meetingId },
-		include: { createdBy: true },
+		include: { participants: true },
 	});
 
 	if (!meeting || meeting.userId !== user.id) {

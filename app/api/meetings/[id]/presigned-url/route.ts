@@ -5,17 +5,12 @@ import {
 import { S3BucketType } from '@/lib/s3';
 import { NextRequest } from 'next/server';
 import { checkMeetingUserAuthorization } from '@/lib/meeting';
+import { db } from '@/lib/db';
+import { MeetingStatus } from '@/types/meeting';
 
 export async function GET(req: NextRequest) {
 	try {
-		const url = new URL(req.url);
-
-		const searchParams = new URLSearchParams(url.search);
 		const meetingId = req.nextUrl.pathname.split('/').at(-2) as string;
-
-		console.log('meetingId', meetingId);
-
-		const method = searchParams.get('type');
 
 		const meeting = await checkMeetingUserAuthorization(meetingId);
 
@@ -25,23 +20,6 @@ export async function GET(req: NextRequest) {
 
 		if (!meeting.videoKey) {
 			return Response.json({ message: 'Video not found' }, { status: 404 });
-		}
-
-		if (method === 'UPLOAD') {
-			const { url, expiresAt } = await generatePresignedUrl({
-				key: meetingId,
-				expiresIn: 60 * 60,
-				bucketType: S3BucketType.RAW_RECORDINGS_BUCKET,
-			});
-			return Response.json(
-				{
-					presignedUrl: url,
-					expiresAt,
-					meeting,
-					message: 'Presigned url get successfully.',
-				},
-				{ status: 200 },
-			);
 		}
 
 		const sources = [];

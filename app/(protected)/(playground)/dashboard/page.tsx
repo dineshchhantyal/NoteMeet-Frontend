@@ -13,6 +13,7 @@ import DashboardHeader from './components/dashboard-header';
 import { NewMeetingDialog } from './components/new-meeting-dialog';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
+import { MeetingStatus } from '@/types/meeting';
 
 export default function DashboardPage() {
 	const [selectedMeeting, setSelectedMeeting] =
@@ -44,7 +45,12 @@ export default function DashboardPage() {
 	}, []);
 
 	useEffect(() => {
-		if (selectedMeeting && selectedMeeting.videoKey) {
+		if (
+			selectedMeeting &&
+			selectedMeeting.videoKey &&
+			selectedMeeting.status &&
+			selectedMeeting.status > MeetingStatus.InProgress
+		) {
 			const fetchVideoUrl = async () => {
 				try {
 					const response = await fetch(

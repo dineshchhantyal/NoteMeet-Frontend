@@ -4,6 +4,7 @@ import {
 	checkTranscriberAuthorization,
 } from '@/lib/meeting';
 import { deleteS3Object, S3BucketType } from '@/lib/s3';
+import { Prisma } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -102,18 +103,35 @@ export async function DELETE(req: NextRequest) {
 				console.error('Error deleting thumbnail key:', error);
 			}
 		}
+		try {
+			await db.participant.deleteMany({
+				where: { meetingId: id! },
+			});
+		} catch (error) {
+			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				console.log('Error deleting participants:', error);
+			} else throw error;
+		}
 
-		await db.participant.deleteMany({
-			where: { meetingId: id! },
-		});
+		try {
+			await db.notification.delete({
+				where: { meetingId: id! },
+			});
+		} catch (error) {
+			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				console.error('Error deleting notification:', error);
+			} else throw error;
+		}
 
-		await db.notification.delete({
-			where: { meetingId: id! },
-		});
-
-		await db.meeting.delete({
-			where: { id: id! },
-		});
+		try {
+			await db.meeting.delete({
+				where: { id: id! },
+			});
+		} catch (error) {
+			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				console.log('Error deleting meeting:', error);
+			} else throw error;
+		}
 
 		return NextResponse.json({ message: 'Meeting deleted successfully' });
 	} catch (error) {
