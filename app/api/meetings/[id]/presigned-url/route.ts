@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
 		const searchParams = new URLSearchParams(url.search);
 		const meetingId = req.nextUrl.pathname.split('/').at(-2) as string;
 
-		const method = searchParams.get('method');
+		const method = searchParams.get('type');
 
 		const meeting = await checkMeetingUserAuthorization(meetingId);
 
@@ -32,7 +32,12 @@ export async function GET(req: NextRequest) {
 				bucketType: S3BucketType.RAW_RECORDINGS_BUCKET,
 			});
 			return Response.json(
-				{ url, expiresAt, message: 'Presigned url get successfully.' },
+				{
+					presignedUrl: url,
+					expiresAt,
+					meeting,
+					message: 'Presigned url get successfully.',
+				},
 				{ status: 200 },
 			);
 		}
