@@ -141,12 +141,18 @@ export function AppSidebar({
 function getStatusColor(status: MeetingStatus) {
 	switch (status) {
 		case MeetingStatus.Completed:
-			return 'bg-green-100 text-green-800 border-green-300';
+			return 'bg-green-500 text-white border-green-600'; // Completed
 		case MeetingStatus.InProgress:
-			return 'bg-blue-100 text-blue-800 border-blue-300';
+			return 'bg-blue-500 text-white border-blue-600'; // In Progress
 		case MeetingStatus.Scheduled:
-			return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+			return 'bg-yellow-500 text-white border-yellow-600'; // Scheduled
+		case MeetingStatus.Transcoded:
+			return 'bg-purple-500 text-white border-purple-600'; // Transcoded
+		case MeetingStatus.Transcribed:
+			return 'bg-teal-500 text-white border-teal-600'; // Transcribed
+		case MeetingStatus.Cancelled:
+			return 'bg-red-500 text-white border-red-600'; // Cancelled
 		default:
-			return 'bg-gray-100 text-gray-800 border-gray-300';
+			return 'bg-gray-300 text-gray-800 border-gray-400'; // Default case
 	}
 }
