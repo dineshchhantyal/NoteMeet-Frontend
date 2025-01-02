@@ -61,6 +61,10 @@ model User {
   sessions      Session[]
   isTwoFactorEnabled    Boolean @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
+  subscription        Subscription? @relation(fields: [subscriptionId], references: [id])
+  subscriptionId      String?
+
+  @@unique([email, subscriptionId])
 
   meetings      Meeting[]
  
@@ -195,4 +199,41 @@ enum JobApplicationStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+model Subscription {
+  id                String   @id @default(cuid())
+  name              String   // Name of the subscription plan
+  cost              Float    // Cost of the subscription plan
+  currency          String   // Currency of the subscription plan
+  billingCycle      String   // Billing cycle of the subscription plan
+  billingFrequency  String   // Billing frequency of the subscription plan
+  description       String?  // Description of the subscription plan
+  
+  plan              SubscriptionPlan
+  status            SubscriptionStatus @default(ACTIVE) // Options: ACTIVE, CANCELED, EXPIRED
+  startDate         DateTime @default(now())
+  endDate           DateTime? // Nullable for ongoing subscriptions
+  meetingsAllowed   Int      // Number of meetings allowed per month
+  meetingDuration   Int      // Maximum duration of each meeting in minutes
+  cloudStorage      Int      // Cloud storage in GB
+  customLimits      Json?    // Optional JSON field for custom limits set by admin
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  User User[]
+}
+
+enum SubscriptionPlan {
+  FREE
+  TRIAL
+  PRO
+  BUSINESS
+  CUSTOM // For custom plans set by admin
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  EXPIRED
 }
