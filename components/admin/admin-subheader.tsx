@@ -20,7 +20,7 @@ const FORM_ROUTES = [
 
 const SUBSCRIPTION_ROUTES = [
 	{
-		route: '/admin/subscriptions/plans',
+		route: '/admin/subscriptions',
 		label: 'Plans',
 		description: 'View and manage plans',
 	},
