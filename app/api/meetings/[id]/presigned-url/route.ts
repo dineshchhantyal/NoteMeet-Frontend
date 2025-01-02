@@ -27,15 +27,15 @@ export async function GET(req: NextRequest) {
 				contentType: 'video/mp4',
 			});
 			sources.push({ src: mp4PresignedUrl, type: 'video/mp4' });
+		} else {
+			const webmPresignedUrl = await generetePresigedGetUrl({
+				bucketType: S3BucketType.RAW_RECORDINGS_BUCKET,
+				key: meeting.videoKey + '.webm',
+				expiresIn: 60 * 60,
+				contentType: 'video/webm',
+			});
+			sources.push({ src: webmPresignedUrl, type: 'video/webm' });
 		}
-
-		const webmPresignedUrl = await generetePresigedGetUrl({
-			bucketType: S3BucketType.RAW_RECORDINGS_BUCKET,
-			key: meeting.videoKey + '.webm',
-			expiresIn: 60 * 60,
-			contentType: 'video/webm',
-		});
-		sources.push({ src: webmPresignedUrl, type: 'video/webm' });
 
 		return Response.json(
 			{
