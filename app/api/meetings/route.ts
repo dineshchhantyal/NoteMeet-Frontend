@@ -3,8 +3,6 @@ import { currentUser } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 
-import AWS from 'aws-sdk';
-
 export async function GET() {
 	const user = await currentUser();
 	if (!user) {
@@ -96,8 +94,8 @@ export async function POST(req: Request) {
 		// );
 		// }
 
-		const jobName = `Meeting-${meeting.id}`;
-		const scheduleExpression = `at(${date}T${time})`;
+		// const jobName = `Meeting-${meeting.id}`;
+		// const scheduleExpression = `at(${date}T${time})`;
 
 		// const params = {
 		// 	Name: jobName,

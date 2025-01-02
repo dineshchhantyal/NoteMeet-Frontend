@@ -20,6 +20,29 @@ export const metadata: Metadata = {
 	title: 'NoteMeet - Simplifying Meetings, Maximizing Impact',
 	description:
 		'NoteMeet is a modern productivity tool designed to enhance the way meetings are scheduled, recorded, and analyzed.',
+	icons: {
+		icon: '/icons/favicon.ico',
+		shortcut: '/icons/favicon-16x16.png',
+		apple: '/icons/apple-touch-icon.png',
+		other: [
+			{
+				rel: 'icon',
+				url: '/icons/favicon-32x32.png',
+			},
+			{
+				rel: 'android-chrome',
+				url: '/icons/android-chrome-192x192.png',
+			},
+			{
+				rel: 'apple-touch-icon',
+				url: '/icons/apple-touch-icon.png',
+			},
+			{
+				rel: 'manifest',
+				url: '/icons/site.webmanifest',
+			},
+		],
+	},
 };
 
 export default async function RootLayout({
