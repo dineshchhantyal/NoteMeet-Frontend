@@ -1,12 +1,19 @@
-import { generetePresigedGetUrl } from '@/lib/presigned-url';
+import {
+	generatePresignedUrl,
+	generetePresigedGetUrl,
+} from '@/lib/presigned-url';
 import { S3BucketType } from '@/lib/s3';
 import { NextRequest } from 'next/server';
 import { checkMeetingUserAuthorization } from '@/lib/meeting';
 
 export async function GET(req: NextRequest) {
 	try {
-		const path = req.nextUrl.pathname.split('/');
-		const meetingId = path[path.length - 2];
+		const url = new URL(req.url);
+		const searchParams = new URLSearchParams(url.search);
+		console.log('searchParams', searchParams);
+		const meetingId = req.nextUrl.pathname.split('/').pop() as string;
+
+		const method = searchParams.get('method');
 
 		const meeting = await checkMeetingUserAuthorization(meetingId);
 
@@ -16,6 +23,18 @@ export async function GET(req: NextRequest) {
 
 		if (!meeting.videoKey) {
 			return Response.json({ message: 'Video not found' }, { status: 404 });
+		}
+
+		if (method === 'UPLOAD') {
+			const { url, expiresAt } = await generatePresignedUrl({
+				key: meetingId,
+				expiresIn: 60 * 60,
+				bucketType: S3BucketType.RAW_RECORDINGS_BUCKET,
+			});
+			return Response.json(
+				{ url, expiresAt, message: 'Presigned url get successfully.' },
+				{ status: 200 },
+			);
 		}
 
 		const sources = [];
