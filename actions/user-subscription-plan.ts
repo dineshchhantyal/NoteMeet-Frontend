@@ -22,8 +22,11 @@ import {
  * @method getUserRemainingLimits - Get the user's remaining limits
  * @method userSubscribeToPlan - Subscribe a user to a plan
  * @method userCancelSubscription - Cancel a user's subscription
+ * @method cancelSubscription - Cancel a subscription
+ * @method renewSubscription - Renew a subscription
  */
 class UserSubscriptionService {
+	static earlyAccessPlanId = 'cm5gdkrv00000le8ly7x83j8v';
 	private loggedInUser: Partial<User>;
 
 	constructor(loggedInUser: Partial<User>) {
@@ -174,6 +177,13 @@ class UserSubscriptionService {
 			data: { status: SubscriptionStatus.ACTIVE, updatedAt: new Date() },
 		});
 		return subscription;
+	}
+
+	async isUserSubscribedToEarlyAccessPlan(userId: string) {
+		const subscription = await db.subscription.findFirst({
+			where: { userId, planId: UserSubscriptionService.earlyAccessPlanId },
+		});
+		return !!subscription;
 	}
 }
 

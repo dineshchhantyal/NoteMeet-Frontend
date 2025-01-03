@@ -54,7 +54,6 @@ model User {
   name                  String?
   email                 String?                @unique
   emailVerified         DateTime?              @map("email_verified")
-  isEarlyAccess         Boolean                @default(false)
   image                 String?
   password              String?
   role                  UserRole               @default(USER)

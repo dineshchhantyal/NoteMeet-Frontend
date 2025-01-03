@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { SubscriptionPlan, User } from '@prisma/client';
+import { Subscription, SubscriptionPlan, User } from '@prisma/client';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AddUserToSubscriptionPlanSchema } from '@/schemas/subscriptions';
@@ -48,7 +48,9 @@ export function AddUserDialog({
 	onSuccess,
 }: AddUserDialogProps) {
 	const [loading, setLoading] = useState(false);
-	const [user, setUser] = useState<User | null>(null);
+	const [user, setUser] = useState<
+		(User & { activeSubscriptions: Subscription[] }) | null
+	>(null);
 
 	const form = useForm<z.infer<typeof AddUserToSubscriptionPlanSchema>>({
 		resolver: zodResolver(AddUserToSubscriptionPlanSchema),
@@ -83,9 +85,9 @@ export function AddUserDialog({
 		}
 	};
 	const findUser = async (email: string) => {
-		const user = await getUserByEmail(email);
+		const user = await getUserByEmail(email, false, true);
 		if (user) {
-			setUser(user);
+			setUser(user as User & { activeSubscriptions: Subscription[] });
 		} else {
 			toast.error('User not found');
 		}
@@ -158,9 +160,9 @@ export function AddUserDialog({
 												</p>
 											</div>
 											<div className="flex flex-col">
-												<Label htmlFor="user-status">Status:</Label>
+												<Label htmlFor="user-status">Subscription:</Label>
 												<p id="user-status" className="text-gray-700">
-													{user.isEarlyAccess ? 'Early Access' : 'Regular'}
+													{user.activeSubscriptions.length}
 												</p>
 											</div>
 										</div>

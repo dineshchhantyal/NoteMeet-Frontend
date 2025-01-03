@@ -63,7 +63,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				session.user.name = token.name;
 				session.user.email = token.email as string;
 				session.user.isOAuth = token.isOAuth as boolean;
-				session.user.isEarlyAccess = token.isEarlyAccess as boolean;
 			}
 
 			return session;
@@ -82,7 +81,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 			token.email = existingUser.email;
 			token.role = existingUser.role;
 			token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
-			token.isEarlyAccess = existingUser.isEarlyAccess;
 
 			return token;
 		},

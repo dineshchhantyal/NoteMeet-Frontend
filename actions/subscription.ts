@@ -7,7 +7,14 @@ import {
 	SubscriptionPlanSchema,
 	UpdateSubscriptionPlanSchema,
 } from '@/schemas/subscriptions';
-import { BillingPeriod, SubscriptionTier, UserRole } from '@prisma/client';
+import {
+	BillingPeriod,
+	Subscription,
+	SubscriptionStatus,
+	SubscriptionTier,
+	User,
+	UserRole,
+} from '@prisma/client';
 import { z } from 'zod';
 import UserSubscriptionService from './user-subscription-plan';
 
@@ -118,10 +125,32 @@ export async function addUserToSubscriptionPlan(
 	}
 }
 
-export async function getUserByEmail(email: string) {
+export async function getUserByEmail(
+	email: string,
+	includeStorage = false,
+	includeActiveSubscriptions = false,
+): Promise<User | null> {
 	try {
-		const user = await db.user.findUnique({ where: { email } });
-		return user;
+		if (includeActiveSubscriptions) {
+			const user = await db.user.findUnique({
+				where: { email },
+				include: {
+					activeSubscriptions: {
+						where: {
+							status: SubscriptionStatus.ACTIVE,
+						},
+					},
+					storage: includeStorage,
+				},
+			});
+			return user;
+		} else {
+			const user = await db.user.findUnique({
+				where: { email },
+				include: { storage: includeStorage },
+			});
+			return user;
+		}
 	} catch (error) {
 		console.error('Error getting user by email:', error);
 		return null;

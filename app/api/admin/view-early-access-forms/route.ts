@@ -1,4 +1,7 @@
+import UserSubscriptionService from '@/actions/user-subscription-plan';
+import { currentUser } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { UserRole } from '@prisma/client';
 
 import { NextResponse } from 'next/server';
 
@@ -19,6 +22,7 @@ export async function GET() {
 
 export async function PATCH(request: Request) {
 	try {
+		const loggedInUser = await isApproved();
 		const { id, status, isVerified } = await request.json();
 		const updatedEntry = await db.earlyAccessForm.update({
 			where: { id },
@@ -27,12 +31,18 @@ export async function PATCH(request: Request) {
 				isVerified,
 			},
 		});
-		await db.user.update({
+		const user = await db.user.findUnique({
 			where: { email: updatedEntry.email },
-			data: {
-				isEarlyAccess: status === 'approved',
-			},
 		});
+
+		if (!user) {
+			throw new Error('User not found');
+		}
+
+		const earlyAccessPlanId = 'cm5gdkrv00000le8ly7x83j8v'; // early access plan id
+
+		const subscriptionService = new UserSubscriptionService(loggedInUser);
+		await subscriptionService.userSubscribeToPlan(user.id, earlyAccessPlanId);
 
 		return NextResponse.json({ success: true, data: updatedEntry });
 	} catch (error) {
@@ -42,4 +52,13 @@ export async function PATCH(request: Request) {
 			{ status: 500 },
 		);
 	}
+}
+
+async function isApproved() {
+	const user = await currentUser();
+	if (!user || user.role !== UserRole.ADMIN) {
+		throw new Error('Unauthorized');
+	}
+
+	return user;
 }

@@ -5,29 +5,49 @@ import { generatePresignedUrl } from '@/lib/presigned-url';
 import { v4 as uuidv4 } from 'uuid';
 import { S3BucketType } from '@/lib/s3';
 import { format } from 'date-fns';
+import UserSubscriptionService from '@/actions/user-subscription-plan';
 
 export async function GET() {
 	try {
 		const user = await currentUser();
-		if (!user) {
+		if (!user || !user.id) {
 			return Response.json({ message: 'Unauthorized' }, { status: 401 });
 		}
-		if (!user.isEarlyAccess) {
+
+		const userSubscriptionService = new UserSubscriptionService(user);
+
+		const remainingLimits =
+			await userSubscriptionService.getUserRemainingLimits(user.id);
+
+		if (remainingLimits.meetingsAllowed <= 0) {
+			return Response.json(
+				{ message: 'You have reached your meeting limit' },
+				{ status: 403 },
+			);
+		}
+
+		if (remainingLimits.storageLimit <= 0) {
+			return Response.json(
+				{ message: 'You have reached your storage limit' },
+				{ status: 403 },
+			);
+		}
+
+		const isEarlyAccess =
+			await userSubscriptionService.isUserSubscribedToEarlyAccessPlan(user.id);
+
+		if (!isEarlyAccess) {
 			return Response.json(
 				{ message: 'You do not have access to this feature' },
 				{ status: 403 },
 			);
 		}
 
-		const userId = user.id;
-		if (!userId) {
-			return Response.json({ message: 'User ID not found' }, { status: 400 });
-		}
 		const uid = uuidv4();
 		const meeting = await db.meeting.create({
 			data: {
 				id: uid,
-				userId: userId,
+				userId: user.id,
 				status: MeetingStatus.InProgress,
 				date: new Date(),
 				time: new Date().getHours() + ':' + new Date().getMinutes(),
@@ -58,7 +78,9 @@ export async function GET() {
 		return Response.json({
 			presignedUrl: url,
 			meeting: meeting,
-			maxMeetingDuration: 1 * 60 * 60, // 1 hours
+			maxMeetingDuration: remainingLimits.meetingDuration,
+			maxStorageLimit: remainingLimits.storageLimit,
+			maxMeetingsAllowed: remainingLimits.meetingsAllowed,
 		});
 	} catch (error) {
 		console.error(error);
