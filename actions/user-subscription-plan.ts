@@ -83,7 +83,7 @@ class UserSubscriptionService {
 	}
 
 	async getUserTotalLimits(userId: string) {
-		const subscriptions = await this.getUserSubscriptionPlan(userId);
+		const { subscriptions } = await this.getUserSubscriptionPlan(userId);
 
 		const limits = {
 			storageLimit: 0,
@@ -91,7 +91,7 @@ class UserSubscriptionService {
 			meetingsAllowed: 0,
 		};
 
-		for (const subscription of subscriptions.subscriptions) {
+		for (const subscription of subscriptions) {
 			limits.storageLimit += subscription.plan.storageLimit;
 			limits.meetingDuration += subscription.plan.meetingDuration;
 			limits.meetingsAllowed += subscription.plan.meetingsAllowed;
@@ -103,7 +103,13 @@ class UserSubscriptionService {
 	async getUserRemainingLimits(userId: string) {
 		const totalLimits = await this.getUserTotalLimits(userId);
 		const meetingsCount = await db.meeting.count({ where: { userId } });
-		const storage = await db.userStorage.findUnique({ where: { userId } });
+
+		// if not storage, create one
+		let storage = await db.userStorage.upsert({
+			where: { userId },
+			create: { userId, usedStorage: 0 },
+			update: {},
+		});
 
 		if (!storage) {
 			throw new Error('User storage not found');

@@ -14,5 +14,5 @@ export async function GET() {
 	const { subscriptions, limits } =
 		await userSubscriptionService.getUserTotalLimits(user.id);
 
-	return NextResponse.json({ subscriptions, limits });
+	return NextResponse.json({ data: { subscriptions, limits } });
 }
