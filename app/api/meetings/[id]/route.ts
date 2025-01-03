@@ -1,3 +1,4 @@
+import { currentUser } from '@/lib/auth';
 import { db } from '@/lib/db';
 import {
 	checkMeetingUserAuthorization,
@@ -11,7 +12,12 @@ export async function GET(req: NextRequest) {
 	try {
 		const id = req.nextUrl.pathname.split('/').pop();
 
-		const meeting = await checkMeetingUserAuthorization(id!);
+		const user = await currentUser();
+		if (!user) {
+			return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+		}
+
+		const meeting = await checkMeetingUserAuthorization(user, id!);
 		return NextResponse.json(meeting);
 	} catch (error) {
 		console.error('GET Meeting Error:', error);
@@ -36,7 +42,12 @@ export async function PUT(req: NextRequest) {
 		if (body?.role === 'transcriber') {
 			await checkTranscriberAuthorization(body.awsVerification);
 		} else {
-			await checkMeetingUserAuthorization(id!);
+			const user = await currentUser();
+			if (!user) {
+				return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+			}
+
+			await checkMeetingUserAuthorization(user, id!);
 		}
 
 		const updatedMeeting = await db.meeting.update({
@@ -64,7 +75,12 @@ export async function DELETE(req: NextRequest) {
 	try {
 		const id = req.nextUrl.pathname.split('/').pop();
 
-		await checkMeetingUserAuthorization(id!);
+		const user = await currentUser();
+		if (!user) {
+			return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+		}
+
+		await checkMeetingUserAuthorization(user, id!);
 		const meeting = await db.meeting.findUnique({
 			where: { id },
 		});

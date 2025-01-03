@@ -97,7 +97,7 @@ class UserSubscriptionService {
 			limits.meetingsAllowed += subscription.plan.meetingsAllowed;
 		}
 
-		return limits;
+		return { limits, subscriptions };
 	}
 
 	async getUserRemainingLimits(userId: string) {
@@ -110,9 +110,9 @@ class UserSubscriptionService {
 		}
 
 		const remainingLimits = {
-			storageLimit: totalLimits.storageLimit - storage.usedStorage,
-			meetingDuration: totalLimits.meetingDuration,
-			meetingsAllowed: totalLimits.meetingsAllowed - meetingsCount,
+			storageLimit: totalLimits.limits.storageLimit - storage.usedStorage,
+			meetingDuration: totalLimits.limits.meetingDuration,
+			meetingsAllowed: totalLimits.limits.meetingsAllowed - meetingsCount,
 		};
 
 		return remainingLimits;

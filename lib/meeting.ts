@@ -1,12 +1,13 @@
-import { currentUser } from './auth';
+import { User } from '@prisma/client';
 import { db } from './db';
 
-export async function checkMeetingUserAuthorization(meetingId: string) {
+export async function checkMeetingUserAuthorization(
+	user: Partial<User>,
+	meetingId: string,
+) {
 	if (!meetingId) {
 		throw new Error('Invalid meeting ID');
 	}
-
-	const user = await currentUser();
 
 	if (!user) {
 		throw new Error('Unauthorized');

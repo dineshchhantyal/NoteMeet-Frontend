@@ -1,3 +1,5 @@
+import UserSubscriptionService from '@/actions/user-subscription-plan';
+import { currentUser } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { checkMeetingUserAuthorization } from '@/lib/meeting';
 import { generatePresignedUrl } from '@/lib/presigned-url';
@@ -7,16 +9,33 @@ import { NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest) {
 	try {
+		const user = await currentUser();
+		if (!user || !user.id) {
+			return Response.json({ message: 'Unauthorized' }, { status: 401 });
+		}
+
 		const meetingId = req.nextUrl.pathname.split('/').at(-3) as string;
 
 		if (!meetingId) {
 			return Response.json({ message: 'Meeting not found' }, { status: 404 });
 		}
 
-		const meeting = await checkMeetingUserAuthorization(meetingId);
+		const meeting = await checkMeetingUserAuthorization(user, meetingId);
 
 		if (!meeting) {
 			return Response.json({ message: 'Meeting not found' }, { status: 404 });
+		}
+
+		const userSubscriptionService = new UserSubscriptionService(user);
+
+		const remainingLimits =
+			await userSubscriptionService.getUserRemainingLimits(user.id);
+
+		if (remainingLimits.storageLimit <= 0) {
+			return Response.json(
+				{ message: 'You have reached your storage limit' },
+				{ status: 403 },
+			);
 		}
 
 		const { url, expiresAt } = await generatePresignedUrl({
@@ -36,6 +55,9 @@ export async function GET(req: NextRequest) {
 				expiresAt,
 				meeting,
 				message: 'Presigned url get successfully.',
+				maxMeetingDuration: remainingLimits.meetingDuration,
+				maxStorageLimit: remainingLimits.storageLimit,
+				maxMeetingsAllowed: remainingLimits.meetingsAllowed,
 			},
 			{ status: 200 },
 		);

@@ -2,12 +2,19 @@ import { generetePresigedGetUrl } from '@/lib/presigned-url';
 import { S3BucketType } from '@/lib/s3';
 import { NextRequest } from 'next/server';
 import { checkMeetingUserAuthorization } from '@/lib/meeting';
+import { currentUser } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
 	try {
 		const meetingId = req.nextUrl.pathname.split('/').at(-2) as string;
 
-		const meeting = await checkMeetingUserAuthorization(meetingId);
+		const user = await currentUser();
+
+		if (!user) {
+			return Response.json({ message: 'Unauthorized' }, { status: 401 });
+		}
+
+		const meeting = await checkMeetingUserAuthorization(user, meetingId);
 
 		if (!meeting) {
 			return Response.json({ message: 'Meeting not found' }, { status: 404 });
