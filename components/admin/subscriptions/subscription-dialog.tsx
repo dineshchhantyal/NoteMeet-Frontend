@@ -18,7 +18,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { BillingPeriod, Currency, SubscriptionTier } from '@prisma/client';
+import {
+	BillingPeriod,
+	Currency,
+	SubscriptionPlan,
+	SubscriptionTier,
+} from '@prisma/client';
 import { SubscriptionPlanSchema } from '@/schemas/subscriptions';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -30,22 +35,31 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
-import { createSubscriptionPlan } from '@/actions/create-subscription';
+import {
+	createSubscriptionPlan,
+	updateSubscriptionPlan,
+} from '@/actions/subscription';
 import { FormSuccess } from '@/components/form-success';
 import { FormError } from '@/components/form-error';
 import { toast } from 'sonner';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useRouter } from 'next/navigation';
 
-interface CreateSubscriptionDialogProps {
+interface SubscriptionFormDialogProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
+	mode: 'create' | 'edit';
+	subscriptionPlan?: Partial<SubscriptionPlan>;
+	setSubscriptionPlan?: (subscriptionPlan: Partial<SubscriptionPlan>) => void;
 }
 
-export function CreateSubscriptionDialog({
+export function SubscriptionFormDialog({
 	open,
 	onOpenChange,
-}: CreateSubscriptionDialogProps) {
+	mode = 'create',
+	subscriptionPlan,
+	setSubscriptionPlan,
+}: SubscriptionFormDialogProps) {
 	const [error, setError] = useState<string | undefined>('');
 	const [success, setSuccess] = useState<string | undefined>('');
 	const [isPending, startTransition] = useTransition();
@@ -54,18 +68,20 @@ export function CreateSubscriptionDialog({
 	const form = useForm<z.infer<typeof SubscriptionPlanSchema>>({
 		resolver: zodResolver(SubscriptionPlanSchema),
 		defaultValues: {
-			name: '',
-			isActive: true,
-			tier: SubscriptionTier.FREE,
-			basePrice: 0,
-			currency: Currency.USD,
-			billingPeriods: BillingPeriod.MONTHLY,
-			meetingsAllowed: 1,
-			meetingDuration: 1,
-			storageLimit: 1,
-			// features: [],
-			description: '',
-			// trialDays: 0,
+			name: subscriptionPlan?.name || '',
+			isActive: subscriptionPlan?.isActive ?? true,
+			tier: subscriptionPlan?.tier ?? SubscriptionTier.FREE,
+			basePrice: subscriptionPlan?.basePrice
+				? Number(subscriptionPlan.basePrice)
+				: 0,
+			currency: (subscriptionPlan?.currency as Currency) ?? ('USD' as Currency),
+			billingPeriods: subscriptionPlan?.billingPeriods ?? BillingPeriod.MONTHLY,
+			meetingsAllowed: subscriptionPlan?.meetingsAllowed ?? 1,
+			meetingDuration: subscriptionPlan?.meetingDuration ?? 1,
+			storageLimit: subscriptionPlan?.storageLimit || 1,
+			features: subscriptionPlan?.features || [],
+			description: subscriptionPlan?.description || '',
+			trialDays: subscriptionPlan?.trialDays || 0,
 		},
 	});
 
@@ -76,27 +92,67 @@ export function CreateSubscriptionDialog({
 		console.log('Form data:', data);
 		setError('');
 		setSuccess('');
-		startTransition(() => {
-			createSubscriptionPlan(data)
-				.then((data) => {
-					console.log('Response data:', data);
-					if (data?.error) {
-						setError(data.error);
-					}
 
-					if (data?.success) {
-						form.reset();
-						onOpenChange(false);
-						toast.success('Subscription plan created successfully');
+		if (mode === 'create') {
+			startTransition(() => {
+				createSubscriptionPlan(data)
+					.then(
+						(data: {
+							error?: string;
+							success?: string;
+							data?: Partial<SubscriptionPlan>;
+						}) => {
+							console.log('Response data:', data);
+							if (data?.error) {
+								setError(data.error);
+							}
 
-						router.refresh();
-					}
-				})
-				.catch((e) => {
-					console.error('Error:', e);
-					setError(e.message);
-				});
-		});
+							if (data?.success) {
+								form.reset();
+								onOpenChange(false);
+								toast.success('Subscription plan created successfully');
+								if (data?.data && setSubscriptionPlan) {
+									setSubscriptionPlan(data.data);
+								}
+
+								router.refresh();
+							}
+						},
+					)
+					.catch((e: Error) => {
+						console.error('Error:', e);
+						setError(e.message);
+					});
+			});
+		} else if (mode === 'edit') {
+			startTransition(() => {
+				updateSubscriptionPlan({
+					...data,
+					id: subscriptionPlan?.id || '',
+				}).then(
+					(data: {
+						error?: string;
+						success?: string;
+						data?: Partial<SubscriptionPlan>;
+					}) => {
+						console.log('Response data:', data);
+						if (data?.error) {
+							setError(data.error);
+						}
+
+						if (data?.success) {
+							form.reset();
+							onOpenChange(false);
+							toast.success('Subscription plan updated successfully');
+							if (data?.data && setSubscriptionPlan) {
+								setSubscriptionPlan(data.data);
+							}
+							router.refresh();
+						}
+					},
+				);
+			});
+		}
 	};
 
 	return (
@@ -377,7 +433,11 @@ export function CreateSubscriptionDialog({
 								Cancel
 							</Button>
 							<Button type="submit" disabled={isPending}>
-								{isPending ? 'Creating...' : 'Create Plan'}
+								{isPending
+									? 'Processing...'
+									: mode === 'create'
+										? 'Create Plan'
+										: 'Update Plan'}
 							</Button>
 						</DialogFooter>
 					</form>

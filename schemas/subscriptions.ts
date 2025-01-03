@@ -29,7 +29,7 @@ export const SubscriptionPlanSchema = z.object({
 	}),
 	features: z
 		.array(z.string())
-		.min(1, {
+		.min(0, {
 			message: 'Please provide at least one feature for the subscription.',
 		})
 		.optional(),
@@ -40,4 +40,13 @@ export const SubscriptionPlanSchema = z.object({
 			message: 'Trial days must be a non-negative number.',
 		})
 		.optional(),
+});
+
+export const UpdateSubscriptionPlanSchema = SubscriptionPlanSchema.extend({
+	id: z.string(),
+});
+
+export const AddUserToSubscriptionPlanSchema = z.object({
+	email: z.string().email(),
+	subscriptionPlanId: z.string(),
 });

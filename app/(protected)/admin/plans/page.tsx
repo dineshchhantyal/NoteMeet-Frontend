@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { SubscriptionPlanTable } from '@/components/admin/subscriptions/subscription-table';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { CreateSubscriptionDialog } from '@/components/admin/subscriptions/create-subscription-dialog';
 import { SubscriptionStats } from '@/components/admin/subscriptions/subscription-stats';
+import { SubscriptionFormDialog } from '@/components/admin/subscriptions/subscription-dialog';
 
 export default function SubscriptionsPage() {
 	const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -27,9 +27,10 @@ export default function SubscriptionsPage() {
 
 			<SubscriptionStats />
 			<SubscriptionPlanTable />
-			<CreateSubscriptionDialog
+			<SubscriptionFormDialog
 				open={isCreateDialogOpen}
 				onOpenChange={setIsCreateDialogOpen}
+				mode="create"
 			/>
 		</div>
 	);
