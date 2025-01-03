@@ -311,7 +311,7 @@ model Subscription {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userId, status]) // Ensures only one active subscription per user
+  @@unique([userId, planId, status]) // Ensures only one active subscription per user
   @@index([status])
   @@index([nextBillingDate])
 }

@@ -133,10 +133,45 @@ class UserSubscriptionService {
 		return subscription;
 	}
 
-	async userCancelSubscription(userId: string) {
-		const subscription = await db.subscription.update({
-			where: { userId_status: { userId, status: SubscriptionStatus.ACTIVE } },
+	async userCancelAllActiveSubscriptions(userId: string) {
+		const subscription = await db.subscription.updateMany({
+			where: {
+				userId,
+				status: SubscriptionStatus.ACTIVE,
+			},
 			data: { status: SubscriptionStatus.CANCELED, updatedAt: new Date() },
+		});
+		return subscription;
+	}
+
+	async userCancelSubscription(userId: string, planId: string) {
+		console.log('userId', userId);
+		console.log('planId', planId);
+		const subscription = await db.subscription.updateMany({
+			where: {
+				planId,
+				userId,
+				status: SubscriptionStatus.ACTIVE,
+			},
+			data: { status: SubscriptionStatus.CANCELED, updatedAt: new Date() },
+		});
+
+		console.log('subscription', subscription);
+		return subscription;
+	}
+
+	async cancelSubscription(subscriptionId: string) {
+		const subscription = await db.subscription.update({
+			where: { id: subscriptionId },
+			data: { status: SubscriptionStatus.CANCELED, updatedAt: new Date() },
+		});
+		return subscription;
+	}
+
+	async renewSubscription(subscriptionId: string) {
+		const subscription = await db.subscription.update({
+			where: { id: subscriptionId },
+			data: { status: SubscriptionStatus.ACTIVE, updatedAt: new Date() },
 		});
 		return subscription;
 	}

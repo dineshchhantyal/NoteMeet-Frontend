@@ -31,18 +31,15 @@ export function AdminDashboard() {
 
 	const updateStatus = async (id: string, status: 'approved' | 'rejected') => {
 		try {
-			const { success, data } = await fetch(
-				'/api/admin/view-early-access-forms',
-				{
-					method: 'PATCH',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({
-						id,
-						status,
-						isVerified: status === 'approved',
-					}),
-				},
-			).then((res) => res.json());
+			const { success } = await fetch('/api/admin/view-early-access-forms', {
+				method: 'PATCH',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					id,
+					status,
+					isVerified: status === 'approved',
+				}),
+			}).then((res) => res.json());
 			if (success) {
 				setSubmissions((submissions) =>
 					submissions.map((submission) =>

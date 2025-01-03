@@ -142,7 +142,7 @@ const NavigationMenuContent = React.forwardRef<
 	<NavigationMenuPrimitive.Content
 		ref={ref}
 		className={cn(
-			'left-0 top-0 w-full data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 md:absolute md:w-auto ',
+			' w-full data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 md:absolute md:w-auto ',
 			className,
 		)}
 		{...props}
@@ -198,28 +198,30 @@ const AdminSubHeader = () => {
 						<NavigationMenuList>
 							{LINKS.map((link) => (
 								<NavigationMenuItem key={link.label}>
-									<NavigationMenuTrigger>{link.label}</NavigationMenuTrigger>
-									<NavigationMenuContent>
-										<ul className="flex flex-row p-2">
-											{link.routes.map((route) => (
-												<li
-													key={route.route}
-													className="flex flex-col p-2 hover:bg-gray-100 rounded-md group"
-												>
-													<NavigationMenuLink asChild>
-														<Link href={route.route}>
-															<p className="text-sm font-medium">
-																{route.label}
-															</p>
-															<p className="text-xs text-muted-foreground">
-																{route.description}
-															</p>
-														</Link>
-													</NavigationMenuLink>
-												</li>
-											))}
-										</ul>
-									</NavigationMenuContent>
+									<div className="flex items-center">
+										<NavigationMenuTrigger>{link.label}</NavigationMenuTrigger>
+										<NavigationMenuContent>
+											<ul className="flex flex-row p-2">
+												{link.routes.map((route) => (
+													<li
+														key={route.route}
+														className="flex flex-col p-2 hover:bg-gray-100 rounded-md group"
+													>
+														<NavigationMenuLink asChild>
+															<Link href={route.route}>
+																<p className="text-sm font-medium">
+																	{route.label}
+																</p>
+																<p className="text-xs text-muted-foreground">
+																	{route.description}
+																</p>
+															</Link>
+														</NavigationMenuLink>
+													</li>
+												))}
+											</ul>
+										</NavigationMenuContent>
+									</div>
 								</NavigationMenuItem>
 							))}
 						</NavigationMenuList>

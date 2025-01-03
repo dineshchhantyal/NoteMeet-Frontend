@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from 'react';
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog';
@@ -17,10 +16,12 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Plus, RefreshCcw } from 'lucide-react';
+import { Check, Plus, RefreshCcw, X } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { AddUserDialog } from './add-user-dialog';
-import { SubscriptionPlan } from '@prisma/client';
+import { SubscriptionPlan, SubscriptionStatus } from '@prisma/client';
 import { format } from 'date-fns';
+import { toast } from 'sonner';
 
 interface ViewUsersDialogProps {
 	subscriptionPlan: Partial<SubscriptionPlan> | null;
@@ -45,16 +46,53 @@ export function ViewUsersDialog({
 	onOpenChange,
 }: ViewUsersDialogProps) {
 	const [isAddUserOpen, setIsAddUserOpen] = useState(false);
-	const [users, setUsers] = useState<User[]>([]);
+	const [subscriptionUsers, setSubscriptionUsers] = useState<User[]>([]);
 
 	const refreshUsers = useCallback(async () => {
 		// Add API call here to refresh users list
 		const updatedUsers = await fetch(
 			`/api/admin/plans/users/${subscriptionPlan?.id}`,
 		);
-		const { users: usersData } = await updatedUsers.json();
-		setUsers(usersData);
+		const { users: subscriptionUsers } = await updatedUsers.json();
+		setSubscriptionUsers(subscriptionUsers);
 	}, [subscriptionPlan]); // Close the refreshUsers function
+
+	const handleSubscriptionCancel = async (
+		planId: string,
+		subscriptionId: string,
+	) => {
+		const res = await fetch(`/api/admin/plans/users/${planId}`, {
+			method: 'DELETE',
+			body: JSON.stringify({ subscriptionId: subscriptionId }),
+		});
+		const { error, message } = await res.json();
+		if (error) {
+			console.error('Error deleting user:', error);
+			toast.error(error);
+		}
+		if (message) {
+			toast.success(message);
+		}
+
+		refreshUsers();
+	};
+
+	const handleSubscriptionRenew = async (subscriptionId: string) => {
+		const res = await fetch(`/api/admin/subsciption`, {
+			method: 'PATCH',
+			body: JSON.stringify({ subscriptionId: subscriptionId }),
+		});
+		const { error, message } = await res.json();
+		if (error) {
+			console.error('Error renewing subscription:', error);
+			toast.error(error);
+		}
+		if (message) {
+			toast.success(message);
+		}
+
+		refreshUsers();
+	};
 
 	useEffect(() => {
 		refreshUsers();
@@ -80,7 +118,7 @@ export function ViewUsersDialog({
 						</div>
 					</DialogHeader>
 					<div className="mt-4">
-						{users && users.length > 0 ? (
+						{subscriptionUsers && subscriptionUsers.length > 0 ? (
 							<Table>
 								<TableHeader>
 									<TableRow>
@@ -88,16 +126,44 @@ export function ViewUsersDialog({
 										<TableHead>Email</TableHead>
 										<TableHead>Status</TableHead>
 										<TableHead>Joined</TableHead>
+										<TableHead>Actions</TableHead>
 									</TableRow>
 								</TableHeader>
 								<TableBody>
-									{users.map((user) => (
-										<TableRow key={user.id}>
-											<TableCell>{user.activeUser.name}</TableCell>
-											<TableCell>{user.activeUser.email}</TableCell>
-											<TableCell>{user.status}</TableCell>
+									{subscriptionUsers.map((subscription) => (
+										<TableRow key={subscription.id}>
+											<TableCell>{subscription.activeUser.name}</TableCell>
+											<TableCell>{subscription.activeUser.email}</TableCell>
 											<TableCell>
-												{format(user.createdAt, 'MM/dd/yyyy HH:mm')}
+												<SubscriptionStatusBadge status={subscription.status} />
+											</TableCell>
+											<TableCell>
+												{format(subscription.createdAt, 'MM/dd/yyyy HH:mm')}
+											</TableCell>
+											<TableCell>
+												{subscription.status === SubscriptionStatus.ACTIVE ? (
+													<Button
+														onClick={() =>
+															handleSubscriptionCancel(
+																subscription.planId,
+																subscription.id,
+															)
+														}
+														variant={'destructive'}
+													>
+														<X className="mr-2 h-4 w-4" />
+														Cancel
+													</Button>
+												) : (
+													<Button
+														onClick={() =>
+															handleSubscriptionRenew(subscription.id)
+														}
+													>
+														<Check className="mr-2 h-4 w-4" />
+														Renew
+													</Button>
+												)}
 											</TableCell>
 										</TableRow>
 									))}
@@ -118,4 +184,24 @@ export function ViewUsersDialog({
 			/>
 		</>
 	);
+}
+
+function SubscriptionStatusBadge({ status }: { status: string }) {
+	return (
+		<Badge
+			variant="outline"
+			className={`text-xs ${getStatusColor(status as SubscriptionStatus)}`}
+		>
+			{status}
+		</Badge>
+	);
+}
+
+function getStatusColor(status: SubscriptionStatus) {
+	switch (status) {
+		case SubscriptionStatus.ACTIVE:
+			return 'bg-green-500 text-white border-green-600';
+		case SubscriptionStatus.CANCELED:
+			return 'bg-red-500 text-white border-red-600';
+	}
 }
