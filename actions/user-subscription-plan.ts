@@ -35,9 +35,7 @@ class UserSubscriptionService {
 		this.loggedInUser = loggedInUser;
 	}
 
-	async getUserSubscriptionPlan(
-		userId: string,
-	): Promise<{
+	async getUserSubscriptionPlan(userId: string): Promise<{
 		subscriptions: (Subscription & { plan: SubscriptionPlan })[];
 		user: User;
 	}> {
@@ -190,7 +188,11 @@ class UserSubscriptionService {
 
 	async isUserSubscribedToEarlyAccessPlan(userId: string) {
 		const subscription = await db.subscription.findFirst({
-			where: { userId, planId: UserSubscriptionService.earlyAccessPlanId },
+			where: {
+				userId,
+				planId: UserSubscriptionService.earlyAccessPlanId,
+				status: SubscriptionStatus.ACTIVE,
+			},
 		});
 		return !!subscription;
 	}
