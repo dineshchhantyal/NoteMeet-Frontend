@@ -3,6 +3,8 @@ import { currentUser } from '@/lib/auth'; // Assuming this is how you get the cu
 import { db } from '@/lib/db';
 import {
 	BillingPeriod,
+	Subscription,
+	SubscriptionPlan,
 	SubscriptionStatus,
 	User,
 	UserRole,
@@ -33,7 +35,12 @@ class UserSubscriptionService {
 		this.loggedInUser = loggedInUser;
 	}
 
-	async getUserSubscriptionPlan(userId: string) {
+	async getUserSubscriptionPlan(
+		userId: string,
+	): Promise<{
+		subscriptions: (Subscription & { plan: SubscriptionPlan })[];
+		user: User;
+	}> {
 		try {
 			if (
 				this.loggedInUser.id !== userId &&
@@ -73,8 +80,8 @@ class UserSubscriptionService {
 
 	async getUserLimits(userId: string) {
 		const user = await getUserById(userId);
-		const subscription = await this.getUserSubscriptionPlan(userId);
-		return { user, subscription };
+		const subscriptions = await this.getUserSubscriptionPlan(userId);
+		return { user, subscriptions };
 	}
 
 	async getUserTotalLimits(userId: string) {
@@ -114,11 +121,14 @@ class UserSubscriptionService {
 	}
 
 	async userSubscribeToPlan(userId: string, planId: string) {
-		const plan = await this.getUserSubscriptionPlan(userId);
-		if (plan.subscriptions.length > 0) {
-			throw new Error(
-				'User already has an active subscription, please cancel the current subscription before subscribing to a new plan',
-			);
+		const subscriptions = await this.getUserSubscriptionPlan(userId);
+
+		const isAlreadySubscribed = subscriptions.subscriptions.some(
+			(subscription) => subscription.planId === planId,
+		);
+
+		if (isAlreadySubscribed) {
+			throw new Error('User already has an active subscription');
 		}
 
 		const subscription = await db.subscription.create({
@@ -159,7 +169,6 @@ class UserSubscriptionService {
 			data: { status: SubscriptionStatus.CANCELED, updatedAt: new Date() },
 		});
 
-		console.log('subscription', subscription);
 		return subscription;
 	}
 
