@@ -64,6 +64,13 @@ export function SubscriptionPlanTable() {
 	const [addingUser, setAddingUser] =
 		useState<Partial<SubscriptionPlan> | null>(null);
 
+	console.log({
+		addingUser,
+		editingSubscription,
+		viewingUsers,
+		deletingSubscription,
+	});
+
 	useEffect(() => {
 		const fetchSubscriptions = async () => {
 			try {
@@ -121,9 +128,13 @@ export function SubscriptionPlanTable() {
 											format(subscriptionPlan.createdAt, 'PP')}
 									</TableCell>
 									<TableCell>
-										<DropdownMenu>
+										<DropdownMenu modal={false}>
 											<DropdownMenuTrigger asChild>
-												<Button variant="ghost" className="h-8 w-8 p-0">
+												<Button
+													variant="ghost"
+													className="h-8 w-8 p-0 z-10 hover:bg-accent"
+													onClick={(e) => e.stopPropagation()}
+												>
 													<MoreHorizontal className="h-4 w-4" />
 												</Button>
 											</DropdownMenuTrigger>

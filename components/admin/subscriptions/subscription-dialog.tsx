@@ -7,6 +7,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogFooter,
+	DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -160,6 +161,9 @@ export function SubscriptionFormDialog({
 			<DialogContent className="max-w-md">
 				<DialogHeader>
 					<DialogTitle>Create New Subscription Plan</DialogTitle>
+					<DialogDescription>
+						Create a new subscription plan to offer to your users.
+					</DialogDescription>
 				</DialogHeader>
 				<FormProvider {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>

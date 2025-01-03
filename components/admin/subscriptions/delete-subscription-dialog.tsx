@@ -18,7 +18,7 @@ import { toast } from 'sonner';
 interface DeleteSubscriptionDialogProps {
 	subscriptionPlan: Partial<SubscriptionPlan>;
 	open: boolean;
-	onOpenChange: (open: boolean) => void;
+	onOpenChange: () => void;
 	setSubscriptionPlan: (subscriptionPlan: Partial<SubscriptionPlan>) => void;
 }
 
@@ -34,7 +34,7 @@ export function DeleteSubscriptionDialog({
 		setLoading(true);
 		// Add API call here
 		setLoading(false);
-		onOpenChange(false);
+		onOpenChange();
 		toast.success('Subscription plan deleted successfully');
 		setSubscriptionPlan(subscriptionPlan);
 	};
