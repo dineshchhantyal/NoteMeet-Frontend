@@ -9,126 +9,133 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url  	    = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
+
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String  @map("user_id")
-  type               String
-  provider           String
-  providerAccountId  String  @map("provider_account_id")
-  refresh_token      String? @db.Text
-  access_token       String? @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String? @db.Text
-  session_state      String?
- 
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@unique([provider, providerAccountId])
   @@map("accounts")
 }
- 
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique @map("session_token")
   userId       String   @map("user_id")
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@map("sessions")
 }
 
 enum UserRole {
   ADMIN
   USER
-} 
- 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  isEarlyAccess Boolean   @default(false)
-  image         String?
-  password      String?
-  role          UserRole @default(USER)
-  accounts      Account[]
-  sessions      Session[]
-  isTwoFactorEnabled    Boolean @default(false)
-  twoFactorConfirmation TwoFactorConfirmation?
-  subscriptionId      String?
-  status            SubscriptionStatus @default(ACTIVE) // Options: ACTIVE, CANCELED, EXPIRED
-
-  @@unique([email, subscriptionId])
-
-  meetings      Meeting[]
- 
-  @@map("users")
 }
- 
+
+model User {
+  id                    String                 @id @default(cuid())
+  name                  String?
+  email                 String?                @unique
+  emailVerified         DateTime?              @map("email_verified")
+  isEarlyAccess         Boolean                @default(false)
+  image                 String?
+  password              String?
+  role                  UserRole               @default(USER)
+  accounts              Account[]
+  sessions              Session[]
+  isTwoFactorEnabled    Boolean                @default(false)
+  twoFactorConfirmation TwoFactorConfirmation?
+
+  meetings Meeting[]
+
+  // subscription
+  activeSubscriptions Subscription[] @relation("ActiveUserSubscription")
+  subscriptionHistory Subscription[] @relation("UserSubscriptionHistory")
+  activeSubscriptionId  String?                @map("active_subscription_id")
+
+  userSubscriptionId  String?
+    
+  @@map("users")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model VerificationToken {
-  id         String @id @default(cuid())
-  email      String
-  token      String @unique
-  expires    DateTime
- 
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
   @@unique([email, token])
   @@map("verification_tokens")
 }
 
 model PasswordResetToken {
-  id         String @id @default(cuid())
-  email      String
-  token      String @unique
-  expires    DateTime
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
 
   @@unique([email, token])
-    @@map("password_reset_tokens")
+  @@map("password_reset_tokens")
 }
 
 model TwoFactorToken {
-  id         String @id @default(cuid())
-  email      String
-  token      String @unique
-  expires    DateTime
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
 
   @@unique([email, token])
-    @@map("two_factor_tokens")
+  @@map("two_factor_tokens")
 }
 
 model TwoFactorConfirmation {
-  id         String @id @default(cuid())
-  userId     String @unique
+  id     String @id @default(cuid())
+  userId String @unique
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Meeting {
-  id            String      @id @default(cuid())
-  title         String
-  date          DateTime
-  time          String
-  duration      Float @default(30) // in minutes
-  description   String?
-  provider      String
-  meetingLink   String
-  notification Notification? 
-  status        Int      @default(1) // Possible values: 1 - "Scheduled", 2 - "In Progress", 3 - "Transcoded", 4 - "Transcribed", 5 - "Completed", 6 -  "Cancelled"
-  participants  Participant[] // Participants can be deleted without affecting the Meeting
-  awsSchedulerArn String?  // ARN of the AWS Scheduler job
-  awsJobId        String?  // Unique ID of the AWS Scheduler job
+  id              String        @id @default(cuid())
+  title           String
+  date            DateTime
+  time            String
+  duration        Float         @default(30) // in minutes
+  description     String?
+  provider        String
+  meetingLink     String
+  notification    Notification?
+  status          Int           @default(1) // Possible values: 1 - "Scheduled", 2 - "In Progress", 3 - "Transcoded", 4 - "Transcribed", 5 - "Completed", 6 -  "Cancelled"
+  participants    Participant[] // Participants can be deleted without affecting the Meeting
+  awsSchedulerArn String? // ARN of the AWS Scheduler job
+  awsJobId        String? // Unique ID of the AWS Scheduler job
   transcript      String?
   videoKey        String?
   summary         Json?
-  createdBy     User        @relation(fields: [userId], references: [id])
-  userId        String
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  createdBy       User          @relation(fields: [userId], references: [id])
+  userId          String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
 
 model Participant {
@@ -139,13 +146,12 @@ model Participant {
 }
 
 model Notification {
-  id             String   @id @default(cuid())
+  id             String  @id @default(cuid())
   sendTranscript Boolean
   sendSummary    Boolean
-  meeting        Meeting  @relation(fields: [meetingId], references: [id], onDelete: Cascade)
-  meetingId      String @unique
-  }
-
+  meeting        Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  meetingId      String  @unique
+}
 
 model ContactMessage {
   id        Int      @id @default(autoincrement())
@@ -154,45 +160,44 @@ model ContactMessage {
   subject   String
   message   String
   isRead    Boolean  @default(false)
-
-  @@unique([email, isRead])
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+
+  @@unique([email, isRead])
 }
 
 model EarlyAccessForm {
-  id             String   @id @default(cuid())
-  name           String
-  email          String   @unique
-  company        String
-  subscription   String   // Options: starter, pro, enterprise
-  paymentMethod  String   // Options: credit_card, paypal, bank_transfer
-  features       String[] @default([]) // Array of features
-  message        String?  // Optional field
-  agreeTerms     Boolean
-  isVerified     Boolean  @default(false) // Admin-specific
-  status         String   @default("pending") // Options: pending, approved, rejected
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  company       String
+  subscription  String // Options: starter, pro, enterprise
+  paymentMethod String // Options: credit_card, paypal, bank_transfer
+  features      String[] @default([]) // Array of features
+  message       String? // Optional field
+  agreeTerms    Boolean
+  isVerified    Boolean  @default(false) // Admin-specific
+  status        String   @default("pending") // Options: pending, approved, rejected
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
-
 model JobApplication {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String
-  resume    String
+  id          Int    @id @default(autoincrement())
+  name        String
+  email       String
+  resume      String
   coverLetter String
-  position String
+  position    String
 
-  status JobApplicationStatus @default(PENDING)
-  isVerified Boolean @default(false) // Admin-specific
-  isRead Boolean @default(false) // Admin-specific
+  status     JobApplicationStatus @default(PENDING)
+  isVerified Boolean              @default(false) // Admin-specific
+  isRead     Boolean              @default(false) // Admin-specific
   modifiedBy String? // Admin-specific
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
 
   @@unique([email, position])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 enum JobApplicationStatus {
@@ -201,39 +206,151 @@ enum JobApplicationStatus {
   REJECTED
 }
 
-model Subscription {
-  id                String   @id @default(cuid())
-  name              String   // Name of the subscription plan
-  cost              Float    // Cost of the subscription plan
-  currency          String   // Currency of the subscription plan
-  billingCycle      String   // Billing cycle of the subscription plan
-  billingFrequency  String   // Billing frequency of the subscription plan
-  description       String?  // Description of the subscription plan
+// subscription.prisma
 
-  plan              SubscriptionPlan
-  startDate         DateTime @default(now())
-  endDate           DateTime? // Nullable for ongoing subscriptions
-  meetingsAllowed   Int      // Number of meetings allowed per month
-  meetingDuration   Int      // Maximum duration of each meeting in minutes
-  cloudStorage      Int      // Cloud storage in GB
-  customLimits      Json?    // Optional JSON field for custom limits set by admin
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  features          String[] @default([]) // Array of features
-
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  PENDING
+  CANCELED
 }
 
-enum SubscriptionPlan {
+enum BillingPeriod {
+  MONTHLY
+  QUARTERLY
+  ANNUAL
+  CUSTOM
+}
+
+enum Currency {
+  USD
+  EUR
+  GBP
+}
+
+enum SubscriptionTier {
   FREE
   TRIAL
   PRO
   BUSINESS
-  CUSTOM // For custom plans set by admin
+  CUSTOM
 }
 
-enum SubscriptionStatus {
-  ACTIVE
-  CANCELED
-  EXPIRED
+model SubscriptionPlan {
+  id          String           @id @default(cuid())
+  name        String
+  tier        SubscriptionTier
+  description String?
+  isActive    Boolean          @default(true)
+
+  // Pricing
+  basePrice Decimal @db.Decimal(10, 2)
+  currency  String  @default("USD")
+
+  // Features and Limits
+  features         String[] // Store features as JSON array
+  meetingsAllowed Int
+  meetingDuration  Int // in minutes
+  storageLimit     Int // in GB
+  maxParticipants  Int
+
+  // Billing settings
+  billingPeriods BillingPeriod[]
+  trialDays      Int             @default(0)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  subscriptions Subscription[]
+
+  @@map("subscription_plans")
 }
 
+model Subscription {
+  id     String @id @default(cuid())
+  userId String 
+  planId String
+
+  // Core subscription data
+  status        SubscriptionStatus @default(ACTIVE)
+  billingPeriod BillingPeriod
+
+  // Important dates
+  startDate   DateTime
+  endDate     DateTime?
+  trialEndsAt DateTime?
+
+  // Billing amounts
+  quantity   Int      @default(1)
+  basePrice  Decimal  @db.Decimal(10, 2)
+  discount   Decimal? @db.Decimal(10, 2)
+  tax        Decimal? @db.Decimal(10, 2)
+  totalPrice Decimal  @db.Decimal(10, 2)
+  currency   String   @default("USD")
+
+  // Payment tracking
+  lastBillingDate DateTime?
+  nextBillingDate DateTime?
+  canceledAt      DateTime?
+
+  // Custom limits (can override plan limits)
+  customLimits Json?
+
+  // Relations
+  activeUser  User?   @relation("ActiveUserSubscription", fields: [userId], references: [id])
+  user        User    @relation("UserSubscriptionHistory", fields: [userId], references: [id], onDelete: Cascade, map: "user_subscription_history_fk")
+  plan       SubscriptionPlan @relation(fields: [planId], references: [id])
+  invoices   Invoice[]
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, status]) // Ensures only one active subscription per user
+  @@index([status])
+  @@index([nextBillingDate])
+  @@map("subscriptions")
+}
+
+model Invoice {
+  id             String @id @default(cuid())
+  subscriptionId String
+
+  // Invoice details
+  number   String   @unique
+  amount   Decimal  @db.Decimal(10, 2)
+  tax      Decimal? @db.Decimal(10, 2)
+  total    Decimal  @db.Decimal(10, 2)
+  currency Currency @default(USD)
+  status   String // pending, paid, void, etc.
+
+  // Dates
+  issueDate DateTime
+  dueDate   DateTime
+  paidAt    DateTime?
+
+  // Payment details
+  paymentMethod String?
+  paymentId     String? // External payment reference
+
+  // Relations
+  subscription Subscription @relation(fields: [subscriptionId], references: [id])
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([subscriptionId])
+  @@map("invoices")
+}
+
+model CouponCode {
+  id   String @id @default(cuid())
+  code String @unique
+
+  // Discount details
+  type     String // percentage or fixed
+  amount   Decimal @db.Decimal(10, 2)
+}

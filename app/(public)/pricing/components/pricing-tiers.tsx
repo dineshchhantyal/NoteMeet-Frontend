@@ -1,4 +1,3 @@
-import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -8,6 +7,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
+import { Check } from 'lucide-react';
 
 interface PricingTier {
 	name: string;
