@@ -57,7 +57,6 @@ export default function DashboardPage() {
 						`/api/meetings/${selectedMeeting.id}/presigned-url`,
 					);
 					const data = await response.json();
-					console.log('data', data.sources);
 					setSources(data.sources);
 				} catch (error) {
 					console.error('Error fetching video url:', error);

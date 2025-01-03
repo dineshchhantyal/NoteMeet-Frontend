@@ -64,13 +64,6 @@ export function SubscriptionPlanTable() {
 	const [addingUser, setAddingUser] =
 		useState<Partial<SubscriptionPlan> | null>(null);
 
-	console.log({
-		addingUser,
-		editingSubscription,
-		viewingUsers,
-		deletingSubscription,
-	});
-
 	useEffect(() => {
 		const fetchSubscriptions = async () => {
 			try {
@@ -89,7 +82,7 @@ export function SubscriptionPlanTable() {
 	return (
 		<>
 			{isLoading ? (
-				<div className="flex justify-center items-center h-screen">
+				<div className="flex justify-center items-center">
 					<Loader2 className="h-4 w-4 animate-spin" />
 				</div>
 			) : (

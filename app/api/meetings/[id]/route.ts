@@ -64,8 +64,6 @@ export async function DELETE(req: NextRequest) {
 	try {
 		const id = req.nextUrl.pathname.split('/').pop();
 
-		console.log('id', id);
-
 		await checkMeetingUserAuthorization(id!);
 		const meeting = await db.meeting.findUnique({
 			where: { id },
@@ -109,7 +107,7 @@ export async function DELETE(req: NextRequest) {
 			});
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
-				console.log('Error deleting participants:', error);
+				console.error('Error deleting participants:', error);
 			} else throw error;
 		}
 
@@ -129,7 +127,7 @@ export async function DELETE(req: NextRequest) {
 			});
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
-				console.log('Error deleting meeting:', error);
+				console.error('Error deleting meeting:', error);
 			} else throw error;
 		}
 

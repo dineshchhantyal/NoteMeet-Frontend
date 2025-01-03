@@ -12,7 +12,6 @@ export async function GET() {
 		if (!user) {
 			return Response.json({ message: 'Unauthorized' }, { status: 401 });
 		}
-		console.log('user', user);
 		if (!user.isEarlyAccess) {
 			return Response.json(
 				{ message: 'You do not have access to this feature' },

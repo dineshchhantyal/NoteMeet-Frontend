@@ -43,7 +43,6 @@ export function AdminDashboard() {
 					}),
 				},
 			).then((res) => res.json());
-			console.log('data', data);
 			if (success) {
 				setSubmissions((submissions) =>
 					submissions.map((submission) =>

@@ -2,7 +2,6 @@ import { createJobApplication } from '@/actions/job-application'; // Import the 
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
-	console.log(req.body);
 	const formData = await req.formData();
 	const jobApplicationData = {
 		name: formData.get('name') as string,

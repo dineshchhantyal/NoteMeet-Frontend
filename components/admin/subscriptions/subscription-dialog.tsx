@@ -86,11 +86,7 @@ export function SubscriptionFormDialog({
 		},
 	});
 
-	console.log('Form data:', form.getValues());
-	console.log('Form errors:', form.formState.errors);
-
 	const onSubmit = async (data: z.infer<typeof SubscriptionPlanSchema>) => {
-		console.log('Form data:', data);
 		setError('');
 		setSuccess('');
 
@@ -103,7 +99,6 @@ export function SubscriptionFormDialog({
 							success?: string;
 							data?: Partial<SubscriptionPlan>;
 						}) => {
-							console.log('Response data:', data);
 							if (data?.error) {
 								setError(data.error);
 							}
@@ -136,7 +131,6 @@ export function SubscriptionFormDialog({
 						success?: string;
 						data?: Partial<SubscriptionPlan>;
 					}) => {
-						console.log('Response data:', data);
 						if (data?.error) {
 							setError(data.error);
 						}

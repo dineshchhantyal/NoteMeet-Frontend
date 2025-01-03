@@ -7,10 +7,8 @@ import { z } from 'zod';
 export const createJobApplication = async (
 	data: z.infer<typeof JobApplicationSchema>,
 ) => {
-	console.log(data);
 	const validatedFields = JobApplicationSchema.safeParse(data);
 
-	console.log(validatedFields.error);
 	if (!validatedFields.success) {
 		return { error: 'Invalid fields!' };
 	}
