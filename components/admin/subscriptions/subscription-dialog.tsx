@@ -45,6 +45,13 @@ import { FormError } from '@/components/form-error';
 import { toast } from 'sonner';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useRouter } from 'next/navigation';
+import { Info } from 'lucide-react';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface SubscriptionFormDialogProps {
 	open: boolean;
@@ -71,6 +78,7 @@ export function SubscriptionFormDialog({
 		defaultValues: {
 			name: subscriptionPlan?.name || '',
 			isActive: subscriptionPlan?.isActive ?? true,
+			isPublic: subscriptionPlan?.isPublic ?? false,
 			tier: subscriptionPlan?.tier ?? SubscriptionTier.FREE,
 			basePrice: subscriptionPlan?.basePrice
 				? Number(subscriptionPlan.basePrice)
@@ -402,26 +410,58 @@ export function SubscriptionFormDialog({
 								)}
 							/>
 						</div>
-						<FormField
-							control={form.control}
-							name="isActive"
-							render={({ field }) => (
-								<FormItem className="flex flex-row items-center space-x-2">
-									<FormControl>
-										<Checkbox
-											checked={field.value}
-											onCheckedChange={field.onChange}
-											className="mt-2"
-										/>
-									</FormControl>
-									<FormLabel htmlFor="isActive" className="m-0 p-0">
-										Active Subscription
-									</FormLabel>
+						<div className="flex flex-row mb-2 items-center space-x-2">
+							<FormField
+								control={form.control}
+								name="isActive"
+								render={({ field }) => (
+									<FormItem className="flex flex-row items-center space-x-2">
+										<FormControl>
+											<Checkbox
+												checked={field.value}
+												onCheckedChange={field.onChange}
+												className="mt-2"
+											/>
+										</FormControl>
+										<FormLabel htmlFor="isActive" className="m-0 p-0">
+											Active Subscription
+										</FormLabel>
 
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name="isPublic"
+								render={({ field }) => (
+									<FormItem className="flex flex-row items-center space-x-2">
+										<FormControl>
+											<Checkbox
+												checked={field.value}
+												onCheckedChange={field.onChange}
+												className="mt-2"
+											/>
+										</FormControl>
+										<FormLabel htmlFor="isPublic" className="m-0 p-0">
+											Public
+											<TooltipProvider>
+												<Tooltip>
+													<TooltipTrigger>
+														<Info className="h-4 w-4" />
+													</TooltipTrigger>
+													<TooltipContent>
+														Public plans are visible to all users.
+													</TooltipContent>
+												</Tooltip>
+											</TooltipProvider>
+										</FormLabel>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
 
 						<DialogFooter>
 							<FormError message={error} />

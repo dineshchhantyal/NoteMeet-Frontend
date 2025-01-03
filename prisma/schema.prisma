@@ -247,7 +247,9 @@ model SubscriptionPlan {
   tier        SubscriptionTier
   description String?
   isActive    Boolean          @default(true)
-
+  isPublic    Boolean          @default(false)
+  public      Boolean          @default(true) // if false, the plan is just a draft
+  
   // Pricing
   basePrice Decimal @db.Decimal(10, 2)
   currency  String  @default("USD")

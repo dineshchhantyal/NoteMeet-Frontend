@@ -6,6 +6,7 @@ export const SubscriptionPlanSchema = z.object({
 		message: 'Please provide a name for the subscription plan.',
 	}),
 	isActive: z.boolean().optional(),
+	isPublic: z.boolean().optional(),
 	tier: z.nativeEnum(SubscriptionTier, {
 		message: 'Please select a subscription tier.',
 	}),

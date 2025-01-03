@@ -16,7 +16,7 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Check, Plus, RefreshCcw, X } from 'lucide-react';
+import { Check, Loader2, Plus, RefreshCcw, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { AddUserDialog } from './add-user-dialog';
 import { SubscriptionPlan, SubscriptionStatus } from '@prisma/client';
@@ -47,14 +47,17 @@ export function ViewUsersDialog({
 }: ViewUsersDialogProps) {
 	const [isAddUserOpen, setIsAddUserOpen] = useState(false);
 	const [subscriptionUsers, setSubscriptionUsers] = useState<User[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
 
 	const refreshUsers = useCallback(async () => {
 		// Add API call here to refresh users list
+		setIsLoading(true);
 		const updatedUsers = await fetch(
 			`/api/admin/plans/users/${subscriptionPlan?.id}`,
 		);
 		const { users: subscriptionUsers } = await updatedUsers.json();
 		setSubscriptionUsers(subscriptionUsers);
+		setIsLoading(false);
 	}, [subscriptionPlan]); // Close the refreshUsers function
 
 	const handleSubscriptionCancel = async (
@@ -118,7 +121,11 @@ export function ViewUsersDialog({
 						</div>
 					</DialogHeader>
 					<div className="mt-4">
-						{subscriptionUsers && subscriptionUsers.length > 0 ? (
+						{isLoading ? (
+							<div className="flex justify-center items-center my-5">
+								<Loader2 className="h-4 w-4 animate-spin" />
+							</div>
+						) : subscriptionUsers && subscriptionUsers.length > 0 ? (
 							<Table>
 								<TableHeader>
 									<TableRow>
