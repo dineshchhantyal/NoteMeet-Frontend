@@ -134,7 +134,11 @@ export function CreateSubscriptionDialog({
 										<FormItem>
 											<FormLabel htmlFor="tier">Plan Type</FormLabel>
 											<FormControl>
-												<Select disabled={isPending} {...field}>
+												<Select
+													disabled={isPending}
+													onValueChange={field.onChange}
+													value={field.value}
+												>
 													<SelectTrigger>
 														<SelectValue placeholder="Select plan" />
 													</SelectTrigger>
@@ -187,7 +191,11 @@ export function CreateSubscriptionDialog({
 										<FormItem>
 											<FormLabel htmlFor="currency">Currency</FormLabel>
 											<FormControl>
-												<Select disabled={isPending} {...field}>
+												<Select
+													disabled={isPending}
+													onValueChange={field.onChange}
+													value={field.value}
+												>
 													<SelectTrigger>
 														<SelectValue placeholder="Select currency" />
 													</SelectTrigger>
@@ -214,7 +222,11 @@ export function CreateSubscriptionDialog({
 												Billing Frequency
 											</FormLabel>
 											<FormControl>
-												<Select disabled={isPending} {...field}>
+												<Select
+													disabled={isPending}
+													onValueChange={field.onChange}
+													value={field.value}
+												>
 													<SelectTrigger>
 														<SelectValue placeholder="Select frequency" />
 													</SelectTrigger>

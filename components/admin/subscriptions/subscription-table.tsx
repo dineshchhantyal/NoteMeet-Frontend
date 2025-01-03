@@ -19,7 +19,13 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Pencil, Users, Trash2 } from 'lucide-react';
+import {
+	MoreHorizontal,
+	Pencil,
+	Users,
+	Trash2,
+	PlusCircle,
+} from 'lucide-react';
 import { EditSubscriptionDialog } from '@/components/admin/subscriptions/edit-subscription-dialog';
 import { ViewUsersDialog } from '@/components/admin/subscriptions/view-users-dialog';
 import { DeleteSubscriptionDialog } from '@/components/admin/subscriptions/delete-subscription-dialog';
@@ -108,6 +114,10 @@ export function SubscriptionPlanTable() {
 										<DropdownMenuContent align="end">
 											<DropdownMenuLabel>Actions</DropdownMenuLabel>
 											<DropdownMenuSeparator />
+											<DropdownMenuItem>
+												<PlusCircle className="mr-2 h-4 w-4" />
+												Add User
+											</DropdownMenuItem>
 											<DropdownMenuItem
 												onClick={() => setEditingSubscription(subscriptionPlan)}
 											>
