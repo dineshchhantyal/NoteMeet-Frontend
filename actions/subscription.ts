@@ -114,7 +114,7 @@ export async function addUserToSubscriptionPlan(
 		return { success: 'User added to subscription successfully' };
 	} catch (error) {
 		console.error('Error adding user to subscription:', error);
-		return { error: 'Failed to add user to subscription' };
+		return { error: (error as Error).message };
 	}
 }
 

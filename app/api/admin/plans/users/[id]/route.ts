@@ -60,11 +60,16 @@ export async function GET(
 					},
 				},
 				planId: true,
+				createdAt: true,
+				status: true,
 			},
 		});
 
 		// Return the list of users
-		return NextResponse.json(users);
+		return NextResponse.json({
+			users,
+			subscriptionPlan,
+		});
 	} catch (error) {
 		console.error('Error in GET subscriptions/users/[id]:', error);
 		return NextResponse.json(

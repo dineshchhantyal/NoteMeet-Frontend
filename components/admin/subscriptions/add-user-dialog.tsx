@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { SubscriptionPlan, User } from '@prisma/client';
-import { useForm, Controller, FormProvider } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AddUserToSubscriptionPlanSchema } from '@/schemas/subscriptions';
 import { z } from 'zod';
@@ -59,7 +59,6 @@ export function AddUserDialog({
 	});
 
 	const { control, handleSubmit } = form;
-	console.log(form.formState.errors);
 
 	const onSubmit = async (
 		data: z.infer<typeof AddUserToSubscriptionPlanSchema>,
@@ -73,9 +72,11 @@ export function AddUserDialog({
 					onSuccess?.();
 					onOpenChange(false);
 					form.reset();
+				} else {
+					toast.error(res.error || 'Failed to add user to subscription');
 				}
 			});
-		} catch (error) {
+		} catch {
 			toast.error('Failed to add user to subscription');
 		} finally {
 			setLoading(false);

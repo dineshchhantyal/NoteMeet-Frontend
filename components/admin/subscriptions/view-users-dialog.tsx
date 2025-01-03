@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
 	Dialog,
 	DialogContent,
@@ -16,9 +16,10 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, RefreshCcw } from 'lucide-react';
 import { AddUserDialog } from './add-user-dialog';
 import { SubscriptionPlan } from '@prisma/client';
+import { format } from 'date-fns';
 
 interface ViewUsersDialogProps {
 	subscriptionPlan: Partial<SubscriptionPlan> | null;
@@ -26,16 +27,16 @@ interface ViewUsersDialogProps {
 	onOpenChange: (open: boolean) => void;
 }
 
-const mockUsers = [
-	{
-		id: 1,
-		name: 'John Doe',
-		email: 'john@example.com',
-		status: 'active',
-		joinedAt: '2024-01-15',
-	},
-	// Add more mock data as needed
-];
+interface User {
+	id: string;
+	activeUser: {
+		name: string;
+		email: string;
+	};
+	status: string;
+	createdAt: Date;
+	planId: string;
+}
 
 export function ViewUsersDialog({
 	subscriptionPlan,
@@ -43,13 +44,20 @@ export function ViewUsersDialog({
 	onOpenChange,
 }: ViewUsersDialogProps) {
 	const [isAddUserOpen, setIsAddUserOpen] = useState(false);
-	const [users, setUsers] = useState(mockUsers);
+	const [users, setUsers] = useState<User[]>([]);
 
-	const refreshUsers = async () => {
+	const refreshUsers = useCallback(async () => {
 		// Add API call here to refresh users list
-		// const updatedUsers = await getSubscriptionUsers(subscription?.id);
-		// setUsers(updatedUsers);
-	};
+		const updatedUsers = await fetch(
+			`/api/admin/plans/users/${subscriptionPlan?.id}`,
+		);
+		const { users: usersData } = await updatedUsers.json();
+		setUsers(usersData);
+	}, [subscriptionPlan]); // Close the refreshUsers function
+
+	useEffect(() => {
+		refreshUsers();
+	}, [subscriptionPlan, refreshUsers]); // Dependency array for useEffect
 
 	if (!subscriptionPlan) return null;
 
@@ -60,6 +68,10 @@ export function ViewUsersDialog({
 					<DialogHeader>
 						<div className="flex items-center justify-between">
 							<DialogTitle>Users on {subscriptionPlan.name}</DialogTitle>
+							<Button onClick={refreshUsers}>
+								<RefreshCcw className="mr-2 h-4 w-4" />
+								Refresh
+							</Button>
 							<Button onClick={() => setIsAddUserOpen(true)}>
 								<Plus className="mr-2 h-4 w-4" />
 								Add User
@@ -67,26 +79,32 @@ export function ViewUsersDialog({
 						</div>
 					</DialogHeader>
 					<div className="mt-4">
-						<Table>
-							<TableHeader>
-								<TableRow>
-									<TableHead>Name</TableHead>
-									<TableHead>Email</TableHead>
-									<TableHead>Status</TableHead>
-									<TableHead>Joined</TableHead>
-								</TableRow>
-							</TableHeader>
-							<TableBody>
-								{users.map((user) => (
-									<TableRow key={user.id}>
-										<TableCell>{user.name}</TableCell>
-										<TableCell>{user.email}</TableCell>
-										<TableCell>{user.status}</TableCell>
-										<TableCell>{user.joinedAt}</TableCell>
+						{users && users.length > 0 ? (
+							<Table>
+								<TableHeader>
+									<TableRow>
+										<TableHead>Name</TableHead>
+										<TableHead>Email</TableHead>
+										<TableHead>Status</TableHead>
+										<TableHead>Joined</TableHead>
 									</TableRow>
-								))}
-							</TableBody>
-						</Table>
+								</TableHeader>
+								<TableBody>
+									{users.map((user) => (
+										<TableRow key={user.id}>
+											<TableCell>{user.activeUser.name}</TableCell>
+											<TableCell>{user.activeUser.email}</TableCell>
+											<TableCell>{user.status}</TableCell>
+											<TableCell>
+												{format(user.createdAt, 'MM/dd/yyyy HH:mm')}
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+						) : (
+							<p>No users found</p>
+						)}
 					</div>
 				</DialogContent>
 			</Dialog>
