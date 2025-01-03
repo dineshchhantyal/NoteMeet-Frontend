@@ -26,7 +26,7 @@ const tiers: PricingTier[] = [
 			'2 meetings (up to 60 minutes each)',
 			'Basic video recording and transcript generation',
 			'Limited cloud storage (2 GB)',
-			'Access to summary and action item generation for 3 meetings',
+			'Access to summary and action item generation for 2 meetings',
 			'Community support',
 		],
 	},

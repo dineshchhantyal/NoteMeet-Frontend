@@ -34,6 +34,8 @@ import { createSubscriptionPlan } from '@/actions/create-subscription';
 import { FormSuccess } from '@/components/form-success';
 import { FormError } from '@/components/form-error';
 import { toast } from 'sonner';
+import { Checkbox } from '@/components/ui/checkbox';
+import { useRouter } from 'next/navigation';
 
 interface CreateSubscriptionDialogProps {
 	open: boolean;
@@ -47,17 +49,28 @@ export function CreateSubscriptionDialog({
 	const [error, setError] = useState<string | undefined>('');
 	const [success, setSuccess] = useState<string | undefined>('');
 	const [isPending, startTransition] = useTransition();
+	const router = useRouter();
 
 	const form = useForm<z.infer<typeof SubscriptionPlanSchema>>({
 		resolver: zodResolver(SubscriptionPlanSchema),
 		defaultValues: {
 			name: '',
+			isActive: true,
 			tier: SubscriptionTier.FREE,
 			basePrice: 0,
 			currency: Currency.USD,
 			billingPeriods: BillingPeriod.MONTHLY,
+			meetingsAllowed: 1,
+			meetingDuration: 1,
+			storageLimit: 1,
+			// features: [],
+			description: '',
+			// trialDays: 0,
 		},
 	});
+
+	console.log('Form data:', form.getValues());
+	console.log('Form errors:', form.formState.errors);
 
 	const onSubmit = async (data: z.infer<typeof SubscriptionPlanSchema>) => {
 		console.log('Form data:', data);
@@ -66,18 +79,23 @@ export function CreateSubscriptionDialog({
 		startTransition(() => {
 			createSubscriptionPlan(data)
 				.then((data) => {
+					console.log('Response data:', data);
 					if (data?.error) {
 						setError(data.error);
 					}
 
 					if (data?.success) {
-						setSuccess(data.success);
 						form.reset();
 						onOpenChange(false);
 						toast.success('Subscription plan created successfully');
+
+						router.refresh();
 					}
 				})
-				.catch((e) => setError(e.message));
+				.catch((e) => {
+					console.error('Error:', e);
+					setError(e.message);
+				});
 		});
 	};
 
@@ -108,36 +126,31 @@ export function CreateSubscriptionDialog({
 										</FormItem>
 									)}
 								/>
-								<div className="space-y-2">
-									<FormField
-										control={form.control}
-										name="tier"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel htmlFor="tier">Plan Type</FormLabel>
-												<FormControl>
-													<Select
-														disabled={isPending}
-														onValueChange={field.onChange}
-														defaultValue={field.value}
-													>
-														<SelectTrigger>
-															<SelectValue placeholder="Select plan" />
-														</SelectTrigger>
-														<SelectContent>
-															{Object.values(SubscriptionTier).map((tier) => (
-																<SelectItem key={tier} value={tier}>
-																	{tier}
-																</SelectItem>
-															))}
-														</SelectContent>
-													</Select>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-								</div>
+
+								<FormField
+									control={form.control}
+									name="tier"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel htmlFor="tier">Plan Type</FormLabel>
+											<FormControl>
+												<Select disabled={isPending} {...field}>
+													<SelectTrigger>
+														<SelectValue placeholder="Select plan" />
+													</SelectTrigger>
+													<SelectContent>
+														{Object.values(SubscriptionTier).map((tier) => (
+															<SelectItem key={tier} value={tier}>
+																{tier}
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 							</div>
 
 							<div className="grid grid-cols-2 gap-4">
@@ -154,40 +167,41 @@ export function CreateSubscriptionDialog({
 													step="0.01"
 													placeholder="0.00"
 													{...field}
+													value={field.value}
+													onChange={(e) =>
+														field.onChange(
+															e.target.value ? Number(e.target.value) : '',
+														)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
 									)}
 								/>
-								<div className="space-y-2">
-									<FormField
-										control={form.control}
-										name="currency"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel htmlFor="currency">Currency</FormLabel>
-												<FormControl>
-													<Select
-														disabled={isPending}
-														onValueChange={field.onChange}
-														defaultValue={field.value}
-													>
-														<SelectTrigger>
-															<SelectValue placeholder="Select currency" />
-														</SelectTrigger>
-														<SelectContent>
-															<SelectItem value="USD">USD</SelectItem>
-															<SelectItem value="EUR">EUR</SelectItem>
-															<SelectItem value="GBP">GBP</SelectItem>
-														</SelectContent>
-													</Select>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-								</div>
+
+								<FormField
+									control={form.control}
+									name="currency"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel htmlFor="currency">Currency</FormLabel>
+											<FormControl>
+												<Select disabled={isPending} {...field}>
+													<SelectTrigger>
+														<SelectValue placeholder="Select currency" />
+													</SelectTrigger>
+													<SelectContent>
+														<SelectItem value="USD">USD</SelectItem>
+														<SelectItem value="EUR">EUR</SelectItem>
+														<SelectItem value="GBP">GBP</SelectItem>
+													</SelectContent>
+												</Select>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 							</div>
 
 							<div className="grid grid-cols-2 gap-4">
@@ -200,11 +214,7 @@ export function CreateSubscriptionDialog({
 												Billing Frequency
 											</FormLabel>
 											<FormControl>
-												<Select
-													disabled={isPending}
-													onValueChange={field.onChange}
-													defaultValue={field.value}
-												>
+												<Select disabled={isPending} {...field}>
 													<SelectTrigger>
 														<SelectValue placeholder="Select frequency" />
 													</SelectTrigger>
@@ -221,36 +231,7 @@ export function CreateSubscriptionDialog({
 										</FormItem>
 									)}
 								/>
-								<FormField
-									control={form.control}
-									name="billingPeriods"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel htmlFor="billingPeriods">
-												Billing Cycle
-											</FormLabel>
-											<FormControl>
-												<Select
-													disabled={isPending}
-													onValueChange={field.onChange}
-													defaultValue={field.value}
-												>
-													<SelectTrigger>
-														<SelectValue placeholder="Select cycle" />
-													</SelectTrigger>
-													<SelectContent>
-														<SelectItem value="monthly">Monthly</SelectItem>
-														<SelectItem value="yearly">Yearly</SelectItem>
-													</SelectContent>
-												</Select>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
 
-							<div className="grid grid-cols-2 gap-4">
 								<FormField
 									control={form.control}
 									name="meetingsAllowed"
@@ -264,16 +245,22 @@ export function CreateSubscriptionDialog({
 													id="meetingsAllowed"
 													type="number"
 													placeholder="e.g., 100"
-													onChange={(e) =>
-														field.onChange(Number(e.target.value))
-													}
+													{...field}
 													value={field.value}
+													onChange={(e) =>
+														field.onChange(
+															e.target.value ? Number(e.target.value) : '',
+														)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
 									)}
 								/>
+							</div>
+
+							<div className="grid grid-cols-2 gap-4">
 								<FormField
 									control={form.control}
 									name="meetingDuration"
@@ -287,19 +274,20 @@ export function CreateSubscriptionDialog({
 													id="meetingDuration"
 													type="number"
 													placeholder="e.g., 60"
-													onChange={(e) =>
-														field.onChange(Number(e.target.value))
-													}
+													{...field}
 													value={field.value}
+													onChange={(e) =>
+														field.onChange(
+															e.target.value ? Number(e.target.value) : '',
+														)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
 									)}
 								/>
-							</div>
 
-							<div className="space-y-2">
 								<FormField
 									control={form.control}
 									name="storageLimit"
@@ -313,10 +301,13 @@ export function CreateSubscriptionDialog({
 													id="storageLimit"
 													type="number"
 													placeholder="e.g., 100"
-													onChange={(e) =>
-														field.onChange(Number(e.target.value))
-													}
+													{...field}
 													value={field.value}
+													onChange={(e) =>
+														field.onChange(
+															e.target.value ? Number(e.target.value) : '',
+														)
+													}
 												/>
 											</FormControl>
 											<FormMessage />
@@ -325,28 +316,47 @@ export function CreateSubscriptionDialog({
 								/>
 							</div>
 
-							<div className="space-y-2">
-								<FormField
-									control={form.control}
-									name="description"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel htmlFor="description">Description</FormLabel>
-											<FormControl>
-												<Textarea
-													id="description"
-													placeholder="Enter plan description"
-													className="resize-none"
-													rows={3}
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
+							<FormField
+								control={form.control}
+								name="description"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel htmlFor="description">Description</FormLabel>
+										<FormControl>
+											<Textarea
+												id="description"
+												placeholder="Enter plan description"
+												className="resize-none"
+												rows={3}
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 						</div>
+						<FormField
+							control={form.control}
+							name="isActive"
+							render={({ field }) => (
+								<FormItem className="flex flex-row items-center space-x-2">
+									<FormControl>
+										<Checkbox
+											checked={field.value}
+											onCheckedChange={field.onChange}
+											className="mt-2"
+										/>
+									</FormControl>
+									<FormLabel htmlFor="isActive" className="m-0 p-0">
+										Active Subscription
+									</FormLabel>
+
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
 						<DialogFooter>
 							<FormError message={error} />
 							<FormSuccess message={success} />
