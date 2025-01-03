@@ -19,11 +19,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import {
-	Subscription,
-	SubscriptionPlan,
-	SubscriptionTier,
-} from '@prisma/client';
+import { SubscriptionPlan, SubscriptionTier } from '@prisma/client';
 
 interface EditSubscriptionDialogProps {
 	subscriptionPlan: Partial<SubscriptionPlan> | null;

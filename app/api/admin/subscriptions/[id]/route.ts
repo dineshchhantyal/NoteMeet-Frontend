@@ -8,16 +8,16 @@ export async function GET(
 	{ params }: { params: { id: string } },
 ) {
 	await authorizeAdmin();
-	const subscription = await db.subscription.findUnique({
+	const subscriptionPlan = await db.subscriptionPlan.findUnique({
 		where: { id: params.id },
 	});
-	if (!subscription) {
+	if (!subscriptionPlan) {
 		return NextResponse.json(
-			{ error: 'Subscription not found' },
+			{ error: 'Subscription plan not found' },
 			{ status: 404 },
 		);
 	}
-	return NextResponse.json(subscription);
+	return NextResponse.json(subscriptionPlan);
 }
 
 export async function DELETE(
@@ -25,10 +25,10 @@ export async function DELETE(
 	{ params }: { params: { id: string } },
 ) {
 	await authorizeAdmin();
-	const subscription = await db.subscription.delete({
+	const subscriptionPlan = await db.subscriptionPlan.delete({
 		where: { id: params.id },
 	});
-	return NextResponse.json(subscription);
+	return NextResponse.json(subscriptionPlan);
 }
 
 export async function PUT(
@@ -37,11 +37,11 @@ export async function PUT(
 ) {
 	await authorizeAdmin();
 	const body = await req.json();
-	const subscription = await db.subscription.update({
+	const subscriptionPlan = await db.subscriptionPlan.update({
 		where: { id: params.id },
 		data: body,
 	});
-	return NextResponse.json(subscription);
+	return NextResponse.json(subscriptionPlan);
 }
 
 async function authorizeAdmin() {

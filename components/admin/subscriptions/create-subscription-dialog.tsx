@@ -18,15 +18,10 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { SubscriptionPlan, SubscriptionTier } from '@prisma/client';
-import {
-	SubscriptionCurrency,
-	SubscriptionBillingCycle,
-	SubscriptionBillingFrequency,
-	SubscriptionSchema,
-} from '@/schemas/subscriptions';
+import { BillingPeriod, Currency, SubscriptionTier } from '@prisma/client';
+import { SubscriptionPlanSchema } from '@/schemas/subscriptions';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, useForm, FormProvider } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
 	FormControl,
@@ -35,7 +30,7 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
-import { createSubscription } from '@/actions/create-subscription';
+import { createSubscriptionPlan } from '@/actions/create-subscription';
 import { FormSuccess } from '@/components/form-success';
 import { FormError } from '@/components/form-error';
 import { toast } from 'sonner';
@@ -52,25 +47,24 @@ export function CreateSubscriptionDialog({
 	const [error, setError] = useState<string | undefined>('');
 	const [success, setSuccess] = useState<string | undefined>('');
 	const [isPending, startTransition] = useTransition();
-	console.log(SubscriptionBillingCycle);
 
-	const form = useForm<z.infer<typeof SubscriptionSchema>>({
-		resolver: zodResolver(SubscriptionSchema),
+	const form = useForm<z.infer<typeof SubscriptionPlanSchema>>({
+		resolver: zodResolver(SubscriptionPlanSchema),
 		defaultValues: {
 			name: '',
-			cost: 0,
-			currency: SubscriptionCurrency.USD,
-			billingCycle: SubscriptionBillingCycle.MONTHLY,
-			billingFrequency: SubscriptionBillingFrequency.RECURRING,
+			tier: SubscriptionTier.FREE,
+			basePrice: 0,
+			currency: Currency.USD,
+			billingPeriods: BillingPeriod.MONTHLY,
 		},
 	});
 
-	const onSubmit = async (data: z.infer<typeof SubscriptionSchema>) => {
+	const onSubmit = async (data: z.infer<typeof SubscriptionPlanSchema>) => {
 		console.log('Form data:', data);
 		setError('');
 		setSuccess('');
 		startTransition(() => {
-			createSubscription(data)
+			createSubscriptionPlan(data)
 				.then((data) => {
 					if (data?.error) {
 						setError(data.error);
@@ -117,10 +111,10 @@ export function CreateSubscriptionDialog({
 								<div className="space-y-2">
 									<FormField
 										control={form.control}
-										name="plan"
+										name="tier"
 										render={({ field }) => (
 											<FormItem>
-												<FormLabel htmlFor="plan">Plan Type</FormLabel>
+												<FormLabel htmlFor="tier">Plan Type</FormLabel>
 												<FormControl>
 													<Select
 														disabled={isPending}
@@ -149,13 +143,13 @@ export function CreateSubscriptionDialog({
 							<div className="grid grid-cols-2 gap-4">
 								<FormField
 									control={form.control}
-									name="cost"
+									name="basePrice"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel htmlFor="cost">Cost</FormLabel>
+											<FormLabel htmlFor="basePrice">Cost</FormLabel>
 											<FormControl>
 												<Input
-													id="cost"
+													id="basePrice"
 													type="number"
 													step="0.01"
 													placeholder="0.00"
@@ -199,10 +193,10 @@ export function CreateSubscriptionDialog({
 							<div className="grid grid-cols-2 gap-4">
 								<FormField
 									control={form.control}
-									name="billingFrequency"
+									name="billingPeriods"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel htmlFor="billingFrequency">
+											<FormLabel htmlFor="billingPeriods">
 												Billing Frequency
 											</FormLabel>
 											<FormControl>
@@ -215,13 +209,11 @@ export function CreateSubscriptionDialog({
 														<SelectValue placeholder="Select frequency" />
 													</SelectTrigger>
 													<SelectContent>
-														{Object.values(SubscriptionBillingFrequency).map(
-															(frequency) => (
-																<SelectItem key={frequency} value={frequency}>
-																	{frequency}
-																</SelectItem>
-															),
-														)}
+														{Object.values(BillingPeriod).map((period) => (
+															<SelectItem key={period} value={period}>
+																{period}
+															</SelectItem>
+														))}
 													</SelectContent>
 												</Select>
 											</FormControl>
@@ -231,10 +223,10 @@ export function CreateSubscriptionDialog({
 								/>
 								<FormField
 									control={form.control}
-									name="billingCycle"
+									name="billingPeriods"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel htmlFor="billingCycle">
+											<FormLabel htmlFor="billingPeriods">
 												Billing Cycle
 											</FormLabel>
 											<FormControl>
@@ -310,15 +302,15 @@ export function CreateSubscriptionDialog({
 							<div className="space-y-2">
 								<FormField
 									control={form.control}
-									name="cloudStorage"
+									name="storageLimit"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel htmlFor="cloudStorage">
+											<FormLabel htmlFor="storageLimit">
 												Cloud Storage (GB)
 											</FormLabel>
 											<FormControl>
 												<Input
-													id="cloudStorage"
+													id="storageLimit"
 													type="number"
 													placeholder="e.g., 100"
 													onChange={(e) =>

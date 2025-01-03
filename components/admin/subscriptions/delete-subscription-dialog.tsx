@@ -12,14 +12,16 @@ import {
 	AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
+import { SubscriptionPlan } from '@prisma/client';
+
 interface DeleteSubscriptionDialogProps {
-	subscription: any;
+	subscriptionPlan: Partial<SubscriptionPlan>;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 }
 
 export function DeleteSubscriptionDialog({
-	subscription,
+	subscriptionPlan,
 	open,
 	onOpenChange,
 }: DeleteSubscriptionDialogProps) {
@@ -32,7 +34,7 @@ export function DeleteSubscriptionDialog({
 		onOpenChange(false);
 	};
 
-	if (!subscription) return null;
+	if (!subscriptionPlan) return null;
 
 	return (
 		<AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -40,9 +42,9 @@ export function DeleteSubscriptionDialog({
 				<AlertDialogHeader>
 					<AlertDialogTitle>Delete Subscription Plan</AlertDialogTitle>
 					<AlertDialogDescription>
-						Are you sure you want to delete the "{subscription.name}" plan? This
-						action cannot be undone. All users on this plan will need to be
-						migrated to a different plan.
+						Are you sure you want to delete the &quot;{subscriptionPlan.name}
+						&quot; plan? This action cannot be undone. All users on this plan
+						will need to be migrated to a different plan.
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>

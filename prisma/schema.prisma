@@ -64,18 +64,15 @@ model User {
   twoFactorConfirmation TwoFactorConfirmation?
 
   meetings Meeting[]
-
+  // Storage
+  storage UserStorage? @relation(fields: [storageId], references: [userId])
+  storageId String? @unique
   // subscription
   activeSubscriptions Subscription[] @relation("ActiveUserSubscription")
-  subscriptionHistory Subscription[] @relation("UserSubscriptionHistory")
-  activeSubscriptionId  String?                @map("active_subscription_id")
-
-  userSubscriptionId  String?
     
   @@map("users")
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
@@ -236,6 +233,14 @@ enum SubscriptionTier {
   CUSTOM
 }
 
+model UserStorage {
+  userId String @unique
+  usedStorage Int
+  user User? @relation()
+
+  @@map("user_storage")
+}
+
 model SubscriptionPlan {
   id          String           @id @default(cuid())
   name        String
@@ -252,10 +257,9 @@ model SubscriptionPlan {
   meetingsAllowed Int
   meetingDuration  Int // in minutes
   storageLimit     Int // in GB
-  maxParticipants  Int
 
   // Billing settings
-  billingPeriods BillingPeriod[]
+  billingPeriods BillingPeriod
   trialDays      Int             @default(0)
 
   // Timestamps
@@ -293,14 +297,13 @@ model Subscription {
   // Payment tracking
   lastBillingDate DateTime?
   nextBillingDate DateTime?
-  canceledAt      DateTime?
+  autoCanceledAt DateTime?
 
   // Custom limits (can override plan limits)
   customLimits Json?
 
   // Relations
   activeUser  User?   @relation("ActiveUserSubscription", fields: [userId], references: [id])
-  user        User    @relation("UserSubscriptionHistory", fields: [userId], references: [id], onDelete: Cascade, map: "user_subscription_history_fk")
   plan       SubscriptionPlan @relation(fields: [planId], references: [id])
   invoices   Invoice[]
 
@@ -311,7 +314,6 @@ model Subscription {
   @@unique([userId, status]) // Ensures only one active subscription per user
   @@index([status])
   @@index([nextBillingDate])
-  @@map("subscriptions")
 }
 
 model Invoice {

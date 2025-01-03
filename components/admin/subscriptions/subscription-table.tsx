@@ -24,7 +24,6 @@ import { EditSubscriptionDialog } from '@/components/admin/subscriptions/edit-su
 import { ViewUsersDialog } from '@/components/admin/subscriptions/view-users-dialog';
 import { DeleteSubscriptionDialog } from '@/components/admin/subscriptions/delete-subscription-dialog';
 import { format } from 'date-fns';
-import { Subscription } from '@prisma/client';
 import { SubscriptionPlan } from '@prisma/client';
 
 // const mockSubscriptions: Partial<Subscription>[] = [
@@ -43,16 +42,16 @@ import { SubscriptionPlan } from '@prisma/client';
 //   },
 // ];
 
-export function SubscriptionTable() {
-	const [subscriptions, setSubscriptions] = useState<Partial<Subscription>[]>(
-		[],
-	);
+export function SubscriptionPlanTable() {
+	const [subscriptions, setSubscriptions] = useState<
+		Partial<SubscriptionPlan>[]
+	>([]);
 	const [editingSubscription, setEditingSubscription] =
-		useState<Partial<Subscription> | null>(null);
+		useState<Partial<SubscriptionPlan> | null>(null);
 	const [viewingUsers, setViewingUsers] =
-		useState<Partial<Subscription> | null>(null);
+		useState<Partial<SubscriptionPlan> | null>(null);
 	const [deletingSubscription, setDeletingSubscription] =
-		useState<Partial<Subscription> | null>(null);
+		useState<Partial<SubscriptionPlan> | null>(null);
 
 	useEffect(() => {
 		const fetchSubscriptions = async () => {
@@ -80,23 +79,24 @@ export function SubscriptionTable() {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{subscriptions.map((subscription) => (
-							<TableRow key={subscription.id}>
+						{subscriptions.map((subscriptionPlan) => (
+							<TableRow key={subscriptionPlan.id}>
 								<TableCell className="font-medium">
-									{subscription.name}
+									{subscriptionPlan.name}
 								</TableCell>
 								<TableCell>
-									<Badge variant="outline">{subscription.plan}</Badge>
+									<Badge variant="outline">{subscriptionPlan.tier}</Badge>
 								</TableCell>
 								<TableCell>
-									{subscription.cost} {subscription.currency}
+									{subscriptionPlan.basePrice?.toString()}{' '}
+									{subscriptionPlan.currency}
 								</TableCell>
-								<TableCell>{`${subscription.billingFrequency} ${subscription.billingCycle}`}</TableCell>
-								<TableCell>{`${subscription.meetingsAllowed} meetings / ${subscription.meetingDuration}min`}</TableCell>
-								<TableCell>{subscription.cloudStorage}GB</TableCell>
+								<TableCell>{`${subscriptionPlan.billingPeriods?.[0]} ${subscriptionPlan.billingPeriods?.[1]}`}</TableCell>
+								<TableCell>{`${subscriptionPlan.meetingsAllowed} meetings / ${subscriptionPlan.meetingDuration}min`}</TableCell>
+								<TableCell>{subscriptionPlan.storageLimit}GB</TableCell>
 								<TableCell>
-									{subscription.startDate &&
-										format(subscription.startDate, 'PP')}
+									{subscriptionPlan.createdAt &&
+										format(subscriptionPlan.createdAt, 'PP')}
 								</TableCell>
 								<TableCell>
 									<DropdownMenu>
@@ -109,19 +109,21 @@ export function SubscriptionTable() {
 											<DropdownMenuLabel>Actions</DropdownMenuLabel>
 											<DropdownMenuSeparator />
 											<DropdownMenuItem
-												onClick={() => setEditingSubscription(subscription)}
+												onClick={() => setEditingSubscription(subscriptionPlan)}
 											>
 												<Pencil className="mr-2 h-4 w-4" />
 												Edit
 											</DropdownMenuItem>
 											<DropdownMenuItem
-												onClick={() => setViewingUsers(subscription)}
+												onClick={() => setViewingUsers(subscriptionPlan)}
 											>
 												<Users className="mr-2 h-4 w-4" />
 												View Users
 											</DropdownMenuItem>
 											<DropdownMenuItem
-												onClick={() => setDeletingSubscription(subscription)}
+												onClick={() =>
+													setDeletingSubscription(subscriptionPlan)
+												}
 												className="text-destructive"
 											>
 												<Trash2 className="mr-2 h-4 w-4" />
@@ -137,22 +139,25 @@ export function SubscriptionTable() {
 			</div>
 
 			<EditSubscriptionDialog
-				subscription={editingSubscription}
+				subscriptionPlan={editingSubscription}
 				open={!!editingSubscription}
 				onOpenChange={() => setEditingSubscription(null)}
 			/>
+			{viewingUsers && (
+				<ViewUsersDialog
+					subscriptionPlan={viewingUsers}
+					open={!!viewingUsers}
+					onOpenChange={() => setViewingUsers(null)}
+				/>
+			)}
 
-			<ViewUsersDialog
-				subscription={viewingUsers}
-				open={!!viewingUsers}
-				onOpenChange={() => setViewingUsers(null)}
-			/>
-
-			<DeleteSubscriptionDialog
-				subscription={deletingSubscription}
-				open={!!deletingSubscription}
-				onOpenChange={() => setDeletingSubscription(null)}
-			/>
+			{deletingSubscription && (
+				<DeleteSubscriptionDialog
+					subscriptionPlan={deletingSubscription}
+					open={!!deletingSubscription}
+					onOpenChange={() => setDeletingSubscription(null)}
+				/>
+			)}
 		</>
 	);
 }

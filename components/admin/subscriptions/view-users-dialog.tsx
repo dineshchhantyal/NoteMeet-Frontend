@@ -14,9 +14,10 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import { SubscriptionPlan } from '@prisma/client';
 
 interface ViewUsersDialogProps {
-	subscription: any;
+	subscriptionPlan: Partial<SubscriptionPlan>;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 }
@@ -33,17 +34,17 @@ const mockUsers = [
 ];
 
 export function ViewUsersDialog({
-	subscription,
+	subscriptionPlan,
 	open,
 	onOpenChange,
 }: ViewUsersDialogProps) {
-	if (!subscription) return null;
+	if (!subscriptionPlan) return null;
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent className="max-w-3xl">
 				<DialogHeader>
-					<DialogTitle>Users on {subscription.name}</DialogTitle>
+					<DialogTitle>Users on {subscriptionPlan.name}</DialogTitle>
 				</DialogHeader>
 				<div className="mt-4">
 					<Table>

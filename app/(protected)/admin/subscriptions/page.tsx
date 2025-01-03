@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { SubscriptionTable } from '@/components/admin/subscriptions/subscription-table';
+import { SubscriptionPlanTable } from '@/components/admin/subscriptions/subscription-table';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { CreateSubscriptionDialog } from '@/components/admin/subscriptions/create-subscription-dialog';
@@ -26,7 +26,7 @@ export default function SubscriptionsPage() {
 			</div>
 
 			<SubscriptionStats />
-			<SubscriptionTable />
+			<SubscriptionPlanTable />
 			<CreateSubscriptionDialog
 				open={isCreateDialogOpen}
 				onOpenChange={setIsCreateDialogOpen}

@@ -3,6 +3,7 @@ import { currentUser } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { UserRole } from '@prisma/client';
 
+// Function to authorize an admin
 async function authorizeAdmin() {
 	const user = await currentUser();
 	if (!user) {
@@ -13,22 +14,27 @@ async function authorizeAdmin() {
 	}
 }
 
+// API route to get users by subscription plan
 export async function GET(
 	req: NextRequest,
-	{ params }: { params: { subscriptionId: string } },
+	{ params }: { params: { id: string } },
 ) {
 	try {
+		// Authorize admin access
 		await authorizeAdmin();
-		const subscriptionId = params.subscriptionId;
-		let subscription;
+
+		const subscriptionPlanId = params.id;
+
+		// Check if the subscription plan exists
+		let subscriptionPlan;
 		try {
-			subscription = await db.subscription.findUnique({
-				where: { id: subscriptionId },
+			subscriptionPlan = await db.subscriptionPlan.findUnique({
+				where: { id: subscriptionPlanId },
 			});
 
-			if (!subscription) {
+			if (!subscriptionPlan) {
 				return NextResponse.json(
-					{ error: 'Subscription not found' },
+					{ error: 'Subscription plan not found' },
 					{ status: 404 },
 				);
 			}
@@ -40,10 +46,24 @@ export async function GET(
 			);
 		}
 
-		const users = await db.user.findMany({
-			where: { subscriptionId: subscriptionId },
+		// Fetch users associated with the subscription plan
+		const users = await db.subscription.findMany({
+			where: {
+				planId: subscriptionPlanId,
+			},
+			select: {
+				id: true,
+				activeUser: {
+					select: {
+						name: true,
+						email: true,
+					},
+				},
+				planId: true,
+			},
 		});
 
+		// Return the list of users
 		return NextResponse.json(users);
 	} catch (error) {
 		console.error('Error in GET subscriptions/users/[id]:', error);

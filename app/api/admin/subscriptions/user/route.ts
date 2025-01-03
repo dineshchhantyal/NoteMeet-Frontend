@@ -1,29 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@/lib/auth';
-import { db } from '@/lib/db';
 import { UserRole } from '@prisma/client';
+import UserSubscriptionService from '@/actions/user-subscription-plan';
 
 async function authorizeAdmin() {
 	const user = await currentUser();
 	if (!user) {
-		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+		throw new Error('Unauthorized');
 	}
 	if (user.role !== UserRole.ADMIN) {
-		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+		throw new Error('Unauthorized');
 	}
+
+	return user;
 }
 
 export async function POST(req: NextRequest) {
-	await authorizeAdmin();
+	const user = await authorizeAdmin();
 	const body = await req.json();
 
-	const subscription = await db.user.update({
-		where: { id: body.userId },
-		data: {
-			subscriptionId: body.subscriptionId,
-			status: body.status,
-		},
-	});
+	if (!body.userId || !body.subscriptionPlanId) {
+		throw new Error('User ID and subscription plan ID are required');
+	}
 
-	return NextResponse.json(subscription);
+	const userSubscriptionService = new UserSubscriptionService(user);
+
+	await userSubscriptionService.userSubscribeToPlan(
+		body.userId,
+		body.subscriptionPlanId,
+	);
+
+	return NextResponse.json({ message: 'Subscription updated' });
 }

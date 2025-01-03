@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { currentUser } from '@/lib/auth';
+import UserSubscriptionService from '@/actions/user-subscription-plan';
 
 export async function GET() {
 	const user = await currentUser();
@@ -37,27 +38,20 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-	const user = await currentUser();
-	if (!user) {
-		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+	const { subscriptionId } = await req.json();
+	// Fetch the current user
+	const loggedInUser = await currentUser();
+
+	if (!loggedInUser || !loggedInUser.id) {
+		throw new Error('User not found or not authenticated');
 	}
 
-	const body = await req.json();
+	const userSubscriptionService = new UserSubscriptionService(loggedInUser);
 
-	if (body && body.subscriptionId) {
-		const subscription = await db.subscription.findUnique({
-			where: { id: body.subscriptionId },
-		});
-
-		// payment must be made before updating the subscription
-		if (subscription) {
-			user.subscriptionId = subscription.id;
-			await db.user.update({
-				where: { id: user.id },
-				data: { subscriptionId: subscription.id },
-			});
-		}
-	}
+	await userSubscriptionService.userSubscribeToPlan(
+		loggedInUser.id,
+		subscriptionId,
+	);
 
 	return NextResponse.json({ message: 'Subscription updated' });
 }
