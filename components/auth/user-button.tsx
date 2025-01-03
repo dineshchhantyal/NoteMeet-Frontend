@@ -31,18 +31,19 @@ export const UserButton = async () => {
 					<SettingsIcon className="h-4 w-4" />
 					<a href="/settings">Settings</a>
 				</DropdownMenuItem>
+
+				{user?.role === UserRole.ADMIN && (
+					<DropdownMenuItem className="animate-pulse">
+						<RiAdminLine className="h-4 w-4" />
+						<a href="/admin">Admin</a>
+					</DropdownMenuItem>
+				)}
 				<LogoutButton>
 					<DropdownMenuItem>
 						<ExitIcon className="h-4 w-4" />
 						Logout
 					</DropdownMenuItem>
 				</LogoutButton>
-				{user?.role === UserRole.ADMIN && (
-					<DropdownMenuItem>
-						<RiAdminLine className="h-4 w-4" />
-						<a href="/admin">Admin</a>
-					</DropdownMenuItem>
-				)}
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
