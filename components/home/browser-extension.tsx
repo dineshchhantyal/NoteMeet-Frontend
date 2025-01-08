@@ -4,7 +4,7 @@ import { Download } from 'lucide-react';
 
 export default function BrowserExtension() {
 	return (
-		<div className="container mx-auto px-4 py-16 text-white">
+		<div className="container mx-auto px-4 py-16 text-white bg-[#0a4a4e]">
 			<div className="grid md:grid-cols-2 gap-12 items-center">
 				<div>
 					<h1 className="text-3xl font-bold tracking-tight mb-6">
@@ -27,7 +27,7 @@ export default function BrowserExtension() {
 					</Button>
 					<p className="text-sm">Supports Chromium based browsers</p>
 				</div>
-				<div className="hidden md:block relative h-[400px]">
+				<div className="hidden md:block relative h-[400px] bg-gray-100 rounded-lg overflow-hidden">
 					<Image
 						src="/logo.png"
 						alt="Browser Extension Banner"

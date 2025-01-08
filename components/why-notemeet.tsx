@@ -22,7 +22,7 @@ const benefits = [
 	},
 ];
 
-export function WhyNoteMeet() {
+export function WhyNoteMeet2() {
 	return (
 		<section className="py-20 bg-[#F5F7FA]">
 			<div className="container mx-auto px-4">
@@ -44,6 +44,54 @@ export function WhyNoteMeet() {
 								<p>{benefit.description}</p>
 							</CardContent>
 						</Card>
+					))}
+				</div>
+			</div>
+		</section>
+	);
+}
+
+export function WhyNoteMeet() {
+	return (
+		<section id="benefits" className="bg-[#0a4a4e] py-20">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div className="text-center mb-16 animate__animated animate__fadeIn">
+					<h2 className="text-4xl font-bold text-white mb-4">
+						Why Choose NoteMeet?
+					</h2>
+					<p className="text-xl text-[#63d392]">
+						Transforming meetings into actionable insights
+					</p>
+				</div>
+
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+					{benefits.map((benefit, index) => (
+						<div
+							key={index}
+							className="bg-white/10 backdrop-blur-lg p-8 rounded-xl border border-[#63d392]/20 hover:border-[#63d392] transition-all duration-300 animate__animated animate__fadeInUp"
+							style={{ animationDelay: `${index * 0.2}s` }}
+						>
+							<div className="flex items-center justify-center mb-6">
+								<div className="h-16 w-16 bg-[#63d392] rounded-full flex items-center justify-center">
+									<benefit.icon className="w-8 h-8 text-[#0a4a4e]" />
+								</div>
+							</div>
+							<h3 className="text-2xl font-bold text-white text-center mb-4">
+								{benefit.title}
+							</h3>
+							<p className="text-center text-gray-300 mb-4">
+								{benefit.description}
+							</p>
+							<div className="flex justify-center">
+								<span className="text-[#63d392] text-lg font-bold">
+									{index === 0
+										? '50%'
+										: index === 1
+											? 'Real-time Collaboration'
+											: 'Multiple Integrations'}
+								</span>
+							</div>
+						</div>
 					))}
 				</div>
 			</div>

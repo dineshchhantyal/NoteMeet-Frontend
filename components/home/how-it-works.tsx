@@ -180,9 +180,10 @@ export const methods = [
 
 export function InteractiveHowItWorks() {
 	return (
-		<section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+		<section className="py-20 bg-white">
 			<div className="container mx-auto px-4">
-				<h2 className="text-center text-xl font-bold mb-12">How It Works</h2>
+				<h2 className="text-center text-3xl font-bold mb-12">How It Works</h2>
+
 				<Tabs defaultValue="browser-extension">
 					<TabsList className="grid w-full grid-cols-2">
 						<TabsTrigger value="browser-extension">
@@ -247,7 +248,7 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 								cx={x}
 								cy={y}
 								r="40"
-								fill={colors.emerald}
+								fill={'#63d392'}
 								initial={{ scale: 1 }}
 								whileHover={{ scale: 1.1, fill: colors.deepBlue }}
 							/>
@@ -306,32 +307,31 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: 20 }}
 						transition={{ duration: 0.2 }}
-						className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-lg max-w-sm w-full text-center"
+						className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#63d392] p-6 rounded-lg shadow-lg max-w-sm w-full text-center"
 						style={{
-							backgroundImage:
-								'linear-gradient(135deg, #f0f9ff 0%, #e6f3ff 100%)',
+							background: '#0a4a4e',
 							border: '1px solid #cce3ff',
 						}}
 					>
-						<h3 className="text-2xl font-semibold mb-2 text-primary">
+						<h3 className="text-2xl font-semibold mb-2 text-[#63d392]">
 							{steps[hoveredStep].title}
 						</h3>
-						<p className="text-gray-600 mb-4">{steps[hoveredStep].content}</p>
+						<p className="text-white mb-4">{steps[hoveredStep].content}</p>
 						<ul className="text-left">
 							{steps[hoveredStep].benefits.map((benefit, index) => (
 								<li key={index} className="flex items-start mb-2">
 									<svg
-										className="w-4 h-4 text-green-500 mt-1 mr-2"
+										className="w-4 h-4 mt-1 mr-2"
 										fill="none"
 										strokeLinecap="round"
 										strokeLinejoin="round"
 										strokeWidth="2"
 										viewBox="0 0 24 24"
-										stroke="currentColor"
+										stroke="#63d392"
 									>
 										<path d="M5 13l4 4L19 7"></path>
 									</svg>
-									<span className="text-sm text-gray-700">{benefit}</span>
+									<span className="text-sm text-gray-300">{benefit}</span>
 								</li>
 							))}
 						</ul>

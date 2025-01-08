@@ -12,11 +12,11 @@ import { IntegrationsHighlight } from '@/components/integrations-highlight';
 
 export default function HomePage() {
 	return (
-		<div className="flex flex-col min-h-screen bg-primary">
+		<div className="flex flex-col min-h-screen">
 			<main className="flex-grow">
 				<HeroSection />
-				<WhyNoteMeet />
 				<KeyFeatures />
+				<WhyNoteMeet />
 				<InteractiveHowItWorks />
 				<BrowserExtension />
 				<BrowserSupport />
