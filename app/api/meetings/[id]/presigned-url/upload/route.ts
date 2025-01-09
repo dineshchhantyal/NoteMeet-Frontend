@@ -31,6 +31,13 @@ export async function GET(req: NextRequest) {
 		const remainingLimits =
 			await userSubscriptionService.getUserRemainingLimits(user.id);
 
+		if (remainingLimits.meetingsAllowed <= 0) {
+			return Response.json(
+				{ message: 'You have reached your meeting limit' },
+				{ status: 403 },
+			);
+		}
+
 		if (remainingLimits.storageLimit <= 0) {
 			return Response.json(
 				{ message: 'You have reached your storage limit' },
