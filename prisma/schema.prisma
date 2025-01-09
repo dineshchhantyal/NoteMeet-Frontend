@@ -125,7 +125,8 @@ model Meeting {
   participants    Participant[] // Participants can be deleted without affecting the Meeting
   awsSchedulerArn String? // ARN of the AWS Scheduler job
   awsJobId        String? // Unique ID of the AWS Scheduler job
-  transcript      String?
+  transcriptUrl   String? // This is remote URL to the transcript file 
+  transcriptKey   String? // This is the key to the transcript file in the S3 bucket
   videoKey        String?
   summary         Json?
   createdBy       User          @relation(fields: [userId], references: [id])
