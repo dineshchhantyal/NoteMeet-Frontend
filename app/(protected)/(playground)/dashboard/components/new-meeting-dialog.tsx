@@ -173,7 +173,7 @@ export function NewMeetingDialog({ onMeetingCreated }: NewMeetingDialogProps) {
 
 						<div className="grid gap-2">
 							<Label htmlFor="provider">Meeting Provider</Label>
-							<Select name="provider" required>
+							<Select name="provider">
 								<SelectTrigger>
 									<SelectValue placeholder="Select meeting provider" />
 								</SelectTrigger>
@@ -193,7 +193,6 @@ export function NewMeetingDialog({ onMeetingCreated }: NewMeetingDialogProps) {
 								id="meetingLink"
 								name="meetingLink"
 								placeholder="Paste your meeting link here"
-								required
 							/>
 						</div>
 
