@@ -28,14 +28,14 @@ import {
  * @method renewSubscription - Renew a subscription
  */
 class UserSubscriptionService {
-	static earlyAccessPlanId = 'cm5gdkrv00000le8ly7x83j8v';
+	static earlyAccessPlanId = 'cm5oucr4l0000128d5xzw8qdh';
 	private loggedInUser: Partial<User>;
 
 	constructor(loggedInUser: Partial<User>) {
 		this.loggedInUser = loggedInUser;
 	}
 
-	async getUserSubscriptionPlan(userId: string): Promise<{
+	async getUserSubscriptionPlans(userId: string): Promise<{
 		subscriptions: (Subscription & { plan: SubscriptionPlan })[];
 		user: User;
 	}> {
@@ -78,12 +78,12 @@ class UserSubscriptionService {
 
 	async getUserLimits(userId: string) {
 		const user = await getUserById(userId);
-		const subscriptions = await this.getUserSubscriptionPlan(userId);
+		const subscriptions = await this.getUserSubscriptionPlans(userId);
 		return { user, subscriptions };
 	}
 
 	async getUserTotalLimits(userId: string) {
-		const { subscriptions } = await this.getUserSubscriptionPlan(userId);
+		const { subscriptions } = await this.getUserSubscriptionPlans(userId);
 
 		const limits = {
 			storageLimit: 0,
@@ -125,7 +125,7 @@ class UserSubscriptionService {
 	}
 
 	async userSubscribeToPlan(userId: string, planId: string) {
-		const subscriptions = await this.getUserSubscriptionPlan(userId);
+		const subscriptions = await this.getUserSubscriptionPlans(userId);
 
 		const isAlreadySubscribed = subscriptions.subscriptions.some(
 			(subscription) => subscription.planId === planId,
