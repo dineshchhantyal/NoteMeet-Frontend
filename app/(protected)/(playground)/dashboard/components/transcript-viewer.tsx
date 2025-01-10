@@ -63,8 +63,8 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 		return (
 			<Card>
 				<CardContent>
-					<p className="text-center text-muted-foreground py-8">
-						No transcript available.
+					<p className="text-center text-muted-foreground pt-5">
+						The transcript is still generating, it might take 2-3 minutes.
 					</p>
 				</CardContent>
 			</Card>
@@ -118,7 +118,7 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 											<span>{word.text}</span>
 										)}{' '}
 										<span className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-											{formatTime(word.start)}
+											{formatTime(word.start / 1000)}
 										</span>
 									</span>
 								))}

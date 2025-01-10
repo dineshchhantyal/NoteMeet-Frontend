@@ -157,7 +157,13 @@ export default function DashboardPage() {
 								<TranscriptViewer transcript={transcript ?? null} />
 							</TabsContent>
 							<TabsContent value="summary" className="mt-4">
-								<SummarySection summary={selectedMeeting?.summary} />
+								<SummarySection
+									summary={
+										selectedMeeting?.summary
+											? JSON.parse(selectedMeeting.summary as string)
+											: null
+									}
+								/>
 							</TabsContent>
 						</Tabs>
 					</main>
