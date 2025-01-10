@@ -1,5 +1,6 @@
 import {
 	DeleteObjectCommand,
+	GetObjectCommand,
 	PutObjectCommand,
 	S3Client,
 } from '@aws-sdk/client-s3';
@@ -93,6 +94,34 @@ export const uploadS3Object = async (
 	} catch (error) {
 		throw new Error(
 			`Failed to upload S3 object: ${error instanceof Error ? error.message : 'Unknown error'}`,
+		);
+	}
+};
+
+export const getObject = async (key: string, bucketType: S3BucketType) => {
+	if (!s3Configs[bucketType]) {
+		throw new Error(`Invalid bucket type: ${bucketType}`);
+	}
+
+	const config = s3Configs[bucketType];
+
+	try {
+		const client = new S3Client({
+			region: config.region,
+			credentials: config.credentials,
+		});
+
+		const command = new GetObjectCommand({
+			Bucket: config.bucketName,
+			Key: key,
+		});
+
+		const response = await client.send(command);
+
+		return response.Body?.transformToString();
+	} catch (error) {
+		throw new Error(
+			`Failed to get S3 object: ${error instanceof Error ? error.message : 'Unknown error'}`,
 		);
 	}
 };

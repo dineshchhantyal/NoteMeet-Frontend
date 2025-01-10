@@ -57,7 +57,7 @@ export async function GET() {
 					'Instant Meeting Session ' +
 					format(new Date(), 'MM/dd/yyyy/HH/mm/ss'),
 				description: 'This meeting is recorded on demand by browser extension.',
-				provider: 'Externsion',
+				provider: 'Extension',
 				videoKey: uid,
 			},
 		});

@@ -117,6 +117,18 @@ export async function DELETE(req: NextRequest) {
 				console.error('Error deleting thumbnail key:', error);
 			}
 		}
+
+		if (meeting.transcriptKey) {
+			try {
+				await deleteS3Object(
+					'recordings/transcript/' + meeting.transcriptKey,
+					S3BucketType.MAIN_BUCKET,
+				);
+			} catch (error) {
+				console.error('Error deleting transcript key:', error);
+			}
+		}
+
 		try {
 			await db.participant.deleteMany({
 				where: { meetingId: id! },
