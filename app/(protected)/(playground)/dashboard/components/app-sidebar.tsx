@@ -146,9 +146,9 @@ function getStatusColor(status: MeetingStatus) {
 			return 'bg-blue-500 text-white border-blue-600'; // In Progress
 		case MeetingStatus.Scheduled:
 			return 'bg-yellow-500 text-white border-yellow-600'; // Scheduled
-		case MeetingStatus.Transcoded:
+		case MeetingStatus.Transcoding:
 			return 'bg-purple-500 text-white border-purple-600'; // Transcoded
-		case MeetingStatus.Transcribed:
+		case MeetingStatus.Transcring:
 			return 'bg-teal-500 text-white border-teal-600'; // Transcribed
 		case MeetingStatus.Cancelled:
 			return 'bg-red-500 text-white border-red-600'; // Cancelled

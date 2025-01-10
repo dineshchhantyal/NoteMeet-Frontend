@@ -27,7 +27,7 @@ export default function DashboardPage() {
 	>([]);
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 
-	const [transcript, setTranscript] = useState<string | null>(null);
+	const [transcript, setTranscript] = useState<{ text?: string } | null>(null);
 
 	const [meetings, setMeetings] = useState<MeetingInterface[]>([]);
 	useEffect(() => {
@@ -75,7 +75,9 @@ export default function DashboardPage() {
 						`/api/meetings/${selectedMeeting.id}/transcript`,
 					);
 					const data = await response.json();
-					setTranscript(data.transcript);
+
+					if (data && data.transcript) console.log(JSON.parse(data.transcript));
+					setTranscript(JSON.parse(data.transcript));
 				} catch (error) {
 					console.error('Error fetching transcript:', error);
 				}
@@ -149,7 +151,7 @@ export default function DashboardPage() {
 								</TabsTrigger>
 							</TabsList>
 							<TabsContent value="transcript" className="mt-4">
-								<TranscriptViewer transcript={transcript ?? ''} />
+								<TranscriptViewer transcript={transcript?.text ?? ''} />
 							</TabsContent>
 							<TabsContent value="summary" className="mt-4">
 								<SummarySection summary={selectedMeeting?.summary} />

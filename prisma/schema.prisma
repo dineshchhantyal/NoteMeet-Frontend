@@ -121,7 +121,7 @@ model Meeting {
   provider        String
   meetingLink     String
   notification    Notification?
-  status          Int           @default(1) // Possible values: 1 - "Scheduled", 2 - "In Progress", 3 - "Transcoded", 4 - "Transcribed", 5 - "Completed", 6 -  "Cancelled"
+  status          Int           @default(1) // Possible values: 1 - "Scheduled", 2 - "In Progress", 3 - "Transcoding", 4 - "Transcring", 5 - "Completed", 6 -  "Cancelled"
   participants    Participant[] // Participants can be deleted without affecting the Meeting
   awsSchedulerArn String? // ARN of the AWS Scheduler job
   awsJobId        String? // Unique ID of the AWS Scheduler job
@@ -129,6 +129,7 @@ model Meeting {
   transcriptKey   String? // This is the key to the transcript file in the S3 bucket
   videoKey        String?
   summary         Json?
+
   createdBy       User          @relation(fields: [userId], references: [id])
   userId          String
   createdAt       DateTime      @default(now())

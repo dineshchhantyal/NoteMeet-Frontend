@@ -1,4 +1,3 @@
-import { generetePresigedGetUrl } from '@/lib/presigned-url';
 import { getObject, S3BucketType } from '@/lib/s3';
 import { NextRequest } from 'next/server';
 import { checkMeetingUserAuthorization } from '@/lib/meeting';

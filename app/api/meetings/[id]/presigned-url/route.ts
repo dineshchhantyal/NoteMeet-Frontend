@@ -25,7 +25,11 @@ export async function GET(req: NextRequest) {
 		}
 
 		const sources = [];
-		if (Number(meeting.status) >= 3) {
+		if (
+			Number(meeting.status) > 3 &&
+			meeting.status !== 6 &&
+			meeting.videoKey
+		) {
 			const mp4PresignedUrl = await generetePresigedGetUrl({
 				bucketType: S3BucketType.MAIN_BUCKET,
 				key: 'recordings/video/' + meeting.videoKey + '.mp4',

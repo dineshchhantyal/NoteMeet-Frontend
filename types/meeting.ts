@@ -24,8 +24,8 @@ export interface Meeting {
 export enum MeetingStatus {
 	Scheduled = 1,
 	InProgress = 2,
-	Transcoded = 3,
-	Transcribed = 4,
+	Transcoding = 3,
+	Transcring = 4,
 	Completed = 5,
 	Cancelled = 6,
 }
