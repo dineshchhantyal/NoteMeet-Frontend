@@ -27,6 +27,8 @@ export default function DashboardPage() {
 	>([]);
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 
+	const [transcript, setTranscript] = useState<string | null>(null);
+
 	const [meetings, setMeetings] = useState<MeetingInterface[]>([]);
 	useEffect(() => {
 		const fetchMeetings = async () => {
@@ -65,6 +67,22 @@ export default function DashboardPage() {
 
 			fetchVideoUrl();
 		} else setSources([]);
+
+		if (selectedMeeting && selectedMeeting.transcriptKey) {
+			const fetchTranscript = async () => {
+				try {
+					const response = await fetch(
+						`/api/meetings/${selectedMeeting.id}/transcript`,
+					);
+					const data = await response.json();
+					setTranscript(data.transcript);
+				} catch (error) {
+					console.error('Error fetching transcript:', error);
+				}
+			};
+
+			fetchTranscript();
+		}
 	}, [selectedMeeting]);
 
 	const onMeetingDelete = async (meetingId: string) => {
@@ -131,7 +149,7 @@ export default function DashboardPage() {
 								</TabsTrigger>
 							</TabsList>
 							<TabsContent value="transcript" className="mt-4">
-								<TranscriptViewer transcript={selectedMeeting?.transcript} />
+								<TranscriptViewer transcript={transcript ?? ''} />
 							</TabsContent>
 							<TabsContent value="summary" className="mt-4">
 								<SummarySection summary={selectedMeeting?.summary} />
