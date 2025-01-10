@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
 		} else {
 			const webmPresignedUrl = await generetePresigedGetUrl({
 				bucketType: S3BucketType.RAW_RECORDINGS_BUCKET,
-				key: meeting.videoKey + '.webm',
+				key: meeting.videoKey,
 				expiresIn: 60 * 60,
 				contentType: 'video/webm',
 			});
