@@ -14,6 +14,7 @@ import { NewMeetingDialog } from './components/new-meeting-dialog';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 import { MeetingStatus } from '@/types/meeting';
+import { VideoTranscriptResponse } from '@/types/video-transcript';
 
 export default function DashboardPage() {
 	const [selectedMeeting, setSelectedMeeting] =
@@ -27,7 +28,9 @@ export default function DashboardPage() {
 	>([]);
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 
-	const [transcript, setTranscript] = useState<{ text?: string } | null>(null);
+	const [transcript, setTranscript] = useState<VideoTranscriptResponse | null>(
+		null,
+	);
 
 	const [meetings, setMeetings] = useState<MeetingInterface[]>([]);
 	useEffect(() => {
@@ -151,7 +154,7 @@ export default function DashboardPage() {
 								</TabsTrigger>
 							</TabsList>
 							<TabsContent value="transcript" className="mt-4">
-								<TranscriptViewer transcript={transcript?.text ?? ''} />
+								<TranscriptViewer transcript={transcript ?? null} />
 							</TabsContent>
 							<TabsContent value="summary" className="mt-4">
 								<SummarySection summary={selectedMeeting?.summary} />

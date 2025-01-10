@@ -103,7 +103,7 @@ model TwoFactorToken {
   @@unique([email, token])
   @@map("two_factor_tokens")
 }
-
+ 
 model TwoFactorConfirmation {
   id     String @id @default(cuid())
   userId String @unique
