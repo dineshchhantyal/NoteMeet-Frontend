@@ -15,7 +15,7 @@ export default function SubscriptionsPage() {
 			<div className="flex justify-between items-center mb-8">
 				<div>
 					<h1 className="text-3xl font-bold tracking-tight">Subscriptions</h1>
-					<p className="text-muted-foreground">
+					<p className="text-gray-600">
 						Manage and monitor all subscription plans
 					</p>
 				</div>

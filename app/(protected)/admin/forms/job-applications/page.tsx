@@ -43,12 +43,12 @@ export default function JobApplicationsPage() {
 	return (
 		<div className="container mx-auto py-10">
 			<div className="flex items-center space-x-4 mb-8">
-				<Briefcase className="h-8 w-8 text-primary" />
+				<Briefcase className="h-8 w-8 text-white" />
 				<div>
 					<h1 className="text-3xl font-bold tracking-tight">
 						Job Applications
 					</h1>
-					<p className="text-muted-foreground">
+					<p className="text-gray-600">
 						Manage and review all job applications
 					</p>
 				</div>

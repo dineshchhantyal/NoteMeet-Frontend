@@ -12,12 +12,12 @@ export const metadata: Metadata = {
 
 export default function PricingPage() {
 	return (
-		<div className="bg-gradient-to-b from-primary/10 to-white min-h-screen">
-			<div className="container mx-auto px-4 py-16">
-				<h1 className="text-4xl md:text-5xl font-bold text-center text-primary mb-4">
+		<div className="min-h-screen">
+			<div className="container mx-auto px-4 py-16 text-white">
+				<h1 className="text-4xl md:text-5xl font-bold text-center mb-4">
 					Simple, Transparent Pricing
 				</h1>
-				<p className="text-xl text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+				<p className="text-xl text-center mb-12 max-w-2xl mx-auto">
 					Choose the perfect plan for your team. All plans include our core
 					features with varying usage limits and support levels.
 				</p>

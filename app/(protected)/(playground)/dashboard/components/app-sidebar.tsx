@@ -62,7 +62,7 @@ export function AppSidebar({
 				</div>
 				<div className="p-4">
 					<div className="relative">
-						<Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
+						<Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-600" />
 						<Input
 							type="search"
 							placeholder="Search meetings..."
@@ -77,7 +77,7 @@ export function AppSidebar({
 						<div className="px-4 py-2 mb-4 bg-primary/10 rounded-md mx-4">
 							<h3 className="font-semibold text-sm">Next Meeting</h3>
 							<p className="text-sm">{nextMeeting.title}</p>
-							<p className="text-xs text-muted-foreground">
+							<p className="text-xs text-gray-600">
 								{nextMeeting.date} - {nextMeeting.time}
 							</p>
 						</div>
@@ -93,12 +93,12 @@ export function AppSidebar({
 									onClose();
 								}}
 							>
-								<div className="flex flex-col items-start w-full space-y-1">
+								<div className="flex flex-col items-start w-full space-y-1 text-primary">
 									<span className="font-medium text-sm truncate w-full">
 										{meeting.title}
 									</span>
 									<div className="flex flex-wrap items-center gap-2 w-full">
-										<span className="text-xs text-muted-foreground">
+										<span className="text-xs text-gray-600">
 											{meeting.date} - {meeting.time}
 										</span>
 									</div>

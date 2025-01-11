@@ -27,9 +27,7 @@ export function IntegrationsHighlight() {
 									height={80}
 								/>
 							</div>
-							<p className="text-sm text-muted-foreground">
-								{integration.name}
-							</p>
+							<p className="text-sm text-gray-600">{integration.name}</p>
 						</div>
 					))}
 				</div>

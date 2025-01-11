@@ -35,7 +35,7 @@ const blogPosts = [
 export default function BlogPage() {
 	return (
 		<div className="container mx-auto px-4 py-16">
-			<h1 className="text-4xl font-bold mb-8 text-center text-primary">
+			<h1 className="text-4xl font-bold mb-8 text-center text-white">
 				NoteMeet Blog
 			</h1>
 

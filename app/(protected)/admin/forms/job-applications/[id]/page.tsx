@@ -108,11 +108,11 @@ export default function ApplicationDetailPage() {
 					</CardHeader>
 					<CardContent className="space-y-4">
 						<div>
-							<p className="text-sm font-medium text-muted-foreground">Name</p>
+							<p className="text-sm font-medium text-gray-600">Name</p>
 							<p className="text-lg font-medium">{application.name}</p>
 						</div>
 						<div>
-							<p className="text-sm font-medium text-muted-foreground">Email</p>
+							<p className="text-sm font-medium text-gray-600">Email</p>
 							<div className="flex items-center space-x-2">
 								<p className="text-lg font-medium">{application.email}</p>
 								<Button variant="ghost" size="icon">
@@ -121,15 +121,11 @@ export default function ApplicationDetailPage() {
 							</div>
 						</div>
 						<div>
-							<p className="text-sm font-medium text-muted-foreground">
-								Position
-							</p>
+							<p className="text-sm font-medium text-gray-600">Position</p>
 							<p className="text-lg font-medium">{application.position}</p>
 						</div>
 						<div>
-							<p className="text-sm font-medium text-muted-foreground">
-								Applied On
-							</p>
+							<p className="text-sm font-medium text-gray-600">Applied On</p>
 							<p className="text-lg font-medium">
 								{format(new Date(application.createdAt), 'PPP')}
 							</p>
@@ -144,7 +140,7 @@ export default function ApplicationDetailPage() {
 					</CardHeader>
 					<CardContent className="space-y-4">
 						<div>
-							<p className="text-sm font-medium text-muted-foreground mb-2">
+							<p className="text-sm font-medium text-gray-600 mb-2">
 								Current Status
 							</p>
 							<Badge
@@ -162,7 +158,7 @@ export default function ApplicationDetailPage() {
 						</div>
 						<Separator />
 						<div>
-							<p className="text-sm font-medium text-muted-foreground mb-2">
+							<p className="text-sm font-medium text-gray-600 mb-2">
 								Update Status
 							</p>
 							<Select
@@ -204,9 +200,7 @@ export default function ApplicationDetailPage() {
 								<div className="flex items-center space-x-4">
 									<div>
 										<p className="font-medium">Resume</p>
-										<p className="text-sm text-muted-foreground">
-											PDF Document
-										</p>
+										<p className="text-sm text-gray-600">PDF Document</p>
 									</div>
 								</div>
 								{/* <Link href={application.resume} target="_blank">
@@ -229,9 +223,7 @@ export default function ApplicationDetailPage() {
 								<div className="flex items-center space-x-4">
 									<div>
 										<p className="font-medium">Cover Letter</p>
-										<p className="text-sm text-muted-foreground">
-											PDF Document
-										</p>
+										<p className="text-sm text-gray-600">PDF Document</p>
 									</div>
 								</div>
 

@@ -17,7 +17,7 @@ export function FreeTrial() {
 				<p className="text-lg mb-4">
 					Experience all Pro Tier features for 14 days, no credit card required.
 				</p>
-				<ul className="text-sm text-muted-foreground space-y-2 mb-6">
+				<ul className="text-sm text-gray-600 space-y-2 mb-6">
 					<li>50 meetings per month (up to 2 hours each)</li>
 					<li>Unlimited transcript generation and summaries</li>
 					<li>Cloud storage up to 50 GB</li>

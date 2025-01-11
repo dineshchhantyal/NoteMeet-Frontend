@@ -53,7 +53,7 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 			</CardHeader>
 			<CardContent>
 				<div className="flex items-center space-x-2 mb-4">
-					<Search className="h-4 w-4 text-muted-foreground" />
+					<Search className="h-4 w-4 text-gray-600" />
 					<Input
 						type="search"
 						placeholder="Search transcript..."

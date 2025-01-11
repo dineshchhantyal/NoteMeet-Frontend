@@ -73,7 +73,7 @@ export function ApplicationForm() {
 	};
 
 	return (
-		<section className="mb-16">
+		<section className="mb-16 bg-card p-8 shadow-lg rounded-lg text-gray-800">
 			<h2 className="text-2xl font-semibold mb-8">Apply Now</h2>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -187,7 +187,7 @@ export function ApplicationForm() {
 					<FormError message={error} />
 					<FormSuccess message={success} />
 
-					<Button type="submit" disabled={isPending}>
+					<Button type="submit" disabled={isPending} variant={'outline'}>
 						{isPending ? 'Submitting...' : 'Submit Application'}
 					</Button>
 				</form>

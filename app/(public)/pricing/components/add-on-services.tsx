@@ -13,9 +13,7 @@ export function AddOnServices() {
 					</CardHeader>
 					<CardContent>
 						<p className="text-lg font-semibold mb-2">$10/month</p>
-						<p className="text-sm text-muted-foreground">
-							For every extra 100 GB
-						</p>
+						<p className="text-sm text-gray-600">For every extra 100 GB</p>
 					</CardContent>
 				</Card>
 				<Card>
@@ -24,7 +22,7 @@ export function AddOnServices() {
 					</CardHeader>
 					<CardContent>
 						<p className="text-lg font-semibold mb-2">$500 one-time fee</p>
-						<p className="text-sm text-muted-foreground">
+						<p className="text-sm text-gray-600">
 							Per tool (e.g., proprietary CRMs, custom APIs)
 						</p>
 					</CardContent>
@@ -35,9 +33,7 @@ export function AddOnServices() {
 					</CardHeader>
 					<CardContent>
 						<p className="text-lg font-semibold mb-2">Starting at 10% off</p>
-						<p className="text-sm text-muted-foreground">
-							For teams of 10+ users
-						</p>
+						<p className="text-sm text-gray-600">For teams of 10+ users</p>
 					</CardContent>
 				</Card>
 			</div>

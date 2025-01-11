@@ -36,7 +36,7 @@ export function WhyNoteMeet2() {
 						<Card key={index}>
 							<CardHeader>
 								<CardTitle className="flex items-center">
-									<benefit.icon className="mr-2 h-6 w-6 text-primary" />
+									<benefit.icon className="mr-2 h-6 w-6 text-white" />
 									{benefit.title}
 								</CardTitle>
 							</CardHeader>

@@ -63,7 +63,7 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 		return (
 			<Card>
 				<CardContent>
-					<p className="text-center text-muted-foreground pt-5">
+					<p className="text-center text-gray-600 pt-5">
 						The transcript is still generating, it might take 2-3 minutes.
 					</p>
 				</CardContent>
@@ -86,7 +86,7 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 			</CardHeader>
 			<CardContent>
 				<div className="flex items-center space-x-2 mb-4">
-					<Search className="h-4 w-4 text-muted-foreground" />
+					<Search className="h-4 w-4 text-gray-600" />
 					<Input
 						type="search"
 						placeholder="Search transcript..."
@@ -97,7 +97,7 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 				<ScrollArea className="h-[400px] pr-4">
 					{highlightedTranscript.map((speakerGroup, groupIndex) => (
 						<div key={groupIndex} className="mb-4">
-							<div className="font-semibold text-sm text-primary mb-1">
+							<div className="font-semibold text-sm text-white mb-1">
 								{speakerGroup[0].speaker || `Speaker ${groupIndex + 1}`}
 							</div>
 							<p className="text-sm leading-relaxed">

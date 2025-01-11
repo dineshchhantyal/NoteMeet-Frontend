@@ -41,7 +41,7 @@ export function KeyFeatures2() {
 						>
 							<CardHeader>
 								<CardTitle className="flex flex-col items-center text-center">
-									<feature.icon className="h-12 w-12 text-primary mb-4 group-hover:scale-110 transition-transform duration-300" />
+									<feature.icon className="h-12 w-12 text-white mb-4 group-hover:scale-110 transition-transform duration-300" />
 									<span className="text-xl">{feature.title}</span>
 								</CardTitle>
 							</CardHeader>

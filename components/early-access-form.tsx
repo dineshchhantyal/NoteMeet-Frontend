@@ -102,7 +102,10 @@ export function EarlyAccessForm() {
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+			<form
+				onSubmit={form.handleSubmit(onSubmit)}
+				className="space-y-8 bg-gray-200 p-6 rounded-lg shadow-md text-primary"
+			>
 				<FormField
 					control={form.control}
 					name="name"

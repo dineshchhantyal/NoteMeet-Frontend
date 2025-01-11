@@ -139,7 +139,7 @@ export default function DashboardPage() {
 						/>
 						{!sources.length ? (
 							<VideoPlayerPlaceholder>
-								<p className="text-muted-foreground">No video available</p>
+								<p className="text-gray-600">No video available</p>
 							</VideoPlayerPlaceholder>
 						) : (
 							<VideoPlayer sources={sources} />

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function CareersPage() {
 	return (
 		<div className="container mx-auto px-4 py-16">
-			<h1 className="text-4xl font-bold mb-8 text-center text-primary">
+			<h1 className="text-4xl font-bold mb-8 text-center text-white">
 				Careers at NoteMeet
 			</h1>
 

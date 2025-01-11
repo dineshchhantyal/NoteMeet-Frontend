@@ -18,7 +18,7 @@ export function SummarySection({ summary }: SummarySectionProps) {
 					<CardTitle>Meeting Summary</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<p className="text-muted-foreground">No summary available.</p>
+					<p className="text-gray-600">No summary available.</p>
 				</CardContent>
 			</Card>
 		);

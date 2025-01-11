@@ -83,12 +83,12 @@ export function CustomerTestimonials() {
 											)}
 										</div>
 										<div className="md:w-2/3 md:pl-6">
-											<Quote className="h-8 w-8 text-primary mb-4" />
+											<Quote className="h-8 w-8 text-white mb-4" />
 											<p className="text-lg mb-4 italic">
 												&quot;{testimonial.quote}&quot;
 											</p>
 											<p className="font-semibold">{testimonial.name}</p>
-											<p className="text-sm text-muted-foreground">
+											<p className="text-sm text-gray-600">
 												{testimonial.role}, {testimonial.company}
 											</p>
 										</div>

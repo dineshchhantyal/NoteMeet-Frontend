@@ -212,7 +212,7 @@ const AdminSubHeader = () => {
 																<p className="text-sm font-medium">
 																	{route.label}
 																</p>
-																<p className="text-xs text-muted-foreground">
+																<p className="text-xs text-gray-600">
 																	{route.description}
 																</p>
 															</Link>

@@ -24,7 +24,7 @@ const config: Config = {
 				background: colors.mintCream,
 				foreground: colors.deepBlue,
 				card: {
-					DEFAULT: colors.mintCream,
+					DEFAULT: colors.mintCream2,
 					foreground: colors.deepBlue,
 				},
 				popover: {
@@ -68,7 +68,7 @@ const config: Config = {
 				},
 				accent: {
 					DEFAULT: colors.softYellow,
-					foreground: colors.deepBlue,
+					foreground: colors.midnightGreen,
 					50: '#f8f8f8',
 					100: '#e8e8e8',
 					200: '#d3d3d3',

@@ -11,23 +11,20 @@ export function MeetingFooter() {
 					<nav>
 						<ul className="flex space-x-4 text-sm">
 							<li>
-								<Link href="/help" className="text-gray-600 hover:text-primary">
+								<Link href="/help" className="text-gray-600 hover:text-white">
 									Help
 								</Link>
 							</li>
 							<li>
 								<Link
 									href="/privacy"
-									className="text-gray-600 hover:text-primary"
+									className="text-gray-600 hover:text-white"
 								>
 									Privacy
 								</Link>
 							</li>
 							<li>
-								<Link
-									href="/terms"
-									className="text-gray-600 hover:text-primary"
-								>
+								<Link href="/terms" className="text-gray-600 hover:text-white">
 									Terms
 								</Link>
 							</li>

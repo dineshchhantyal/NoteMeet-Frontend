@@ -78,13 +78,11 @@ export function PricingTiers() {
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="flex-grow">
-						<p className="text-sm text-muted-foreground mb-4">
-							{tier.description}
-						</p>
+						<p className="text-sm text-gray-600 mb-4">{tier.description}</p>
 						<ul className="space-y-2">
 							{tier.features.map((feature, index) => (
 								<li key={index} className="flex items-center">
-									<Check className="h-5 w-5 text-primary mr-2 flex-shrink-0" />
+									<Check className="h-5 w-5 text-white mr-2 flex-shrink-0" />
 									<span className="text-sm">{feature}</span>
 								</li>
 							))}
@@ -99,7 +97,7 @@ export function PricingTiers() {
 						</Button>
 					</CardFooter>
 					{tier.isPopular && (
-						<div className="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">
+						<div className="absolute top-0 right-0 bg-primary text-gray-600 text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">
 							Most Popular
 						</div>
 					)}

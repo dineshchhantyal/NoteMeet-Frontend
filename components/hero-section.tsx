@@ -18,7 +18,7 @@ export function HeroSection2() {
 					<div className="flex flex-col sm:flex-row gap-4">
 						<Button
 							size="lg"
-							className="bg-white text-primary font-semibold hover:bg-primary hover:text-white"
+							className="bg-white text-white font-semibold hover:bg-primary hover:text-white"
 							asChild
 						>
 							<a href="/early-access">
@@ -29,7 +29,7 @@ export function HeroSection2() {
 						<Button
 							size="lg"
 							variant="outline"
-							className="bg-white/10 text-white border-white hover:bg-white hover:text-primary font-semibold"
+							className="bg-white/10 text-white border-white hover:bg-white hover:text-white font-semibold"
 							asChild
 						>
 							<a href="/early-access">

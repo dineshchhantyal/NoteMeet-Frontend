@@ -84,7 +84,7 @@ export function VideoPlayer({
 					</video>
 					{!sources.length && (
 						<div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-							<p className="text-muted-foreground">No video available</p>
+							<p className="text-gray-600">No video available</p>
 						</div>
 					)}
 				</div>
@@ -99,7 +99,7 @@ export function VideoPlayer({
 							className="w-full mb-2"
 						/>
 						<div className="flex justify-between items-center">
-							<span className="text-sm text-muted-foreground">
+							<span className="text-sm text-gray-600">
 								{formatTime(currentTime)} / {formatTime(duration)}
 							</span>
 							<div className="flex space-x-2">

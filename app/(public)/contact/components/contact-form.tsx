@@ -54,7 +54,10 @@ export function ContactForm() {
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className="space-y-6">
+		<form
+			onSubmit={handleSubmit}
+			className="space-y-6 bg-gray-200 p-6 rounded-lg shadow-md text-gray-800"
+		>
 			<div>
 				<Label htmlFor="name">Name</Label>
 				<Input id="name" name="name" required />

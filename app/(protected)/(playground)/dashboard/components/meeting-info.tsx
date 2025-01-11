@@ -35,13 +35,11 @@ export function MeetingInfo({ meeting, onMeetingDelete }: MeetingInfoProps) {
 			<CardContent>
 				<div className="flex justify-between items-center mb-4">
 					<div>
-						<p className="text-sm text-muted-foreground">
+						<p className="text-sm text-gray-600">
 							Date: {new Date(meeting.date).toLocaleDateString()}
 						</p>
-						<p className="text-sm text-muted-foreground">
-							Time: {meeting.time}
-						</p>
-						<p className="text-sm text-muted-foreground">Duration: 1 hour</p>
+						<p className="text-sm text-gray-600">Time: {meeting.time}</p>
+						<p className="text-sm text-gray-600">Duration: 1 hour</p>
 					</div>
 					<div className="flex -space-x-2">
 						{['John D', 'Jane S', 'Mike R'].map((attendee, index) => (

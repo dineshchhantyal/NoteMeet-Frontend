@@ -13,20 +13,20 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
 	return (
-		<div className="bg-gradient-to-b from-primary/10 to-white">
-			<div className="container mx-auto px-4 py-16">
-				<h1 className="text-4xl md:text-5xl font-bold mb-8 text-center text-primary">
+		<div className="">
+			<div className="container mx-auto px-4 py-16 text-white">
+				<h1 className="text-4xl md:text-5xl font-bold mb-8 text-center text-white">
 					About NoteMeet
 				</h1>
 
 				<section className="mb-16 text-center max-w-3xl mx-auto">
 					<h2 className="text-3xl font-semibold mb-4">Our Mission</h2>
-					<p className="text-xl mb-6 text-gray-700">
-						At NoteMeet, we&quot;re on a mission to revolutionize the way teams
+					<p className="text-xl mb-6">
+						At NoteMeet, we&rsquo;re on a mission to revolutionize the way teams
 						collaborate and communicate. We believe that every meeting should be
 						productive, insightful, and actionable.
 					</p>
-					<p className="text-lg text-gray-600">
+					<p className="text-lg">
 						Our AI-powered platform is designed to capture the essence of your
 						discussions, providing you with accurate transcripts, concise
 						summaries, and actionable insights.
@@ -117,12 +117,12 @@ export default function AboutPage() {
 									</AvatarFallback>
 								</Avatar>
 								<h3 className="text-xl font-semibold">{member.name}</h3>
-								<p className="text-gray-600 mb-2">{member.role}</p>
+								<p className="text-gray-200 mb-2">{member.role}</p>
 								<a
 									href={member.linkedin}
 									target="_blank"
 									rel="noopener noreferrer"
-									className="text-primary hover:underline"
+									className="text-white hover:underline"
 								>
 									LinkedIn Profile
 								</a>
@@ -137,7 +137,7 @@ export default function AboutPage() {
 						We&quot;re always looking for talented individuals to join our team
 						and help shape the future of meetings.
 					</p>
-					<Button size="lg" variant="outline" asChild className="text-primary">
+					<Button size="lg" variant="outline" asChild>
 						<a href="/careers">
 							View Open Positions
 							<ArrowRight className="ml-2 h-5 w-5" />
