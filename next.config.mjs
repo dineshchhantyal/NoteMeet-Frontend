@@ -1,6 +1,9 @@
 import { withNextVideo } from 'next-video/process';
 // next.config.js
 
+const NEXT_PUBLIC_CHROME_EXTENSION_ID =
+	process.env.NEXT_PUBLIC_CHROME_EXTENSION_ID;
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	async headers() {
@@ -12,7 +15,7 @@ const nextConfig = {
 					{ key: 'Access-Control-Allow-Credentials', value: 'true' },
 					{
 						key: 'Access-Control-Allow-Origin',
-						value: 'chrome-extension://ccoapackmkdejpomnbgidnngnahglmpm',
+						value: `chrome-extension://${NEXT_PUBLIC_CHROME_EXTENSION_ID}`,
 					}, // replace this your actual origin
 					{
 						key: 'Access-Control-Allow-Methods',

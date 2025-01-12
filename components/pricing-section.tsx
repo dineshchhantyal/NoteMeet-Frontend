@@ -65,9 +65,13 @@ export function PricingSection() {
 							<CardHeader>
 								<CardTitle className="text-2xl">{tier.name}</CardTitle>
 								<CardDescription>
-									<span className="text-3xl font-bold">{tier.price}</span>
+									<span className="text-3xl text-primary font-bold">
+										{tier.price}
+									</span>
 									{tier.price !== 'Custom' && (
-										<span className="text-sm">/month per user</span>
+										<span className="text-sm text-primary-900">
+											/month per user
+										</span>
 									)}
 								</CardDescription>
 							</CardHeader>
@@ -97,7 +101,7 @@ export function PricingSection() {
 					))}
 				</div>
 				<div className="text-center mt-12">
-					<p className="text-lg mb-4">
+					<p className="text-lg mb-4 text-gray-600">
 						Need a custom solution for your enterprise?
 					</p>
 					<Button variant="outline" size="lg" asChild>

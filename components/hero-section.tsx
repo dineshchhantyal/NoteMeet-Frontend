@@ -81,7 +81,7 @@ export const HeroSection = () => {
 							</button> */}
 							<Button
 								size="lg"
-								className="bg-[#63d392] text-[#0a4a4e] font-semibold hover:bg-opacity-90 transform hover:scale-105 transition-all duration-300"
+								className="bg-[#63d392] text-[#0a4a4e] font-semibold hover:text-white hover:bg-opacity-90 transform hover:scale-105 transition-all duration-300"
 								asChild
 							>
 								<a href="/early-access">Get Started Free</a>
