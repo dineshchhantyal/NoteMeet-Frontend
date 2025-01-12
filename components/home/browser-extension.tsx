@@ -1,8 +1,23 @@
+'use client';
+
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
 
+const LINKS = {
+	Chrome:
+		'https://chromewebstore.google.com/detail/notemeet-recorder/iglooicboappkpddcinabadplpbkchfl',
+	Firefox: 'https://addons.mozilla.org/en-US/firefox/addon/notemeet-recorder/',
+};
+
 export default function BrowserExtension() {
+	const handleDownload = () => {
+		const browser = navigator.userAgent.includes('Chrome')
+			? 'Chrome'
+			: 'Firefox';
+		window.open(LINKS[browser]);
+	};
+
 	return (
 		<div className="container mx-auto px-4 py-16 text-white bg-[#0a4a4e]">
 			<div className="grid md:grid-cols-2 gap-12 items-center">
@@ -20,10 +35,10 @@ export default function BrowserExtension() {
 					<Button
 						size="lg"
 						className="mb-4 bg-white text-black hover:bg-white/90 hover:text-black"
+						onClick={handleDownload}
 					>
 						<Download className="mr-2 h-5 w-5" />
-						{/* Download Now */}
-						Coming Soon
+						Download Now
 					</Button>
 					<p className="text-sm">Supports Chromium based browsers</p>
 				</div>
