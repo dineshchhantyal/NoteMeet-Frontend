@@ -2,7 +2,6 @@ import { withNextVideo } from 'next-video/process';
 // next.config.js
 
 const EXTENSIONS = [
-	,
 	{
 		browser: 'chrome',
 		type: 'development',
