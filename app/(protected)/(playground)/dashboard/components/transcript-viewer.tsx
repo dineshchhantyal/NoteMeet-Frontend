@@ -62,10 +62,11 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 	if (!transcript) {
 		return (
 			<Card>
+				<CardHeader>
+					<CardTitle>Meeting Transcript</CardTitle>
+				</CardHeader>
 				<CardContent>
-					<p className="text-center text-gray-600 pt-5">
-						The transcript is still generating, it might take 2-3 minutes.
-					</p>
+					<p className="text-gray-600">No transcript available.</p>
 				</CardContent>
 			</Card>
 		);
