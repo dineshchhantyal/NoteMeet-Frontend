@@ -8,6 +8,11 @@ const EXTENSIONS = [
 		id: 'jgieeopdjainceemppplhdpaphahecji',
 	},
 	{
+		browser: 'edge',
+		type: 'production',
+		id: 'njjobhoojhpgimbmdleifbkoghncindb',
+	},
+	{
 		browser: 'chrome',
 		type: 'production',
 		id: 'iglooicboappkpddcinabadplpbkchfl',
