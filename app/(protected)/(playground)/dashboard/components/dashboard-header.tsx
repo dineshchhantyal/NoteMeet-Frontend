@@ -13,7 +13,7 @@ const DashboardHeader = ({ handleMeetingCreated }: DashboardHeaderProps) => {
 		<div className="flex flex-1 h-16 items-center gap-4 border-b bg-background px-6">
 			<LogoLink showText={true} />
 
-			<div className="ml-auto flex items-center gap-4">
+			<div className="ml-auto flex items-center gap-4 text-primary-400">
 				<NewMeetingDialog onMeetingCreated={handleMeetingCreated} />
 			</div>
 			<NotificationDropdown />

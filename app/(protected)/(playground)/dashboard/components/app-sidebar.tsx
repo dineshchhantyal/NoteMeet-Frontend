@@ -74,7 +74,7 @@ export function AppSidebar({
 				</div>
 				<ScrollArea className="flex-1">
 					{nextMeeting && (
-						<div className="px-4 py-2 mb-4 bg-primary/10 rounded-md mx-4">
+						<div className="px-4 py-2 mb-4 bg-primary/10 text-primary-400 rounded-md mx-4">
 							<h3 className="font-semibold text-sm">Next Meeting</h3>
 							<p className="text-sm">{nextMeeting.title}</p>
 							<p className="text-xs text-gray-600">

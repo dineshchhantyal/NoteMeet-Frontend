@@ -168,7 +168,7 @@ export default function DashboardPage() {
 						</Tabs>
 					</main>
 				) : (
-					<div className="flex flex-col items-center justify-center h-full p-6 bg-gray-50 rounded-lg shadow-md">
+					<div className="flex flex-col items-center justify-center h-full p-6 bg-gray-50 text-primary-300 rounded-lg shadow-md">
 						<p className="text-xl font-semibold text-gray-800 mb-4">
 							Select a meeting from the sidebar to view details.
 						</p>

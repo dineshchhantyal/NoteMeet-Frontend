@@ -126,7 +126,7 @@ export function NewMeetingDialog({ onMeetingCreated }: NewMeetingDialogProps) {
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[600px]">
-				<form onSubmit={handleSubmit}>
+				<form onSubmit={handleSubmit} className="text-primary-400">
 					<DialogHeader>
 						<DialogTitle>Schedule New Meeting</DialogTitle>
 						<DialogDescription>
