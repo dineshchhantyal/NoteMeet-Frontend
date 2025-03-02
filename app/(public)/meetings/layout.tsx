@@ -1,6 +1,5 @@
 import { MeetingHeader } from '@/components/dashboard/meeting-header';
 import { MeetingFooter } from '@/components/meeting-footer';
-import { useAppSelector } from '@/lib/redux/hooks';
 
 export default function MeetingLayout({
 	children,

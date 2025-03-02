@@ -1,23 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Bell, Search, Settings, Share2 } from 'lucide-react';
+import { Bell, Search, Settings } from 'lucide-react';
 import LogoLink from '../LogoLink';
-import { MeetingInterface } from '@/types';
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-} from '@/components/ui/dialog';
-import { ShareManagement } from '../share/share-management';
 
 export function MeetingHeader() {
-	const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
-
 	return (
 		<header className="bg-[#0d5559]/90 backdrop-blur-sm border-b border-[#63d392]/20 text-white">
 			<div className="container mx-auto px-4 py-4">
