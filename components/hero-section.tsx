@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { ArrowRight, Play, Clock, Brain, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { MeetingDemo } from './home/meeting-demo';
+import { MeetingDemoFlow } from './home/demo-flow';
 
 export const HeroSection = () => {
 	const [loaded, setLoaded] = useState(false);
@@ -143,8 +143,7 @@ export const HeroSection = () => {
 
 					{/* Right Column - Interactive App Demo */}
 					<div className="relative lg:h-auto lg:w-full">
-						{/* <DemoWindow /> */}
-						<MeetingDemo />
+						<MeetingDemoFlow />
 					</div>
 				</div>
 			</div>
