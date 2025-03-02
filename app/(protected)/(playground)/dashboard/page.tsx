@@ -12,15 +12,24 @@ import { VideoPlayerPlaceholder } from './components/video-player-placeholder';
 import DashboardHeader from './components/dashboard-header';
 import { NewMeetingDialog } from './components/new-meeting-dialog';
 import { Button } from '@/components/ui/button';
-import { Menu, FileText, VideoIcon } from 'lucide-react';
+import {
+	Menu,
+	FileText,
+	VideoIcon,
+	FileBarChart2,
+	Loader2,
+} from 'lucide-react';
 import { MeetingStatus } from '@/types/meeting';
 import { VideoTranscriptResponse } from '@/types/video-transcript';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 
 export default function DashboardPage() {
 	const [selectedMeeting, setSelectedMeeting] =
 		useState<MeetingInterface | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [loadingTranscript, setLoadingTranscript] = useState(false);
+	const [loadingVideo, setLoadingVideo] = useState(false);
 	const [sources, setSources] = useState<
 		{
 			src: { url: string; expiresAt: string };
@@ -34,12 +43,14 @@ export default function DashboardPage() {
 	);
 
 	const [meetings, setMeetings] = useState<MeetingInterface[]>([]);
+
 	useEffect(() => {
 		const fetchMeetings = async () => {
 			setLoading(true);
 			try {
 				const response = await fetch('/api/meetings');
 				const data = await response.json();
+				console.log('data', data);
 				setMeetings(data.data);
 			} catch (error) {
 				console.error('Error fetching meetings:', error);
@@ -58,6 +69,7 @@ export default function DashboardPage() {
 			selectedMeeting.status > MeetingStatus.InProgress
 		) {
 			const fetchVideoUrl = async () => {
+				setLoadingVideo(true);
 				try {
 					const response = await fetch(
 						`/api/meetings/${selectedMeeting.id}/presigned-url`,
@@ -66,6 +78,8 @@ export default function DashboardPage() {
 					setSources(data.sources);
 				} catch (error) {
 					console.error('Error fetching video url:', error);
+				} finally {
+					setLoadingVideo(false);
 				}
 			};
 
@@ -74,20 +88,23 @@ export default function DashboardPage() {
 
 		if (selectedMeeting && selectedMeeting.transcriptKey) {
 			const fetchTranscript = async () => {
+				setLoadingTranscript(true);
 				try {
 					const response = await fetch(
 						`/api/meetings/${selectedMeeting.id}/transcript`,
 					);
 					const data = await response.json();
-
-					if (data && data.transcript) console.log(JSON.parse(data.transcript));
-					setTranscript(JSON.parse(data.transcript));
+					setTranscript(data.transcript ? JSON.parse(data.transcript) : null);
 				} catch (error) {
 					console.error('Error fetching transcript:', error);
+				} finally {
+					setLoadingTranscript(false);
 				}
 			};
 
 			fetchTranscript();
+		} else {
+			setTranscript(null);
 		}
 	}, [selectedMeeting]);
 
@@ -95,28 +112,34 @@ export default function DashboardPage() {
 		setMeetings((prevMeetings) =>
 			prevMeetings.filter((meeting) => meeting.id !== meetingId),
 		);
-		const res = await fetch(`/api/meetings/${meetingId}`, {
-			method: 'DELETE',
-		});
+		try {
+			const res = await fetch(`/api/meetings/${meetingId}`, {
+				method: 'DELETE',
+			});
 
-		const data = await res.json();
-		if (data.error) {
-			console.error('Error deleting meeting:', data.error);
+			const data = await res.json();
+			if (data.error) {
+				console.error('Error deleting meeting:', data.error);
+			}
+		} catch (error) {
+			console.error('Error deleting meeting:', error);
 		}
 
 		setSelectedMeeting(null);
 	};
 
 	const handleMeetingCreated = (newMeeting: MeetingInterface) => {
-		setMeetings([...meetings, newMeeting]);
+		setMeetings((prev) => [newMeeting, ...prev]);
+		setSelectedMeeting(newMeeting);
 	};
 
 	return (
 		<div className="flex h-screen bg-[#0a4a4e] overflow-hidden">
-			{/* Background elements */}
-			<div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-				<div className="absolute top-[20%] left-[10%] w-72 h-72 bg-[#63d392]/5 rounded-full blur-[100px]"></div>
-				<div className="absolute bottom-[10%] right-[5%] w-96 h-96 bg-[#156469]/20 rounded-full blur-[100px]"></div>
+			{/* Background gradient elements */}
+			<div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+				<div className="absolute top-[10%] left-[5%] w-96 h-96 bg-[#63d392]/5 rounded-full blur-[120px]"></div>
+				<div className="absolute bottom-[5%] right-[5%] w-[500px] h-[500px] bg-[#156469]/20 rounded-full blur-[150px]"></div>
+				<div className="absolute top-[40%] right-[15%] w-64 h-64 bg-[#63d392]/8 rounded-full blur-[100px]"></div>
 			</div>
 
 			<AppSidebar
@@ -124,34 +147,48 @@ export default function DashboardPage() {
 				meetings={meetings}
 				isOpen={sidebarOpen}
 				onClose={() => setSidebarOpen(false)}
+				selectedMeeting={selectedMeeting}
 			/>
+
 			<div className="flex flex-1 flex-col overflow-hidden relative z-10">
-				<header className="flex h-16 items-center gap-4 border-b border-[#63d392]/20 bg-[#0d5559]/80 backdrop-blur-sm px-6 shadow-sm">
+				<header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-[#63d392]/20 bg-[#0d5559]/85 backdrop-blur-md px-6 shadow-md">
 					<Button
 						variant="ghost"
 						size="icon"
 						onClick={() => setSidebarOpen(!sidebarOpen)}
-						className="md:hidden text-white hover:bg-[#156469]/50"
+						className="md:hidden text-white hover:bg-[#156469]/50 focus:ring-1 focus:ring-[#63d392]/30"
+						aria-label="Toggle sidebar"
 					>
-						<Menu className="h-6 w-6" />
+						<Menu className="h-5 w-5" />
 					</Button>
 
 					<DashboardHeader handleMeetingCreated={handleMeetingCreated} />
 				</header>
+
 				{selectedMeeting ? (
-					<main className="flex-grow overflow-auto p-6 space-y-6">
+					<main className="flex-grow overflow-auto p-4 md:p-6 space-y-6">
 						<MeetingInfo
 							meeting={selectedMeeting}
 							onMeetingDelete={onMeetingDelete}
 						/>
-						<div className="bg-[#156469]/30 backdrop-blur-sm rounded-xl border border-[#63d392]/20 p-4 overflow-hidden">
-							{!sources.length ? (
+
+						<div className="bg-[#156469]/30 backdrop-blur-sm rounded-xl border border-[#63d392]/20 p-4 overflow-hidden transition-all shadow-md">
+							{loadingVideo ? (
 								<VideoPlayerPlaceholder>
 									<div className="flex flex-col items-center justify-center p-8">
-										<div className="bg-[#0d5559]/50 p-4 rounded-full mb-4">
-											<VideoIcon className="h-8 w-8 text-[#63d392]/60" />
+										<div className="bg-[#0d5559]/70 p-4 rounded-full mb-4 animate-pulse">
+											<Loader2 className="h-8 w-8 text-[#63d392]/80 animate-spin" />
 										</div>
-										<p className="text-gray-300">
+										<p className="text-gray-200">Loading video...</p>
+									</div>
+								</VideoPlayerPlaceholder>
+							) : !sources.length ? (
+								<VideoPlayerPlaceholder>
+									<div className="flex flex-col items-center justify-center p-8">
+										<div className="bg-[#0d5559]/70 p-4 rounded-full mb-4">
+											<VideoIcon className="h-8 w-8 text-[#63d392]/80" />
+										</div>
+										<p className="text-gray-200">
 											Video is processing or unavailable
 										</p>
 									</div>
@@ -162,35 +199,50 @@ export default function DashboardPage() {
 						</div>
 
 						<Tabs defaultValue="transcript" className="w-full">
-							<TabsList className="w-full justify-start bg-[#0d5559]/70">
+							<TabsList className="w-full justify-start bg-[#0d5559]/80 p-1 rounded-lg shadow-inner">
 								<TabsTrigger
 									value="transcript"
-									className="flex-1 data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-white"
+									className="flex-1 data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-white hover:bg-[#156469]/50 transition-colors"
 								>
 									<FileText className="h-4 w-4 mr-2" />
 									Transcript
 								</TabsTrigger>
 								<TabsTrigger
 									value="summary"
-									className="flex-1 data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-white"
+									className="flex-1 data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-white hover:bg-[#156469]/50 transition-colors"
 								>
-									<FileText className="h-4 w-4 mr-2" />
+									<FileBarChart2 className="h-4 w-4 mr-2" />
 									Summary
 								</TabsTrigger>
 							</TabsList>
+
 							<TabsContent value="transcript" className="mt-4">
-								<div className="bg-[#156469]/30 backdrop-blur-sm rounded-xl border border-[#63d392]/20 p-4">
-									<TranscriptViewer transcript={transcript ?? null} />
+								<div
+									className={cn(
+										'bg-[#156469]/30 backdrop-blur-sm rounded-xl border border-[#63d392]/20 p-4 transition-all shadow-md',
+										loadingTranscript && 'animate-pulse',
+									)}
+								>
+									{loadingTranscript ? (
+										<div className="flex flex-col items-center justify-center py-8">
+											<Loader2 className="h-8 w-8 text-[#63d392]/60 animate-spin mb-2" />
+											<p className="text-gray-300">Loading transcript...</p>
+										</div>
+									) : (
+										<TranscriptViewer transcript={transcript ?? null} />
+									)}
 								</div>
 							</TabsContent>
+
 							<TabsContent value="summary" className="mt-4">
-								<div className="bg-[#156469]/30 backdrop-blur-sm rounded-xl border border-[#63d392]/20 p-4">
+								<div className="bg-[#156469]/30 backdrop-blur-sm rounded-xl border border-[#63d392]/20 p-4 transition-all shadow-md">
 									<SummarySection
 										summary={
 											selectedMeeting?.summary
 												? JSON.parse(selectedMeeting.summary as string)
 												: null
 										}
+										isLoading={loadingTranscript}
 									/>
 								</div>
 							</TabsContent>
@@ -198,8 +250,8 @@ export default function DashboardPage() {
 					</main>
 				) : (
 					<div className="flex flex-col items-center justify-center h-full p-6 text-white">
-						<div className="bg-[#156469]/30 backdrop-blur-sm rounded-xl border border-[#63d392]/20 p-8 max-w-md w-full text-center">
-							<div className="bg-[#63d392]/10 p-4 rounded-full mx-auto mb-6 w-20 h-20 flex items-center justify-center">
+						<div className="bg-[#156469]/30 backdrop-blur-sm rounded-xl border border-[#63d392]/20 p-8 max-w-md w-full text-center shadow-lg transition-all hover:shadow-[#63d392]/10">
+							<div className="bg-[#63d392]/10 p-5 rounded-full mx-auto mb-6 w-20 h-20 flex items-center justify-center shadow-inner">
 								<FileText className="h-10 w-10 text-[#63d392]" />
 							</div>
 
@@ -209,8 +261,9 @@ export default function DashboardPage() {
 
 							{loading ? (
 								<div className="space-y-3">
-									<Skeleton className="h-4 w-3/4 mx-auto bg-[#0d5559]" />
-									<Skeleton className="h-4 w-1/2 mx-auto bg-[#0d5559]" />
+									<Skeleton className="h-4 w-3/4 mx-auto bg-[#0d5559] animate-pulse" />
+									<Skeleton className="h-4 w-1/2 mx-auto bg-[#0d5559] animate-pulse" />
+									<Skeleton className="h-9 w-40 mx-auto mt-6 bg-[#0d5559] rounded-md animate-pulse" />
 								</div>
 							) : (
 								<>
