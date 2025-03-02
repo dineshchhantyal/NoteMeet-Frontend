@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
+import { Loader2, CheckCircle2, ArrowRight } from 'lucide-react';
 
 const formSchema = z.object({
 	name: z.string().min(2, {
@@ -55,6 +56,7 @@ const formSchema = z.object({
 
 export function EarlyAccessForm() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isSubmitted, setIsSubmitted] = useState(false);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -62,234 +64,319 @@ export function EarlyAccessForm() {
 			name: '',
 			email: '',
 			company: '',
+			subscription: undefined,
+			paymentMethod: undefined,
 			features: [],
 			message: '',
 			agreeTerms: undefined,
 		},
 	});
 
-	const onSubmit = (values: z.infer<typeof formSchema>) => {
+	const onSubmit = async (values: z.infer<typeof formSchema>) => {
 		setIsSubmitting(true);
-		fetch('/api/early-access-form', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(values),
-		})
-			.then((response) => {
-				if (!response.ok) {
-					throw new Error('Failed to submit application');
-				}
-				toast({
-					title: 'Application Submitted',
-					description:
-						'Thank you for your interest. We will contact you shortly.',
-				});
-				alert('Application submitted successfully!');
-				form.reset();
-			})
-			.catch((error) => {
-				toast({
-					variant: 'destructive',
-					title: 'Submission Failed',
-					description:
-						error instanceof Error ? error.message : 'Something went wrong.',
-				});
-			})
-			.finally(() => {
-				setIsSubmitting(false);
+		try {
+			const response = await fetch('/api/early-access', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(values),
 			});
+
+			if (!response.ok) {
+				throw new Error('Failed to submit application');
+			}
+
+			toast({
+				title: 'Application Submitted',
+				description:
+					'Thank you for your interest. We will contact you shortly.',
+			});
+
+			form.reset();
+			setIsSubmitted(true);
+		} catch (error) {
+			toast({
+				variant: 'destructive',
+				title: 'Submission Failed',
+				description:
+					error instanceof Error ? error.message : 'Something went wrong.',
+			});
+		} finally {
+			setIsSubmitting(false);
+		}
 	};
+
+	if (isSubmitted) {
+		return (
+			<div className="text-center py-8">
+				<div className="bg-[#63d392]/20 h-20 w-20 flex items-center justify-center rounded-full mx-auto mb-6">
+					<CheckCircle2 className="h-10 w-10 text-[#63d392]" />
+				</div>
+				<h3 className="text-2xl font-semibold mb-3 text-white">
+					Application Received!
+				</h3>
+				<p className="text-gray-300 mb-6">
+					Thank you for your interest in NoteMeet. We've received your early
+					access application and will be in touch soon.
+				</p>
+				<Button
+					onClick={() => setIsSubmitted(false)}
+					variant="outline"
+					className="border-[#63d392]/30 text-[#63d392] hover:bg-[#63d392]/10"
+				>
+					Submit Another Application
+				</Button>
+			</div>
+		);
+	}
 
 	return (
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className="space-y-8 bg-gray-200 p-6 rounded-lg shadow-md text-primary"
+				className="space-y-6 text-white"
 			>
 				<FormField
 					control={form.control}
 					name="name"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Full Name</FormLabel>
+							<FormLabel className="text-white">Full Name</FormLabel>
 							<FormControl>
-								<Input placeholder="John Doe" {...field} />
+								<Input
+									placeholder="John Doe"
+									{...field}
+									className="bg-[#0d5559]/70 border-[#63d392]/30 focus:border-[#63d392] text-white placeholder:text-gray-400"
+								/>
 							</FormControl>
-							<FormMessage />
+							<FormMessage className="text-[#ff8882]" />
 						</FormItem>
 					)}
 				/>
+
 				<FormField
 					control={form.control}
 					name="email"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Email</FormLabel>
+							<FormLabel className="text-white">Email</FormLabel>
 							<FormControl>
-								<Input placeholder="john.doe@example.com" {...field} />
+								<Input
+									placeholder="john.doe@example.com"
+									{...field}
+									className="bg-[#0d5559]/70 border-[#63d392]/30 focus:border-[#63d392] text-white placeholder:text-gray-400"
+								/>
 							</FormControl>
-							<FormMessage />
+							<FormMessage className="text-[#ff8882]" />
 						</FormItem>
 					)}
 				/>
+
 				<FormField
 					control={form.control}
 					name="company"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Company</FormLabel>
+							<FormLabel className="text-white">Company</FormLabel>
 							<FormControl>
-								<Input placeholder="Acme Inc." {...field} />
+								<Input
+									placeholder="Acme Inc."
+									{...field}
+									className="bg-[#0d5559]/70 border-[#63d392]/30 focus:border-[#63d392] text-white placeholder:text-gray-400"
+								/>
 							</FormControl>
-							<FormMessage />
+							<FormMessage className="text-[#ff8882]" />
 						</FormItem>
 					)}
 				/>
-				<FormField
-					control={form.control}
-					name="subscription"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Desired Subscription</FormLabel>
-							<Select onValueChange={field.onChange} defaultValue={field.value}>
-								<FormControl>
-									<SelectTrigger>
-										<SelectValue placeholder="Select a subscription plan" />
-									</SelectTrigger>
-								</FormControl>
-								<SelectContent>
-									<SelectItem value="starter">Starter</SelectItem>
-									<SelectItem value="pro">Pro</SelectItem>
-									<SelectItem value="business">Business</SelectItem>
-									<SelectItem value="enterprise">Enterprise</SelectItem>
-								</SelectContent>
-							</Select>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name="paymentMethod"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Preferred Payment Method</FormLabel>
-							<Select onValueChange={field.onChange} defaultValue={field.value}>
-								<FormControl>
-									<SelectTrigger>
-										<SelectValue placeholder="Select a payment method" />
-									</SelectTrigger>
-								</FormControl>
-								<SelectContent>
-									<SelectItem value="credit_card">Credit Card</SelectItem>
-									<SelectItem value="paypal">PayPal</SelectItem>
-									<SelectItem value="bank_transfer">Bank Transfer</SelectItem>
-								</SelectContent>
-							</Select>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
+
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+					<FormField
+						control={form.control}
+						name="subscription"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel className="text-white">
+									Desired Subscription
+								</FormLabel>
+								<Select
+									onValueChange={field.onChange}
+									defaultValue={field.value}
+								>
+									<FormControl>
+										<SelectTrigger className="bg-[#0d5559]/70 border-[#63d392]/30 text-white focus:ring-[#63d392] focus:ring-opacity-20">
+											<SelectValue placeholder="Select a plan" />
+										</SelectTrigger>
+									</FormControl>
+									<SelectContent className="bg-[#0d5559] border-[#63d392]/30 text-white">
+										<SelectItem value="starter">Starter</SelectItem>
+										<SelectItem value="pro">Pro</SelectItem>
+										<SelectItem value="business">Business</SelectItem>
+										<SelectItem value="enterprise">Enterprise</SelectItem>
+									</SelectContent>
+								</Select>
+								<FormMessage className="text-[#ff8882]" />
+							</FormItem>
+						)}
+					/>
+
+					<FormField
+						control={form.control}
+						name="paymentMethod"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel className="text-white">
+									Preferred Payment Method
+								</FormLabel>
+								<Select
+									onValueChange={field.onChange}
+									defaultValue={field.value}
+								>
+									<FormControl>
+										<SelectTrigger className="bg-[#0d5559]/70 border-[#63d392]/30 text-white focus:ring-[#63d392] focus:ring-opacity-20">
+											<SelectValue placeholder="Select payment method" />
+										</SelectTrigger>
+									</FormControl>
+									<SelectContent className="bg-[#0d5559] border-[#63d392]/30 text-white">
+										<SelectItem value="credit_card">Credit Card</SelectItem>
+										<SelectItem value="paypal">PayPal</SelectItem>
+										<SelectItem value="bank_transfer">Bank Transfer</SelectItem>
+									</SelectContent>
+								</Select>
+								<FormMessage className="text-[#ff8882]" />
+							</FormItem>
+						)}
+					/>
+				</div>
+
 				<FormField
 					control={form.control}
 					name="features"
 					render={() => (
 						<FormItem>
 							<div className="mb-4">
-								<FormLabel className="text-base">Desired Features</FormLabel>
-								<FormDescription>
-									Select the features you&apos;re most interested in trying.
+								<FormLabel className="text-white text-base">
+									Desired Features
+								</FormLabel>
+								<FormDescription className="text-gray-300">
+									Select the features you're most interested in trying.
 								</FormDescription>
 							</div>
-							{[
-								'AI Transcription',
-								'Meeting Summaries',
-								'Action Item Extraction',
-								'Integration with Calendar',
-								'Custom Branding',
-							].map((feature) => (
-								<FormField
-									key={feature}
-									control={form.control}
-									name="features"
-									render={({ field }) => {
-										return (
-											<FormItem
-												key={feature}
-												className="flex flex-row items-start space-x-3 space-y-0"
-											>
-												<FormControl>
-													<Checkbox
-														checked={field.value?.includes(feature)}
-														onCheckedChange={(checked) => {
-															return checked
-																? field.onChange([...field.value, feature])
-																: field.onChange(
-																		field.value?.filter(
-																			(value) => value !== feature,
-																		),
-																	);
-														}}
-													/>
-												</FormControl>
-												<FormLabel className="font-normal">{feature}</FormLabel>
-											</FormItem>
-										);
-									}}
-								/>
-							))}
-							<FormMessage />
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+								{[
+									'AI Transcription',
+									'Meeting Summaries',
+									'Action Item Extraction',
+									'Integration with Calendar',
+									'Custom Branding',
+								].map((feature) => (
+									<FormField
+										key={feature}
+										control={form.control}
+										name="features"
+										render={({ field }) => {
+											return (
+												<FormItem
+													key={feature}
+													className="flex flex-row items-start space-x-3 space-y-0"
+												>
+													<FormControl>
+														<Checkbox
+															checked={field.value?.includes(feature)}
+															onCheckedChange={(checked) => {
+																return checked
+																	? field.onChange([...field.value, feature])
+																	: field.onChange(
+																			field.value?.filter(
+																				(value) => value !== feature,
+																			),
+																		);
+															}}
+															className="border-[#63d392]/50 text-[#63d392] data-[state=checked]:bg-[#63d392] data-[state=checked]:text-white"
+														/>
+													</FormControl>
+													<FormLabel className="text-gray-300 font-normal">
+														{feature}
+													</FormLabel>
+												</FormItem>
+											);
+										}}
+									/>
+								))}
+							</div>
+							<FormMessage className="text-[#ff8882] mt-2" />
 						</FormItem>
 					)}
 				/>
+
 				<FormField
 					control={form.control}
 					name="message"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>Additional Message (Optional)</FormLabel>
+							<FormLabel className="text-white">
+								Additional Message (Optional)
+							</FormLabel>
 							<FormControl>
 								<Textarea
 									placeholder="Tell us about your specific needs or any questions you have."
-									className="resize-none"
+									className="resize-none bg-[#0d5559]/70 border-[#63d392]/30 focus:border-[#63d392] text-white placeholder:text-gray-400"
 									{...field}
 								/>
 							</FormControl>
-							<FormMessage />
+							<FormMessage className="text-[#ff8882]" />
 						</FormItem>
 					)}
 				/>
+
 				<FormField
 					control={form.control}
 					name="agreeTerms"
 					render={({ field }) => (
-						<FormItem className="flex flex-row items-start space-x-3 space-y-0">
+						<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-lg border border-[#63d392]/20 p-4 bg-[#0d5559]/30">
 							<FormControl>
 								<Checkbox
 									checked={field.value}
 									onCheckedChange={field.onChange}
+									className="border-[#63d392]/50 text-[#63d392] data-[state=checked]:bg-[#63d392] data-[state=checked]:text-white mt-1"
 								/>
 							</FormControl>
 							<div className="space-y-1 leading-none">
-								<FormLabel>I agree to the terms and conditions</FormLabel>
-								<FormDescription>
+								<FormLabel className="text-white">
+									I agree to the terms and conditions
+								</FormLabel>
+								<FormDescription className="text-gray-300">
 									By checking this box, you agree to our{' '}
-									<a href="/terms" className="text-primary hover:underline">
+									<a href="/terms" className="text-[#63d392] hover:underline">
 										Terms of Service
 									</a>{' '}
 									and{' '}
-									<a href="/privacy" className="text-primary hover:underline">
+									<a href="/privacy" className="text-[#63d392] hover:underline">
 										Privacy Policy
 									</a>
 									.
 								</FormDescription>
 							</div>
-							<FormMessage />
+							<FormMessage className="text-[#ff8882]" />
 						</FormItem>
 					)}
 				/>
-				<Button type="submit" disabled={isSubmitting}>
-					{isSubmitting ? 'Submitting...' : 'Submit Application'}
+
+				<Button
+					type="submit"
+					disabled={isSubmitting}
+					className="w-full bg-[#63d392] text-[#0a4a4e] hover:bg-[#4fb87a] hover:shadow-lg hover:shadow-[#63d392]/20 transition-all mt-4"
+				>
+					{isSubmitting ? (
+						<>
+							<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+							Submitting...
+						</>
+					) : (
+						<>
+							Submit Application
+							<ArrowRight className="ml-2 h-4 w-4" />
+						</>
+					)}
 				</Button>
 			</form>
 		</Form>
