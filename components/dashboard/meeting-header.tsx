@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Bell, Search, Settings } from 'lucide-react';
-import LogoLink from './LogoLink';
+import LogoLink from '../LogoLink';
 
 export function MeetingHeader() {
 	return (

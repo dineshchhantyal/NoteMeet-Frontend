@@ -1,6 +1,6 @@
 import { Button } from './ui/button';
 import { LoginButton } from './auth/login-button';
-import { NotificationDropdown } from '@/app/(protected)/(playground)/dashboard/components/notification-dropdown';
+
 import { UserButton } from './auth/user-button';
 import Link from 'next/link';
 import LogoLink from './LogoLink';
@@ -8,6 +8,7 @@ import { currentUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { NotificationDropdown } from './dashboard/notification-dropdown';
 
 interface HeaderProps {
 	label: string;

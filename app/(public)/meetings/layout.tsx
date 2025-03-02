@@ -1,4 +1,4 @@
-import { MeetingHeader } from '@/components/meeting-header';
+import { MeetingHeader } from '@/components/dashboard/meeting-header';
 import { MeetingFooter } from '@/components/meeting-footer';
 
 export default function MeetingLayout({
