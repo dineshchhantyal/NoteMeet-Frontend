@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { MeetingInterface } from '@/types';
-import { MeetingStatus } from '@/types/meeting';
 
 interface MeetingsState {
 	meetings: MeetingInterface[];

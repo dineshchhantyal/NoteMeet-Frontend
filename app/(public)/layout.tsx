@@ -7,6 +7,7 @@ import { SessionProvider } from 'next-auth/react';
 import { auth } from '@/auth';
 import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
+import { ReduxProvider } from '@/lib/redux/provider';
 
 const geistSans = localFont({
 	src: '../fonts/GeistVF.woff',
@@ -63,9 +64,10 @@ export default async function RootLayout({
 				<Header label="Home" />
 
 				<SessionProvider session={session}>
-					<Toaster />
-
-					{children}
+					<ReduxProvider>
+						<Toaster />
+						{children}
+					</ReduxProvider>
 				</SessionProvider>
 				<Footer />
 			</body>

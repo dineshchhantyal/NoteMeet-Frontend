@@ -33,7 +33,7 @@ import { VideoPlayer } from '@/components/dashboard/video-player';
 import { TranscriptViewer } from '@/components/dashboard/transcript-viewer';
 import { SummarySection } from '@/components/dashboard/summary-section';
 import { ActionItemsTracker } from '@/components/dashboard/action-items-tracker';
-import { AIMeetingAssistant } from '@/components/dashboard/ai-meeting-assistant';
+import { AIMeetingAssistant } from '@/components/chat/ai-meeting-assistant';
 import { MeetingAnalytics } from '@/components/dashboard/meeting-analytics';
 import { VideoPlayerPlaceholder } from '@/components/dashboard/video-player-placeholder';
 import { NewMeetingDialog } from '@/components/dashboard/new-meeting-dialog';

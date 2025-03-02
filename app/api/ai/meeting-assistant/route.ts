@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateAIResponse } from '@/lib/ai/meeting-assistant';
-
-export const runtime = 'edge';
+import { createMeetingTools } from '@/lib/ai/meeting-tools';
+import { streamText } from 'ai';
+import { google } from '@ai-sdk/google';
 
 export async function POST(req: NextRequest) {
 	try {
@@ -14,23 +14,47 @@ export async function POST(req: NextRequest) {
 			);
 		}
 
-		// Get the latest user message
-		const lastMessage = messages[messages.length - 1]?.content || '';
-
-		// Get previous messages as history (excluding the latest)
-		const history = messages.slice(0, -1);
-
 		// Fetch real meeting data from the database
 		const meetingData = await fetchMeetingData(meetingId);
 
-		// Generate streaming AI response using our utility
-		return generateAIResponse(meetingId, lastMessage, history, {
-			title: meetingData.title,
-			transcript: meetingData.transcript,
-			summary: meetingData.summary,
-			date: meetingData.date,
-			participants: meetingData.participants,
-		});
+		try {
+			const systemMessage = `You are NoteMeet's AI Meeting Assistant, a helpful AI that answers questions about meetings.
+You're currently discussing a meeting called "${meetingData.title}" from ${meetingData.date}.
+The meeting had these participants: ${meetingData.participants.join(', ')}.
+
+You have access to the meeting transcript and summary. Use the provided tools to search for specific information.
+When answering questions:
+- Be concise but thorough
+- Use a professional tone
+- Reference specific parts of the meeting when relevant
+- Admit when you don't know something
+- Don't make up information that isn't in the transcript or summary
+- Format your responses using Markdown for better readability
+- Use bullet points or numbered lists when appropriate`;
+			const meetingAssistantModel = google('gemini-1.5-pro', {});
+
+			const augmentedMessages = [
+				{ role: 'system', content: systemMessage },
+				...messages,
+			];
+
+			// Get all meeting tools
+			const meetingTools = createMeetingTools(meetingId);
+
+			// Create a stream response
+			const stream = await streamText({
+				model: meetingAssistantModel,
+				system: systemMessage,
+				messages: augmentedMessages,
+				tools: meetingTools,
+				maxSteps: 5,
+			});
+
+			return stream.toDataStreamResponse();
+		} catch (error) {
+			console.error('Error generating AI response:', error);
+			throw error;
+		}
 	} catch (error) {
 		console.error('Error in AI meeting assistant:', error);
 		return NextResponse.json(
