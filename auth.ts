@@ -1,17 +1,20 @@
 import NextAuth from 'next-auth';
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import { PrismaClient } from '@prisma/client';
-
-import { db } from '@/lib/db';
 import authConfig from '@/auth.config';
 import { getUserById } from '@/data/user';
 import { getTwoFactorConfoirmationByUserId } from '@/data/two-factor-confirmation';
 import { getAccountByUserId } from './data/account';
 
-// Create a separate prisma instance for auth
-const prisma = new PrismaClient();
+// Only import and use PrismaAdapter when not in Edge Runtime
+const adapter =
+	process.env.NEXT_RUNTIME === 'edge'
+		? undefined
+		: (async () => {
+				const { PrismaAdapter } = await import('@auth/prisma-adapter');
+				const { PrismaClient } = await import('@prisma/client');
+				const prisma = new PrismaClient();
+				return PrismaAdapter(prisma);
+			})();
 
-// Don't use the PrismaAdapter in middleware
 export const { handlers, auth, signIn, signOut } = NextAuth({
 	pages: {
 		signIn: '/auth/login',
@@ -19,6 +22,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 	},
 	events: {
 		async linkAccount({ user }) {
+			const { db } = await import('@/lib/db');
 			await db.user.update({
 				where: { id: user.id },
 				data: { emailVerified: new Date() },
@@ -43,6 +47,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
 					if (!twoFactorConfirmation) return false;
 
+					const { db } = await import('@/lib/db');
 					await db.twoFactorConfirmation.delete({
 						where: { id: twoFactorConfirmation.id },
 					});
@@ -90,8 +95,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 			return token;
 		},
 	},
-	adapter:
-		process.env.NEXT_RUNTIME === 'edge' ? undefined : PrismaAdapter(prisma),
+	adapter: adapter,
 	session: { strategy: 'jwt' },
 	...authConfig,
 });
