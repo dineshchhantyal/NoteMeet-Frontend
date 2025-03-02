@@ -10,11 +10,13 @@ import {
 	Users,
 	MessageSquare,
 	Clock,
+	CheckCircle,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 
-// Sample participants
+// Sample participants for a business meeting (non-technical)
 const participants = [
 	{
 		name: 'Sarah Johnson',
@@ -46,28 +48,12 @@ const participants = [
 	},
 ];
 
-// Sample transcript lines for marketing meeting
-const marketingChat = [
-	{ speaker: 'Sarah', text: "Let's review our Q1 campaign performance today." },
-	{
-		speaker: 'Emma',
-		text: 'The social media ads outperformed our expectations by 27%.',
-	},
-	{
-		speaker: 'Michael',
-		text: 'Website traffic is up 35% compared to last quarter.',
-	},
-	{
-		speaker: 'David',
-		text: 'Our audience engagement has doubled on LinkedIn.',
-	},
-];
-
 export const Step2Recording = () => {
 	const [elapsedTime, setElapsedTime] = useState(0);
-	const [currentLine, setCurrentLine] = useState(0);
+	const [currentSpeaker, setCurrentSpeaker] = useState(0);
 	const [isMuted, setIsMuted] = useState(false);
 	const [isVideoOff, setIsVideoOff] = useState(false);
+	const [joinedStatus, setJoinedStatus] = useState('joining'); // joining, recording
 
 	// Animation for speaker highlight
 	const speakerControls = useAnimation();
@@ -90,33 +76,30 @@ export const Step2Recording = () => {
 		return () => clearInterval(timer);
 	}, []);
 
-	// Advance through chat lines
+	// Cycle through speakers periodically
 	useEffect(() => {
 		if (elapsedTime % 5 === 0 && elapsedTime > 0) {
-			setCurrentLine((prev) => (prev + 1) % marketingChat.length);
-
-			// Highlight current speaker
-			const currentSpeaker = marketingChat[currentLine].speaker;
-			const speakerIndex = participants.findIndex(
-				(p) => p.name.split(' ')[0] === currentSpeaker,
-			);
+			// Update NoteMeet status after a few seconds
+			if (elapsedTime === 5) {
+				setJoinedStatus('recording');
+			}
 
 			// Reset all speakers
-			participants.forEach((p) => (p.speaking = false));
+			const updatedParticipants = [...participants];
+			updatedParticipants.forEach((p) => (p.speaking = false));
 
-			// Set current speaker
-			if (speakerIndex >= 0) {
-				participants[speakerIndex].speaking = true;
-			}
+			// Set new speaker
+			const nextSpeaker = (currentSpeaker + 1) % participants.length;
+			updatedParticipants[nextSpeaker].speaking = true;
+			setCurrentSpeaker(nextSpeaker);
 
 			// Animate speaker highlight
 			speakerControls.start({
 				scale: [1, 1.05, 1],
-				opacity: [1, 1, 1],
 				transition: { duration: 0.5 },
 			});
 		}
-	}, [elapsedTime, currentLine, speakerControls]);
+	}, [elapsedTime, currentSpeaker, speakerControls]);
 
 	return (
 		<div className="flex flex-col h-full">
@@ -127,9 +110,31 @@ export const Step2Recording = () => {
 					animate={{ opacity: [0.7, 1, 0.7] }}
 					transition={{ repeat: Infinity, duration: 2 }}
 				>
-					<div className="h-2 w-2 rounded-full bg-red-500 mr-2 animate-pulse"></div>
-					<span className="text-white text-xs">NoteMeet Recording</span>
+					{joinedStatus === 'joining' ? (
+						<>
+							<div className="h-2 w-2 rounded-full bg-amber-500 mr-2 animate-pulse"></div>
+							<span className="text-white text-xs">NoteMeet Joining...</span>
+						</>
+					) : (
+						<>
+							<div className="h-2 w-2 rounded-full bg-red-500 mr-2 animate-pulse"></div>
+							<span className="text-white text-xs">NoteMeet Recording</span>
+						</>
+					)}
 				</motion.div>
+
+				{/* Success notification when recording starts */}
+				{joinedStatus === 'recording' && elapsedTime < 10 && (
+					<motion.div
+						initial={{ opacity: 0, y: -20 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0 }}
+						className="absolute top-3 right-3 z-20 flex items-center bg-[#63d392]/20 backdrop-blur-sm px-3 py-1.5 rounded-md border border-[#63d392]/30"
+					>
+						<CheckCircle className="h-4 w-4 text-[#63d392] mr-2" />
+						<span className="text-white text-xs">Meeting capture started</span>
+					</motion.div>
+				)}
 
 				{/* Main video grid */}
 				<div className="grid grid-cols-2 gap-2 h-full p-3">
@@ -223,44 +228,43 @@ export const Step2Recording = () => {
 				</div>
 			</div>
 
-			{/* Live transcript */}
-			<div className="mt-4 bg-[#156469]/10 rounded-lg p-3 border border-[#156469]/30 max-h-[120px] overflow-y-auto">
+			{/* Meeting info and recording status */}
+			<div className="mt-4 bg-[#156469]/10 rounded-lg p-3 border border-[#156469]/30">
 				<div className="flex justify-between items-center mb-2">
-					<h4 className="text-[#63d392] text-xs uppercase tracking-wider">
-						Live Transcript
+					<h4 className="text-white text-sm font-medium">
+						Q1 Marketing Strategy Meeting
 					</h4>
-					<Badge className="bg-[#63d392]/20 text-[#63d392] text-xs">
-						AI-Powered
+					<Badge
+						className={
+							joinedStatus === 'recording'
+								? 'bg-red-500/20 text-red-400 text-xs'
+								: 'bg-amber-500/20 text-amber-400 text-xs'
+						}
+					>
+						{joinedStatus === 'recording' ? 'Recording' : 'Connecting...'}
 					</Badge>
 				</div>
 
-				<div className="space-y-2">
-					{marketingChat
-						.slice(0, Math.min(currentLine + 1, marketingChat.length))
-						.map((line, idx) => (
-							<motion.div
-								key={idx}
-								className="flex"
-								initial={{ opacity: 0, x: -5 }}
-								animate={{ opacity: 1, x: 0 }}
-								transition={{ duration: 0.3 }}
-							>
-								<span className="text-[#63d392] text-xs font-medium mr-2 whitespace-nowrap">
-									{line.speaker}:
-								</span>
-								<span className="text-white text-xs">{line.text}</span>
-							</motion.div>
-						))}
+				<div className="flex justify-between items-center text-xs text-gray-300 mb-3">
+					<div>4 participants</div>
+					<div>{formatTime(elapsedTime)}</div>
 				</div>
 
-				{currentLine < marketingChat.length - 1 && (
-					<motion.div
-						className="text-[#63d392]/70 text-xs italic mt-1"
-						animate={{ opacity: [0.5, 1, 0.5] }}
-						transition={{ repeat: Infinity, duration: 2 }}
-					>
-						Transcribing in real-time...
-					</motion.div>
+				{joinedStatus === 'recording' && (
+					<div className="space-y-1">
+						<div className="flex justify-between items-center text-xs">
+							<span className="text-[#63d392]">
+								NoteMeet is capturing your meeting
+							</span>
+							<span className="text-white">
+								{Math.min(100, Math.floor(elapsedTime * 3.33))}%
+							</span>
+						</div>
+						<Progress
+							value={Math.min(100, elapsedTime * 3.33)}
+							className="h-1 bg-[#156469]/30"
+						/>
+					</div>
 				)}
 			</div>
 		</div>

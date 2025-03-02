@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
 	Calendar,
 	Cloud,
@@ -214,141 +214,206 @@ export function InteractiveHowItWorks() {
 
 function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 	const [hoveredStep, setHoveredStep] = useState<number | null>(null);
+	const [activeStep, setActiveStep] = useState<number>(0);
+
+	// Auto-advance steps every few seconds for demo effect
+	useEffect(() => {
+		const timer = setInterval(() => {
+			setActiveStep((prev) => (prev + 1) % steps.length);
+		}, 5000);
+		return () => clearInterval(timer);
+	}, [steps.length]);
 
 	return (
-		<div className="relative w-full h-[710px]">
-			<svg viewBox="0 0 800 700" className="w-full h-full">
-				<defs>
-					<linearGradient
-						id="circleGradient"
-						x1="0%"
-						y1="0%"
-						x2="100%"
-						y2="100%"
-					>
-						<stop offset="0%" stopColor="#63d392" />
-						<stop offset="100%" stopColor="#4fb87a" />
-					</linearGradient>
-				</defs>
-				<circle
-					cx="400"
-					cy="350"
-					r="300"
-					fill="none"
-					stroke="#63d392"
-					strokeOpacity="0.3"
-					strokeWidth="2"
-				/>
-				{steps.map((step, index) => {
-					const angle = (index * (360 / steps.length) - 90) * (Math.PI / 180);
-					const x = 400 + 300 * Math.cos(angle);
-					const y = 350 + 300 * Math.sin(angle);
-					const nextAngle =
-						((index + 1) * (360 / steps.length) - 90) * (Math.PI / 180);
-					const nextX = 400 + 300 * Math.cos(nextAngle);
-					const nextY = 350 + 300 * Math.sin(nextAngle);
-
-					return (
-						<g
-							key={index}
-							onMouseEnter={() => setHoveredStep(index)}
-							onMouseLeave={() => setHoveredStep(null)}
-						>
-							<motion.circle
-								cx={x}
-								cy={y}
-								r="40"
-								fill="#63d392"
-								initial={{ scale: 1 }}
-								whileHover={{ scale: 1.1, fill: '#4fb87a' }}
-							/>
-							<foreignObject x={x - 20} y={y - 20} width="40" height="40">
-								<div className="flex items-center justify-center w-full h-full text-[#0a4a4e]">
-									<step.icon size={24} />
-								</div>
-							</foreignObject>
-							<text
-								x={x}
-								y={y + 60}
-								textAnchor="middle"
-								fill="#e2e8f0"
-								fontSize="14"
+		<div className="flex flex-col lg:flex-row gap-8 items-center">
+			{/* Left side: Visual workflow */}
+			<div className="w-full lg:w-1/2">
+				<div className="relative w-full h-[500px] bg-[#0d5559] rounded-xl p-6 shadow-lg overflow-hidden">
+					{/* Connection lines */}
+					<svg className="absolute inset-0 w-full h-full" viewBox="0 0 500 500">
+						<defs>
+							<linearGradient
+								id="lineGradient"
+								x1="0%"
+								y1="0%"
+								x2="100%"
+								y2="0%"
 							>
-								{step.title}
-							</text>
-							{index < steps.length - 1 && (
-								<path
-									d={`M${x} ${y} Q${400} ${350} ${nextX} ${nextY}`}
-									fill="none"
-									stroke="#63d392"
-									strokeOpacity="0.5"
-									strokeWidth="2"
-									strokeDasharray="5,5"
+								<stop offset="0%" stopColor="#63d392" stopOpacity="0.4" />
+								<stop offset="100%" stopColor="#63d392" stopOpacity="0.8" />
+							</linearGradient>
+						</defs>
+
+						{/* Draw connecting paths between steps */}
+						{steps.map(
+							(_, index) =>
+								index < steps.length - 1 && (
+									<path
+										key={`path-${index}`}
+										d={`M80 ${80 + index * 80} L420 ${80 + index * 80 + 40}`}
+										stroke="url(#lineGradient)"
+										strokeWidth="2"
+										strokeDasharray="6,4"
+										strokeLinecap="round"
+										fill="none"
+									>
+										<animate
+											attributeName="stroke-dashoffset"
+											from="40"
+											to="0"
+											dur="2s"
+											repeatCount="indefinite"
+										/>
+									</path>
+								),
+						)}
+					</svg>
+
+					{/* Steps visualization */}
+					<div className="relative z-10">
+						{steps.map((step, index) => (
+							<motion.div
+								key={index}
+								className={`flex items-center mb-12 cursor-pointer ${
+									activeStep === index || hoveredStep === index
+										? 'opacity-100'
+										: 'opacity-60'
+								}`}
+								initial={{ x: -20, opacity: 0 }}
+								animate={{ x: 0, opacity: 1 }}
+								transition={{ delay: index * 0.1 }}
+								onMouseEnter={() => setHoveredStep(index)}
+								onMouseLeave={() => setHoveredStep(null)}
+								onClick={() => setActiveStep(index)}
+							>
+								<motion.div
+									className={`flex items-center justify-center w-16 h-16 rounded-full mr-4 transition-all duration-300 ${
+										activeStep === index || hoveredStep === index
+											? 'bg-[#63d392] shadow-xl shadow-[#63d392]/20'
+											: 'bg-[#156469]'
+									}`}
+									whileHover={{ scale: 1.1 }}
 								>
-									<animate
-										attributeName="stroke-dashoffset"
-										from="0"
-										to="20"
-										dur="1s"
-										repeatCount="indefinite"
+									<step.icon
+										size={28}
+										className={
+											activeStep === index || hoveredStep === index
+												? 'text-[#0a4a4e]'
+												: 'text-white'
+										}
 									/>
-								</path>
-							)}
-						</g>
-					);
-				})}
-				<g transform="translate(400, 350)">
-					<circle cx="0" cy="0" r="80" fill="#156469" />
-					<text
-						x="0"
-						y="4"
-						textAnchor="middle"
-						fill="white"
-						fontSize="24"
-						fontWeight="bold"
-					>
-						NoteMeet
-					</text>
-				</g>
-			</svg>
-			<AnimatePresence>
-				{hoveredStep !== null && (
+								</motion.div>
+								<div>
+									<h3
+										className={`text-xl font-semibold ${
+											activeStep === index || hoveredStep === index
+												? 'text-[#63d392]'
+												: 'text-white'
+										}`}
+									>
+										{step.title}
+									</h3>
+								</div>
+							</motion.div>
+						))}
+					</div>
+				</div>
+			</div>
+
+			{/* Right side: Step details */}
+			<div className="w-full lg:w-1/2">
+				<AnimatePresence mode="wait">
 					<motion.div
+						key={activeStep}
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
-						exit={{ opacity: 0, y: 20 }}
-						transition={{ duration: 0.2 }}
-						className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg shadow-lg max-w-sm w-full text-center"
-						style={{
-							background: '#156469',
-							border: '1px solid #63d392',
-						}}
+						exit={{ opacity: 0, y: -20 }}
+						transition={{ duration: 0.3 }}
+						className="bg-[#156469] p-8 rounded-xl shadow-xl border border-[#63d392]/30"
 					>
-						<h3 className="text-2xl font-semibold mb-2 text-[#63d392]">
-							{steps[hoveredStep].title}
-						</h3>
-						<p className="text-white mb-4">{steps[hoveredStep].content}</p>
-						<ul className="text-left">
-							{steps[hoveredStep].benefits.map((benefit, index) => (
-								<li key={index} className="flex items-start mb-2">
-									<svg
-										className="w-4 h-4 mt-1 mr-2"
-										fill="none"
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										viewBox="0 0 24 24"
-										stroke="#63d392"
+						<div className="flex items-center mb-6">
+							<div className="p-3 bg-[#63d392]/20 rounded-lg mr-4">
+								{steps[activeStep].icon &&
+									React.createElement(steps[activeStep].icon, {
+										size: 32,
+										className: 'text-[#63d392]',
+									})}
+							</div>
+							<h3 className="text-2xl font-bold text-[#63d392]">
+								{steps[activeStep].title}
+							</h3>
+						</div>
+
+						<p className="text-white text-lg mb-6">
+							{steps[activeStep].content}
+						</p>
+
+						<div className="mt-6">
+							<h4 className="text-[#63d392] font-semibold mb-3">
+								Key Benefits:
+							</h4>
+							<ul className="space-y-3">
+								{steps[activeStep].benefits.map((benefit, idx) => (
+									<motion.li
+										key={idx}
+										initial={{ opacity: 0, x: -10 }}
+										animate={{ opacity: 1, x: 0 }}
+										transition={{ delay: idx * 0.1 }}
+										className="flex items-start"
 									>
-										<path d="M5 13l4 4L19 7"></path>
-									</svg>
-									<span className="text-sm text-gray-300">{benefit}</span>
-								</li>
-							))}
-						</ul>
+										<div className="p-1 bg-[#63d392]/20 rounded mr-3 mt-1">
+											<svg
+												className="w-4 h-4"
+												fill="none"
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth="2"
+												viewBox="0 0 24 24"
+												stroke="#63d392"
+											>
+												<path d="M5 13l4 4L19 7"></path>
+											</svg>
+										</div>
+										<span className="text-gray-200">{benefit}</span>
+									</motion.li>
+								))}
+							</ul>
+						</div>
+
+						<div className="flex justify-between mt-8">
+							<button
+								onClick={() =>
+									setActiveStep(
+										(prev) => (prev - 1 + steps.length) % steps.length,
+									)
+								}
+								className="px-4 py-2 bg-[#0a4a4e] text-white rounded-md hover:bg-[#0d5559] transition-colors"
+							>
+								Previous
+							</button>
+							<div className="flex space-x-1">
+								{steps.map((_, idx) => (
+									<button
+										key={idx}
+										onClick={() => setActiveStep(idx)}
+										className={`w-2.5 h-2.5 rounded-full ${
+											activeStep === idx ? 'bg-[#63d392]' : 'bg-[#63d392]/30'
+										}`}
+									/>
+								))}
+							</div>
+							<button
+								onClick={() =>
+									setActiveStep((prev) => (prev + 1) % steps.length)
+								}
+								className="px-4 py-2 bg-[#63d392] text-[#0a4a4e] font-medium rounded-md hover:bg-[#4fb87a] transition-colors"
+							>
+								Next
+							</button>
+						</div>
 					</motion.div>
-				)}
-			</AnimatePresence>
+				</AnimatePresence>
+			</div>
 		</div>
 	);
 }
