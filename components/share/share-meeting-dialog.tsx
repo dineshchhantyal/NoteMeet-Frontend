@@ -88,27 +88,19 @@ export function ShareMeetingDialog({
 
 		try {
 			const urlObj = new URL(url);
-			const origin = urlObj.origin.replace(/^https?:\/\//, ''); // Remove protocol
-			const pathParts = urlObj.pathname.split('/').filter(Boolean);
-			const lastPath =
-				pathParts.length > 0 ? pathParts[pathParts.length - 1] : '';
+			const token = urlObj.pathname.split('/').pop() || '';
 
-			// For very small screens, be even more aggressive with truncation
-			if (window.innerWidth < 400) {
-				return `${origin.split('.')[0]}.../${lastPath}`;
-			}
+			// Show only a small part of the token
+			const shortToken =
+				token.length > 8
+					? `${token.substring(0, 4)}...${token.substring(token.length - 4)}`
+					: token;
 
-			// Medium truncation for normal mobile screens
-			if (window.innerWidth < 640) {
-				return `${origin.split('.')[0]}.../.../${lastPath}`;
-			}
-
-			// Standard truncation for larger screens
-			return `${origin}/.../${lastPath}${urlObj.search ? '?...' : ''}`;
+			return `Invitation: ${shortToken}`;
 		} catch (e) {
 			// Fallback for invalid URLs
 			console.error(e);
-			return url.length > 25 ? url.substring(0, 22) + '...' : url;
+			return 'Click to copy link';
 		}
 	};
 
@@ -251,7 +243,7 @@ export function ShareMeetingDialog({
 										onClick={generateShareLink}
 										size="sm"
 										variant="outline"
-										className="border-[#63d392]/30 text-white hover:bg-[#156469]/70"
+										className="border-[#63d392]/30 text-[#63d392] bg-[#156469]/70 hover:bg-[#156469] hover:text-white"
 										disabled={isLoading}
 									>
 										{isLoading ? (
@@ -264,7 +256,11 @@ export function ShareMeetingDialog({
 										onClick={copyLink}
 										size="sm"
 										variant="outline"
-										className={`border-[#63d392]/30 ${copied ? 'bg-[#63d392]/20 text-[#63d392]' : 'text-white'} hover:bg-[#156469]/70`}
+										className={`border-[#63d392]/30 ${
+											copied
+												? 'bg-[#63d392]/40 text-[#63d392] hover:bg-[#63d392]/50'
+												: 'bg-[#156469]/70 text-[#63d392] hover:bg-[#156469] hover:text-white'
+										}`}
 										disabled={!shareToken || isLoading}
 									>
 										{copied ? (
