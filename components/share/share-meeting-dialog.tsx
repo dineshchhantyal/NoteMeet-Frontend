@@ -50,21 +50,33 @@ export function ShareMeetingDialog({
 	// Create a sharing link
 	const shareLink = `${window.location.origin}/invitation/${meetingId}?permission=${permission}`;
 
-	// Format link for display with intelligent truncation
+	// Format link for display with more aggressive truncation
 	const formatLinkForDisplay = (url: string) => {
-		if (url.length < 40) return url;
+		if (!url) return '';
 
-		const urlObj = new URL(url);
-		const origin = urlObj.origin;
-		const path = urlObj.pathname;
-		const query = urlObj.search;
+		try {
+			const urlObj = new URL(url);
+			const origin = urlObj.origin.replace(/^https?:\/\//, ''); // Remove protocol
+			const pathParts = urlObj.pathname.split('/').filter(Boolean);
+			const lastPath =
+				pathParts.length > 0 ? pathParts[pathParts.length - 1] : '';
 
-		// Get the first part of the path
-		const pathParts = path.split('/');
-		const firstPath = pathParts.slice(0, 2).join('/');
-		const lastPath = pathParts.slice(-1)[0];
+			// For very small screens, be even more aggressive with truncation
+			if (window.innerWidth < 400) {
+				return `${origin.split('.')[0]}.../${lastPath}`;
+			}
 
-		return `${origin}${firstPath}/.../${lastPath}${query}`;
+			// Medium truncation for normal mobile screens
+			if (window.innerWidth < 640) {
+				return `${origin.split('.')[0]}.../.../${lastPath}`;
+			}
+
+			// Standard truncation for larger screens
+			return `${origin}/.../${lastPath}${urlObj.search ? '?...' : ''}`;
+		} catch (e) {
+			// Fallback for invalid URLs
+			return url.length > 25 ? url.substring(0, 22) + '...' : url;
+		}
 	};
 
 	const handleShare = async () => {
@@ -201,7 +213,7 @@ export function ShareMeetingDialog({
 									onClick={copyLink}
 									size="sm"
 									variant="outline"
-									className={`border-[#63d392]/30 ${copied ? 'bg-[#63d392]/20 text-[#63d392]' : 'text-white'} hover:bg-[#156469]/70`}
+									className={`border-[#63d392]/30 ${copied ? 'bg-[#63d392]/20 text-[#63d392]' : 'text-gray-700'} hover:bg-[#156469]/70`}
 								>
 									{copied ? (
 										<Check className="h-4 w-4" />
