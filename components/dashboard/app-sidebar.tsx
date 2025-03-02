@@ -46,6 +46,7 @@ const formatDate = (dateString: string) => {
 		// If it's already a formatted date string, return as is
 		return dateString;
 	} catch (error) {
+		console.error('Error formatting date:', error);
 		return dateString;
 	}
 };
@@ -71,6 +72,7 @@ const formatTime = (timeString: string) => {
 		// Return as is if we can't format it
 		return timeString;
 	} catch (error) {
+		console.error('Error formatting time:', error);
 		return timeString;
 	}
 };

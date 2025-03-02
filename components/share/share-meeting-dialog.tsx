@@ -75,6 +75,7 @@ export function ShareMeetingDialog({
 			return `${origin}/.../${lastPath}${urlObj.search ? '?...' : ''}`;
 		} catch (e) {
 			// Fallback for invalid URLs
+			console.error(e);
 			return url.length > 25 ? url.substring(0, 22) + '...' : url;
 		}
 	};
