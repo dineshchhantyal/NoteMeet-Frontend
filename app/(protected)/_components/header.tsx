@@ -1,5 +1,5 @@
+import { NotificationDropdown } from '@/components/dashboard/notification-dropdown';
 import { UserButton } from '../../../components/auth/user-button';
-import { NotificationDropdown } from '@/app/(protected)/(playground)/dashboard/components/notification-dropdown';
 import LogoLink from '@/components/LogoLink';
 
 interface HeaderProps {
