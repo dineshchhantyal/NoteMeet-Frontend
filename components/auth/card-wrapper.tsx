@@ -8,36 +8,53 @@ import {
 } from '@/components/ui/card';
 import { Social } from '@/components/auth/social';
 import { BackButton } from '@/components/auth/back-button';
+import { cn } from '@/lib/utils';
 
 interface CardWrapperProps {
 	children: React.ReactNode;
-	headerLabel: string;
+	headerLabel: React.ReactNode;
 	backButtonLabel: string;
 	backButtonRef: string;
 	showSocial?: boolean;
+	className?: string;
 }
 
-export const CardWrapper = ({
+export function CardWrapper({
 	children,
 	headerLabel,
 	backButtonLabel,
 	backButtonRef,
 	showSocial,
-}: CardWrapperProps) => {
+	className,
+}: CardWrapperProps) {
 	return (
-		<Card className="w-[400px]">
-			<CardHeader>Welcome back, {headerLabel}</CardHeader>
+		<Card
+			className={cn(
+				'w-full max-w-md shadow-md',
+				'bg-[#156469]/30 backdrop-blur-sm border border-[#63d392]/20 text-white',
+				className,
+			)}
+		>
+			<CardHeader className="space-y-2">{headerLabel}</CardHeader>
 			<CardContent>{children}</CardContent>
-
 			{showSocial && (
-				<CardFooter>
+				<CardFooter className="flex flex-col gap-y-4">
+					<div className="relative w-full">
+						<div className="absolute inset-0 flex items-center">
+							<span className="w-full border-t border-[#63d392]/20" />
+						</div>
+						<div className="relative flex justify-center text-xs uppercase">
+							<span className="bg-[#0d5559] px-2 text-gray-400">
+								Or continue with
+							</span>
+						</div>
+					</div>
 					<Social />
 				</CardFooter>
 			)}
-
 			<CardFooter>
 				<BackButton label={backButtonLabel} href={backButtonRef} />
 			</CardFooter>
 		</Card>
 	);
-};
+}
