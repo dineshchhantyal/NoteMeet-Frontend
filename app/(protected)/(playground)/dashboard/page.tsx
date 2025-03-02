@@ -1,8 +1,32 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import {
+	Menu,
+	FileText,
+	VideoIcon,
+	FileBarChart2,
+	Loader2,
+	MessageSquare,
+	PanelRight,
+	PanelLeft,
+} from 'lucide-react';
+
+// UI Components
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MeetingInterface } from '@/types';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
+
+// Redux
+import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
+import {
+	fetchMeetings,
+	selectMeeting,
+	deleteMeeting,
+} from '@/lib/redux/features/meetings/meetingsSlice';
+
+// Dashboard Components
 import { AppSidebar } from '@/components/dashboard/app-sidebar';
 import { MeetingInfo } from '@/components/dashboard/meeting-info';
 import { VideoPlayer } from '@/components/dashboard/video-player';
@@ -14,59 +38,36 @@ import { MeetingAnalytics } from '@/components/dashboard/meeting-analytics';
 import { VideoPlayerPlaceholder } from '@/components/dashboard/video-player-placeholder';
 import { NewMeetingDialog } from '@/components/dashboard/new-meeting-dialog';
 
-import { Button } from '@/components/ui/button';
-import {
-	Menu,
-	FileText,
-	VideoIcon,
-	FileBarChart2,
-	Loader2,
-	MessageSquare,
-	PanelRight,
-	PanelLeft,
-} from 'lucide-react';
+// Types
+import { MeetingInterface } from '@/types';
 import { MeetingStatus } from '@/types/meeting';
+import { useState } from 'react';
 import { VideoTranscriptResponse } from '@/types/video-transcript';
-import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
 import DashboardHeader from '@/components/dashboard/dashboard-header';
 
 export default function DashboardPage() {
-	const [selectedMeeting, setSelectedMeeting] =
-		useState<MeetingInterface | null>(null);
-	const [loading, setLoading] = useState(true);
+	const dispatch = useAppDispatch();
+	const { meetings, selectedMeeting, loading } = useAppSelector(
+		(state) => state.meetings,
+	);
+
 	const [loadingTranscript, setLoadingTranscript] = useState(false);
 	const [loadingVideo, setLoadingVideo] = useState(false);
-	const [sources, setSources] = useState<
-		{
-			src: { url: string; expiresAt: string };
-			type: string;
-		}[]
-	>([]);
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [rightPanelOpen, setRightPanelOpen] = useState(true);
-
+	const [sources, setSources] = useState<
+		{ src: { url: string; expiresAt: string }; type: string }[]
+	>([]);
 	const [transcript, setTranscript] = useState<VideoTranscriptResponse | null>(
 		null,
 	);
-	const [meetings, setMeetings] = useState<MeetingInterface[]>([]);
 
+	// Fetch meetings on component mount
 	useEffect(() => {
-		const fetchMeetings = async () => {
-			setLoading(true);
-			try {
-				const response = await fetch('/api/meetings');
-				const data = await response.json();
-				setMeetings(data.data);
-			} catch (error) {
-				console.error('Error fetching meetings:', error);
-			}
-			setLoading(false);
-		};
+		dispatch(fetchMeetings());
+	}, [dispatch]);
 
-		fetchMeetings();
-	}, []);
-
+	// Handle video and transcript fetching when a meeting is selected
 	useEffect(() => {
 		if (
 			selectedMeeting &&
@@ -115,28 +116,11 @@ export default function DashboardPage() {
 	}, [selectedMeeting]);
 
 	const onMeetingDelete = async (meetingId: string) => {
-		setMeetings((prevMeetings) =>
-			prevMeetings.filter((meeting) => meeting.id !== meetingId),
-		);
-		try {
-			const res = await fetch(`/api/meetings/${meetingId}`, {
-				method: 'DELETE',
-			});
-
-			const data = await res.json();
-			if (data.error) {
-				console.error('Error deleting meeting:', data.error);
-			}
-		} catch (error) {
-			console.error('Error deleting meeting:', error);
-		}
-
-		setSelectedMeeting(null);
+		dispatch(deleteMeeting(meetingId));
 	};
 
 	const handleMeetingCreated = (newMeeting: MeetingInterface) => {
-		setMeetings((prev) => [newMeeting, ...prev]);
-		setSelectedMeeting(newMeeting);
+		dispatch(selectMeeting(newMeeting));
 	};
 
 	return (
@@ -149,7 +133,7 @@ export default function DashboardPage() {
 			</div>
 
 			<AppSidebar
-				onSelectMeeting={setSelectedMeeting}
+				onSelectMeeting={(meeting) => dispatch(selectMeeting(meeting))}
 				meetings={meetings}
 				isOpen={sidebarOpen}
 				onClose={() => setSidebarOpen(false)}

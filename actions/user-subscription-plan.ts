@@ -1,5 +1,4 @@
 import { getUserById } from '@/data/user';
-import { currentUser } from '@/lib/auth'; // Assuming this is how you get the current user
 import { db } from '@/lib/db';
 import {
 	BillingPeriod,
@@ -105,7 +104,7 @@ class UserSubscriptionService {
 		const meetingsCount = await db.meeting.count({ where: { userId } });
 
 		// if not storage, create one
-		let storage = await db.userStorage.upsert({
+		const storage = await db.userStorage.upsert({
 			where: { userId },
 			create: { userId, usedStorage: 0 },
 			update: {},

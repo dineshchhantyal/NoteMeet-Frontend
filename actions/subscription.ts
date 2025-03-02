@@ -9,7 +9,6 @@ import {
 } from '@/schemas/subscriptions';
 import {
 	BillingPeriod,
-	Subscription,
 	SubscriptionStatus,
 	SubscriptionTier,
 	User,
