@@ -7,16 +7,9 @@ export default function MeetingLayout({
 }: {
 	children: React.ReactNode;
 }) {
-	const { meetings, selectedMeeting, loading } = useAppSelector(
-		(state) => state.meetings,
-	);
-
 	return (
 		<div className="flex flex-col min-h-screen">
-			<MeetingHeader
-				meeting={selectedMeeting}
-				showShareButton={meetings.length > 0 && !loading}
-			/>
+			<MeetingHeader />
 			<main className="flex-grow">{children}</main>
 			<MeetingFooter />
 		</div>

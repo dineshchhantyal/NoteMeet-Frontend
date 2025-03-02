@@ -24,7 +24,11 @@ export const LoginButton = ({
 	}
 
 	return (
-		<Link href="/auth/login" className="cursor-pointer">
+		<Link
+			href="/auth/login"
+			className="cursor-pointer"
+			data-auth-trigger="login"
+		>
 			{children}
 		</Link>
 	);

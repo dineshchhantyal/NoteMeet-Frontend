@@ -1,7 +1,7 @@
 'use client';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Mic, FileAudio, Mail, CheckCircle } from 'lucide-react';
+import { Mic, FileAudio, Mail, CheckCircle, FileText } from 'lucide-react';
 
 // Define brand colors as constants for consistency with other components
 const brandColors = {
@@ -14,9 +14,16 @@ const brandColors = {
 	bgColor: 'bg-[#0a4a4e]', // Background color
 	textColor: 'text-[#63d392]', // Text accent color
 };
-
 const features = [
 	{
+		id: 'transcript',
+		title: 'Automated Transcription',
+		description:
+			'AI-powered transcription creates accurate meeting notes in real-time.',
+		icon: <FileText size={24} />,
+	},
+	{
+		id: 'meetingRecording',
 		icon: <Mic size={24} />,
 		title: 'Meeting Recording',
 		description:
@@ -25,6 +32,7 @@ const features = [
 		animation: 'float',
 	},
 	{
+		id: 'autoTranscription',
 		icon: <FileAudio size={24} />,
 		title: 'Auto Transcription',
 		description:
@@ -33,6 +41,7 @@ const features = [
 		animation: 'pulse',
 	},
 	{
+		id: 'emailSummary',
 		icon: <Mail size={24} />,
 		title: 'Automated Email Summary',
 		description:
@@ -41,6 +50,7 @@ const features = [
 		animation: 'bounce',
 	},
 	{
+		id: 'actionItemDistribution',
 		icon: <CheckCircle size={24} />,
 		title: 'Action Item Distribution',
 		description:
@@ -49,8 +59,11 @@ const features = [
 		animation: 'scale',
 	},
 ];
-
-export function FeatureShowcase() {
+export function FeatureShowcase({
+	onFeatureClick,
+}: {
+	onFeatureClick?: (featureId: string) => void;
+}) {
 	const { ref, inView } = useInView({
 		threshold: 0.2,
 		triggerOnce: true,
@@ -162,13 +175,16 @@ export function FeatureShowcase() {
 					className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
 				>
 					{features.map((feature, index) => {
-						const featureVariant = getFeatureVariant(feature.animation);
+						const featureVariant = getFeatureVariant(
+							feature.animation || 'default',
+						);
 
 						return (
 							<motion.div
 								key={index}
 								whileHover={{ y: -5, transition: { duration: 0.2 } }}
 								className="relative bg-white/10 backdrop-blur-lg rounded-xl p-6 shadow-lg border border-[#63d392]/20 hover:border-[#63d392] transition-all duration-300 h-full"
+								onClick={() => onFeatureClick?.(feature.id)}
 							>
 								<motion.div
 									className={`absolute w-16 h-16 rounded-full ${feature.color} -top-8 left-6 flex items-center justify-center text-[#0a4a4e] shadow-lg p-3`}

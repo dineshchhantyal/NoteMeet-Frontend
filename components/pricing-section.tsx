@@ -57,9 +57,15 @@ const tiers = [
 	},
 ];
 
-export function PricingSection() {
+export function PricingSection({
+	onSelectPlan,
+	onContactSales,
+}: {
+	onSelectPlan?: (planId: string) => void;
+	onContactSales?: () => void;
+}) {
 	return (
-		<section className="py-20 bg-[#0a4a4e]">
+		<section className="py-20 bg-[#0c5054]">
 			<div className="container mx-auto px-4">
 				<div className="text-center mb-16">
 					<h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
@@ -128,28 +134,23 @@ export function PricingSection() {
 												? 'bg-[#63d392] text-[#0a4a4e] hover:bg-[#4fb87a]'
 												: 'bg-transparent border border-[#63d392] text-[#63d392] hover:bg-[#63d392]/10'
 										}`}
-										asChild
+										onClick={() => onSelectPlan?.(tier.name)}
 									>
-										<a
-											href="/early-access"
-											className="flex items-center justify-center"
+										{tier.name === 'Free' ? 'Get Started' : 'Choose Plan'}
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											className="h-4 w-4 ml-2 transform transition-transform group-hover:translate-x-1"
+											fill="none"
+											viewBox="0 0 24 24"
+											stroke="currentColor"
 										>
-											{tier.name === 'Free' ? 'Get Started' : 'Choose Plan'}
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												className="h-4 w-4 ml-2 transform transition-transform group-hover:translate-x-1"
-												fill="none"
-												viewBox="0 0 24 24"
-												stroke="currentColor"
-											>
-												<path
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													strokeWidth={2}
-													d="M13 7l5 5m0 0l-5 5m5-5H6"
-												/>
-											</svg>
-										</a>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth={2}
+												d="M13 7l5 5m0 0l-5 5m5-5H6"
+											/>
+										</svg>
 									</Button>
 								</CardFooter>
 							</Card>
@@ -170,12 +171,10 @@ export function PricingSection() {
 					<Button
 						variant="outline"
 						size="lg"
+						onClick={onContactSales}
 						className="border-[#63d392] text-[#63d392] hover:bg-[#63d392] hover:text-[#0a4a4e]"
-						asChild
 					>
-						<Link href="/contact" passHref>
-							Contact Sales
-						</Link>
+						Contact Sales for Enterprise
 					</Button>
 				</motion.div>
 			</div>

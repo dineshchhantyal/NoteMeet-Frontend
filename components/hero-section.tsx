@@ -6,7 +6,15 @@ import { ArrowRight, Play, Clock, Brain, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { MeetingDemoFlow } from './home/demo-flow';
 
-export const HeroSection = () => {
+export function HeroSection({
+	onGetStarted,
+	onLogin,
+	isLoggedIn = false,
+}: {
+	onGetStarted?: () => void;
+	onLogin?: () => void;
+	isLoggedIn?: boolean;
+}) {
 	const [loaded, setLoaded] = useState(false);
 
 	useEffect(() => {
@@ -78,18 +86,21 @@ export const HeroSection = () => {
 						>
 							<Button
 								size="lg"
+								onClick={onGetStarted}
 								className="bg-gradient-to-r from-[#63d392] to-[#4fb87a] text-[#0a4a4e] font-semibold hover:shadow-lg hover:shadow-[#63d392]/30 transform transition-all duration-300 text-base px-8"
 							>
-								Get Started Free <ArrowRight className="ml-2 h-4 w-4" />
+								{isLoggedIn ? 'Go to Dashboard' : 'Get Started Free'}{' '}
+								<ArrowRight className="ml-2 h-4 w-4" />
 							</Button>
 
 							<Button
 								size="lg"
 								variant="outline"
+								onClick={onLogin}
 								className="border-2 border-[#63d392] text-[#63d392] hover:bg-[#63d392]/10 hover:text-white transition-all duration-300 text-base px-8 group"
 							>
 								<Play className="mr-2 h-4 w-4 group-hover:scale-125 transition-transform duration-300" />
-								Watch Demo
+								{'Early Access'}
 							</Button>
 						</motion.div>
 
@@ -149,4 +160,4 @@ export const HeroSection = () => {
 			</div>
 		</section>
 	);
-};
+}

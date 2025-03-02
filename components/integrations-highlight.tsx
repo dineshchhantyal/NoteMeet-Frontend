@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 const integrations = [
 	{ name: 'Google Calendar', logo: '/GoogleCalendarLogo.png' },
@@ -12,7 +13,11 @@ const integrations = [
 	{ name: 'Asana', logo: '/TrelloLogo.png' },
 ];
 
-export function IntegrationsHighlight() {
+export function IntegrationsHighlight({
+	onExploreIntegrations,
+}: {
+	onExploreIntegrations: () => void;
+}) {
 	const containerVariants = {
 		hidden: { opacity: 0 },
 		visible: {
@@ -102,15 +107,19 @@ export function IntegrationsHighlight() {
 				>
 					<p className="text-gray-300 mb-6">
 						Don&apos;t see your favorite tool?{' '}
-						<span className="text-[#63d392] underline cursor-pointer">
+						<Link
+							href="/contact"
+							className="text-[#63d392] underline cursor-pointer hover:text-[#63d392]/80 transition-colors"
+						>
 							Let us know
-						</span>{' '}
+						</Link>{' '}
 						and we&apos;ll work on adding it.
 					</p>
 					<motion.button
 						whileHover={{ scale: 1.05 }}
 						whileTap={{ scale: 0.98 }}
 						className="px-6 py-2 rounded-lg border border-[#63d392] text-[#63d392] hover:bg-[#63d392]/10 transition-all duration-300"
+						onClick={onExploreIntegrations}
 					>
 						View All Integrations
 					</motion.button>

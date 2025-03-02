@@ -15,15 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { ShareManagement } from '../share/share-management';
 
-interface MeetingHeaderProps {
-	meeting?: MeetingInterface | null;
-	showShareButton?: boolean;
-}
-
-export function MeetingHeader({
-	meeting,
-	showShareButton = false,
-}: MeetingHeaderProps) {
+export function MeetingHeader() {
 	const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
 
 	return (
@@ -43,17 +35,6 @@ export function MeetingHeader({
 						</div>
 					</div>
 					<div className="flex items-center space-x-4">
-						{showShareButton && meeting && (
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={() => setIsShareDialogOpen(true)}
-								className="border-[#63d392]/40 hover:bg-[#63d392]/20 text-white"
-							>
-								<Share2 className="h-4 w-4 mr-2" />
-								Share
-							</Button>
-						)}
 						<Button
 							variant="ghost"
 							size="icon"
@@ -77,18 +58,6 @@ export function MeetingHeader({
 					</div>
 				</div>
 			</div>
-
-			{/* Share Dialog */}
-			{meeting && (
-				<Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
-					<DialogContent className="bg-[#0d5559] border-[#63d392]/30 text-white sm:max-w-md">
-						<DialogHeader>
-							<DialogTitle className="text-white">Share Meeting</DialogTitle>
-						</DialogHeader>
-						<ShareManagement meeting={meeting} />
-					</DialogContent>
-				</Dialog>
-			)}
 		</header>
 	);
 }

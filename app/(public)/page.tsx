@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { HeroSection } from '@/components/hero-section';
@@ -41,6 +41,7 @@ const itemVariants = {
 
 export default function HomePage() {
 	const searchParams = useSearchParams();
+	const router = useRouter();
 
 	useEffect(() => {
 		// Check if we should show the auth message
@@ -70,8 +71,17 @@ export default function HomePage() {
 					},
 				},
 			);
+
+			// clear the search params
+			router.replace('/');
 		}
 	}, [searchParams]);
+
+	// Helper function to handle navigation based on authentication
+	const handleNavigation = (path: string) => {
+		// You can add auth check logic here if needed
+		router.push(path);
+	};
 
 	return (
 		<div className="flex flex-col min-h-screen overflow-x-hidden">
@@ -82,12 +92,39 @@ export default function HomePage() {
 					variants={containerVariants}
 				>
 					<motion.div variants={itemVariants}>
-						<HeroSection />
+						<HeroSection
+							onGetStarted={() => {
+								// If logged in, go to dashboard, otherwise show sign up dialog
+								if (status === 'authenticated') {
+									handleNavigation('/dashboard');
+								} else {
+									// Open login/register dialog
+									const authTrigger = document.querySelector(
+										'[data-auth-trigger="login"]',
+									) as HTMLElement;
+
+									if (authTrigger) {
+										authTrigger.click();
+									} else {
+										handleNavigation('/auth/register');
+									}
+								}
+							}}
+							onLogin={() => {
+								handleNavigation('/early-access');
+							}}
+							isLoggedIn={status === 'authenticated'}
+						/>
 					</motion.div>
 
-					{/* Core Feature Showcase - New Component */}
+					{/* Core Feature Showcase */}
 					<motion.div variants={itemVariants}>
-						<FeatureShowcase />
+						<FeatureShowcase
+							onFeatureClick={(featureId) => {
+								// Can direct to specific feature documentation or demo pages
+								handleNavigation(`/features/${featureId}`);
+							}}
+						/>
 					</motion.div>
 
 					<motion.div variants={itemVariants} className="scroll-reveal">
@@ -107,7 +144,10 @@ export default function HomePage() {
 					</motion.div>
 
 					<motion.div variants={itemVariants} className="scroll-reveal">
-						<PricingSection />
+						<PricingSection
+							onSelectPlan={(planId) => handleNavigation(`/pricing/${planId}`)}
+							onContactSales={() => handleNavigation('/contact')}
+						/>
 					</motion.div>
 
 					<motion.div variants={itemVariants} className="scroll-reveal">
@@ -119,7 +159,9 @@ export default function HomePage() {
 					</motion.div>
 
 					<motion.div variants={itemVariants} className="scroll-reveal">
-						<IntegrationsHighlight />
+						<IntegrationsHighlight
+							onExploreIntegrations={() => handleNavigation('/integrations')}
+						/>
 					</motion.div>
 				</motion.div>
 			</main>
