@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
+import { PrismaClient } from '@prisma/client';
 
 import { db } from '@/lib/db';
 import authConfig from '@/auth.config';
@@ -7,6 +8,10 @@ import { getUserById } from '@/data/user';
 import { getTwoFactorConfoirmationByUserId } from '@/data/two-factor-confirmation';
 import { getAccountByUserId } from './data/account';
 
+// Create a separate prisma instance for auth
+const prisma = new PrismaClient();
+
+// Don't use the PrismaAdapter in middleware
 export const { handlers, auth, signIn, signOut } = NextAuth({
 	pages: {
 		signIn: '/auth/login',
@@ -85,7 +90,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 			return token;
 		},
 	},
-	adapter: PrismaAdapter(db),
+	adapter:
+		process.env.NEXT_RUNTIME === 'edge' ? undefined : PrismaAdapter(prisma),
 	session: { strategy: 'jwt' },
 	...authConfig,
 });

@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["jsonProtocol"] // Add this for edge compatibility
 }
 
 datasource db {
@@ -68,7 +69,7 @@ model User {
   storageId String? @unique
   // subscription
   activeSubscriptions Subscription[] @relation("ActiveUserSubscription")
-    
+
   @@map("users")
 
   createdAt DateTime @default(now())
@@ -103,7 +104,7 @@ model TwoFactorToken {
   @@unique([email, token])
   @@map("two_factor_tokens")
 }
- 
+
 model TwoFactorConfirmation {
   id     String @id @default(cuid())
   userId String @unique
@@ -125,7 +126,7 @@ model Meeting {
   participants    Participant[] // Participants can be deleted without affecting the Meeting
   awsSchedulerArn String? // ARN of the AWS Scheduler job
   awsJobId        String? // Unique ID of the AWS Scheduler job
-  transcriptUrl   String? // This is remote URL to the transcript file 
+  transcriptUrl   String? // This is remote URL to the transcript file
   transcriptKey   String? // This is the key to the transcript file in the S3 bucket
   videoKey        String?
   summary         Json?
@@ -253,7 +254,7 @@ model SubscriptionPlan {
   isActive    Boolean          @default(true)
   isPublic    Boolean          @default(false)
   public      Boolean          @default(true) // if false, the plan is just a draft
-  
+
   // Pricing
   basePrice Decimal @db.Decimal(10, 2)
   currency  String  @default("USD")
@@ -280,7 +281,7 @@ model SubscriptionPlan {
 
 model Subscription {
   id     String @id @default(cuid())
-  userId String 
+  userId String
   planId String
 
   // Core subscription data

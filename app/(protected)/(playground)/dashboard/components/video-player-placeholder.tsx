@@ -1,29 +1,15 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Play } from 'lucide-react';
+import { ReactNode } from 'react';
 
-interface VideoPlayerProps {
-	children?: React.ReactNode;
-	onClick?: () => void;
+interface VideoPlayerPlaceholderProps {
+	children: ReactNode;
 }
 
 export function VideoPlayerPlaceholder({
 	children,
-	onClick,
-}: VideoPlayerProps) {
+}: VideoPlayerPlaceholderProps) {
 	return (
-		<Card>
-			<CardContent className="p-0 relative">
-				<div className="aspect-video relative">
-					<div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-						{children ?? (
-							<Button variant="outline" size="lg" onClick={onClick}>
-								<Play className="h-8 w-8" />
-							</Button>
-						)}
-					</div>
-				</div>
-			</CardContent>
-		</Card>
+		<div className="aspect-video w-full rounded-lg bg-[#0d5559]/50 flex items-center justify-center border border-[#63d392]/20 overflow-hidden">
+			{children}
+		</div>
 	);
 }
