@@ -138,6 +138,7 @@ export default function DashboardPage() {
 				isOpen={sidebarOpen}
 				onClose={() => setSidebarOpen(false)}
 				selectedMeeting={selectedMeeting}
+				loading={loading} // Pass the loading state from Redux
 			/>
 
 			<div className="flex flex-1 flex-col overflow-hidden relative z-10">

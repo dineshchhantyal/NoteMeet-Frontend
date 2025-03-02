@@ -22,6 +22,8 @@ import {
 } from '@/components/ui/tooltip';
 import { MeetingInterface } from '@/types';
 import { MeetingStatus } from '@/types/meeting';
+import { Skeleton } from '@/components/ui/skeleton';
+import { format, parseISO, isValid } from 'date-fns';
 
 // Brand theme colors for consistent reference
 const BRAND = {
@@ -33,12 +35,53 @@ const BRAND = {
 	midTone: '#156469',
 };
 
+// Add these utility functions at the beginning of your component or outside
+const formatDate = (dateString: string) => {
+	try {
+		// Try to parse as ISO date first
+		const date = parseISO(dateString);
+		if (isValid(date)) {
+			return format(date, 'MMM d, yyyy'); // Format as "Jan 1, 2023"
+		}
+		// If it's already a formatted date string, return as is
+		return dateString;
+	} catch (error) {
+		return dateString;
+	}
+};
+
+const formatTime = (timeString: string) => {
+	try {
+		// Check if timeString includes time with seconds (ISO format like 2023-10-15T14:30:00)
+		if (timeString.includes('T')) {
+			const date = parseISO(timeString);
+			if (isValid(date)) {
+				return format(date, 'h:mm a'); // Format as "2:30 PM"
+			}
+		}
+
+		// Handle time strings like "14:30"
+		if (timeString.includes(':')) {
+			const [hours, minutes] = timeString.split(':').map(Number);
+			const date = new Date();
+			date.setHours(hours, minutes);
+			return format(date, 'h:mm a'); // Format as "2:30 PM"
+		}
+
+		// Return as is if we can't format it
+		return timeString;
+	} catch (error) {
+		return timeString;
+	}
+};
+
 interface AppSidebarProps {
 	onSelectMeeting: (meeting: MeetingInterface) => void;
 	meetings: MeetingInterface[];
 	isOpen: boolean;
 	onClose: () => void;
 	selectedMeeting?: MeetingInterface | null;
+	loading?: boolean; // Add loading prop
 }
 
 export function AppSidebar({
@@ -47,6 +90,7 @@ export function AppSidebar({
 	isOpen,
 	onClose,
 	selectedMeeting,
+	loading = false, // Default to false
 }: AppSidebarProps) {
 	const [searchTerm, setSearchTerm] = useState('');
 	console.log('meetings', meetings);
@@ -102,101 +146,126 @@ export function AppSidebar({
 					</div>
 				</div>
 
-				{filteredMeetings.length === 0 ? (
-					<div className="flex flex-col items-center justify-center p-8 text-center">
-						<div className="bg-[#156469]/40 p-4 rounded-full mb-4">
-							<Calendar className="h-6 w-6 text-[#63d392]/80" />
-						</div>
-						<p className="text-gray-300 mb-1">No meetings found</p>
-						<p className="text-xs text-gray-400">
-							{searchTerm
-								? 'Try a different search term'
-								: 'Create your first meeting'}
-						</p>
-					</div>
-				) : (
-					<ScrollArea className="flex-1 pr-3">
-						{nextMeeting && (
-							<div className="px-4 py-3 mb-4 bg-[#63d392]/10 border border-[#63d392]/20 rounded-lg mx-4 shadow-inner">
-								<div className="flex items-center gap-2 mb-2">
-									<Clock className="h-3 w-3 text-[#63d392]" />
-									<h3 className="font-semibold text-sm text-[#63d392]">
-										Next Meeting
-									</h3>
-								</div>
-								<p className="text-sm font-medium">{nextMeeting.title}</p>
-								<p className="text-xs text-gray-300 mt-1 flex items-center gap-1">
-									<Calendar className="h-3 w-3" />
-									{nextMeeting.date} - {nextMeeting.time}
-								</p>
-							</div>
-						)}
+				<div className="flex-1 overflow-auto py-2 px-3">
+					<h3 className="mb-2 px-4 text-xs font-semibold uppercase tracking-wider text-[#63d392]">
+						Your Meetings
+					</h3>
 
-						<div className="space-y-2 px-4">
-							<h3 className="text-xs uppercase text-gray-400 font-semibold tracking-wider mb-3 ml-1">
-								All Meetings
-							</h3>
-							{filteredMeetings.map((meeting) => (
-								<Button
-									key={meeting.id || Math.random()}
-									variant="ghost"
-									className={cn(
-										'w-full justify-start text-left p-3 h-auto mb-1 rounded-lg transition-all',
-										selectedMeeting?.id === meeting.id
-											? 'bg-[#63d392]/20 text-white hover:bg-[#63d392]/30 border-l-2 border-[#63d392]'
-											: 'hover:bg-[#156469]/50 text-white',
-									)}
-									onClick={() => {
-										onSelectMeeting(meeting);
-										onClose();
-									}}
+					{loading ? (
+						// Loading skeletons
+						<div className="space-y-2 px-1 py-2">
+							{[...Array(5)].map((_, i) => (
+								<div
+									key={`skeleton-${i}`}
+									className="flex items-center gap-3 rounded-md p-3 bg-[#156469]/30 animate-pulse"
 								>
-									<div className="flex flex-col items-start w-full space-y-2">
-										<span className="font-medium text-sm truncate w-full">
-											{meeting.title}
-										</span>
-										<div className="flex flex-wrap items-center gap-2 w-full">
-											<span className="text-xs text-gray-300 flex items-center gap-1">
-												<Calendar className="h-3 w-3" />
-												{meeting.date}
-											</span>
-											<span className="text-xs text-gray-300 flex items-center gap-1">
-												<Clock className="h-3 w-3" />
-												{meeting.time}
-											</span>
-										</div>
-										<div className="flex flex-wrap items-center gap-2 w-full">
-											<Badge
-												variant="outline"
-												className={`text-xs ${getStatusBadgeStyle(meeting.status as MeetingStatus)}`}
-											>
-												{MeetingStatus[meeting.status as MeetingStatus]}
-											</Badge>
-											{meeting.participants && (
-												<TooltipProvider>
-													<Tooltip delayDuration={300}>
-														<TooltipTrigger asChild>
-															<Badge
-																variant="secondary"
-																className="text-xs flex items-center gap-1 bg-[#156469]/70 hover:bg-[#156469] text-white border-none"
-															>
-																<Users className="h-3 w-3" />
-																{meeting.participants.length}
-															</Badge>
-														</TooltipTrigger>
-														<TooltipContent className="bg-[#0d5559] text-white border-[#63d392]/20">
-															<p>{meeting.participants.length} Participants</p>
-														</TooltipContent>
-													</Tooltip>
-												</TooltipProvider>
-											)}
-										</div>
+									<div className="rounded-full bg-[#156469]/70 h-8 w-8"></div>
+									<div className="space-y-2 flex-1">
+										<Skeleton className="h-4 w-3/4 bg-[#156469]/70" />
+										<Skeleton className="h-3 w-1/2 bg-[#156469]/50" />
 									</div>
-								</Button>
+								</div>
 							))}
 						</div>
-					</ScrollArea>
-				)}
+					) : filteredMeetings.length === 0 ? (
+						<div className="flex flex-col items-center justify-center p-8 text-center">
+							<div className="bg-[#156469]/40 p-4 rounded-full mb-4">
+								<Calendar className="h-6 w-6 text-[#63d392]/80" />
+							</div>
+							<p className="text-gray-300 mb-1">No meetings found</p>
+							<p className="text-xs text-gray-400">
+								{searchTerm
+									? 'Try a different search term'
+									: 'Create your first meeting'}
+							</p>
+						</div>
+					) : (
+						<ScrollArea className="flex-1 pr-3">
+							{nextMeeting && (
+								<div className="px-4 py-3 mb-4 bg-[#63d392]/10 border border-[#63d392]/20 rounded-lg mx-4 shadow-inner">
+									<div className="flex items-center gap-2 mb-2">
+										<Clock className="h-3 w-3 text-[#63d392]" />
+										<h3 className="font-semibold text-sm text-[#63d392]">
+											Next Meeting
+										</h3>
+									</div>
+									<p className="text-sm font-medium">{nextMeeting.title}</p>
+									<p className="text-xs text-gray-300 mt-1 flex items-center gap-1">
+										<Calendar className="h-3 w-3" />
+										{formatDate(nextMeeting.date)} -{' '}
+										{formatTime(nextMeeting.time)}
+									</p>
+								</div>
+							)}
+
+							<div className="space-y-2 px-4">
+								<h3 className="text-xs uppercase text-gray-400 font-semibold tracking-wider mb-3 ml-1">
+									All Meetings
+								</h3>
+								{filteredMeetings.map((meeting) => (
+									<Button
+										key={meeting.id || Math.random()}
+										variant="ghost"
+										className={cn(
+											'w-full justify-start text-left p-3 h-auto mb-1 rounded-lg transition-all',
+											selectedMeeting?.id === meeting.id
+												? 'bg-[#63d392]/20 text-white hover:bg-[#63d392]/30 border-l-2 border-[#63d392]'
+												: 'hover:bg-[#156469]/50 text-white',
+										)}
+										onClick={() => {
+											onSelectMeeting(meeting);
+											onClose();
+										}}
+									>
+										<div className="flex flex-col items-start w-full space-y-2">
+											<span className="font-medium text-sm truncate w-full">
+												{meeting.title}
+											</span>
+											<div className="flex flex-wrap items-center gap-2 w-full">
+												<span className="text-xs text-gray-300 flex items-center gap-1">
+													<Calendar className="h-3 w-3" />
+													{formatDate(meeting.date)}
+												</span>
+												<span className="text-xs text-gray-300 flex items-center gap-1">
+													<Clock className="h-3 w-3" />
+													{formatTime(meeting.time)}
+												</span>
+											</div>
+											<div className="flex flex-wrap items-center gap-2 w-full">
+												<Badge
+													variant="outline"
+													className={`text-xs ${getStatusBadgeStyle(meeting.status as MeetingStatus)}`}
+												>
+													{MeetingStatus[meeting.status as MeetingStatus]}
+												</Badge>
+												{meeting.participants && (
+													<TooltipProvider>
+														<Tooltip delayDuration={300}>
+															<TooltipTrigger asChild>
+																<Badge
+																	variant="secondary"
+																	className="text-xs flex items-center gap-1 bg-[#156469]/70 hover:bg-[#156469] text-white border-none"
+																>
+																	<Users className="h-3 w-3" />
+																	{meeting.participants.length}
+																</Badge>
+															</TooltipTrigger>
+															<TooltipContent className="bg-[#0d5559] text-white border-[#63d392]/20">
+																<p>
+																	{meeting.participants.length} Participants
+																</p>
+															</TooltipContent>
+														</Tooltip>
+													</TooltipProvider>
+												)}
+											</div>
+										</div>
+									</Button>
+								))}
+							</div>
+						</ScrollArea>
+					)}
+				</div>
 
 				<div className="p-4 border-t border-[#63d392]/20">
 					<p className="text-xs text-center text-gray-400">
