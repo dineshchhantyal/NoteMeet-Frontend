@@ -51,8 +51,8 @@ export function ApplicationForm() {
 					Application Submitted!
 				</h3>
 				<p className="text-gray-300 mb-6 max-w-md mx-auto">
-					Thank you for applying to join the NoteMeet team. We'll review your
-					application and get back to you soon.
+					Thank you for applying to join the NoteMeet team. We&apos;ll review
+					your application and get back to you soon.
 				</p>
 				<Button
 					onClick={() => setFormSubmitted(false)}

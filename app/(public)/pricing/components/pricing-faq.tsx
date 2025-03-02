@@ -84,7 +84,7 @@ export function PricingFAQ() {
 
 				<div className="mt-8 text-center">
 					<p className="text-gray-300 mb-4">
-						Still have questions? We're here to help.
+						Still have questions? We&apos;re here to help.
 					</p>
 					<a
 						href="/contact"

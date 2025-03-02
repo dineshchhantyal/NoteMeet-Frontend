@@ -4,7 +4,6 @@ import {
 	Lock,
 	FileText,
 	Users,
-	Bell,
 	Search,
 	RefreshCw,
 	MessageSquare,
@@ -112,8 +111,8 @@ export default function PrivacyPolicyPage() {
 						</span>
 					</h1>
 					<p className="text-gray-300 max-w-2xl mx-auto">
-						We're committed to the security and privacy of your data. Here's how
-						we protect your information.
+						We&apos;re committed to the security and privacy of your data.
+						Here&apos;s how we protect your information.
 					</p>
 				</div>
 

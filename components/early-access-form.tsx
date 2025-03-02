@@ -115,8 +115,8 @@ export function EarlyAccessForm() {
 					Application Received!
 				</h3>
 				<p className="text-gray-300 mb-6">
-					Thank you for your interest in NoteMeet. We've received your early
-					access application and will be in touch soon.
+					Thank you for your interest in NoteMeet. We&apos;ve received your
+					early access application and will be in touch soon.
 				</p>
 				<Button
 					onClick={() => setIsSubmitted(false)}
@@ -258,7 +258,7 @@ export function EarlyAccessForm() {
 									Desired Features
 								</FormLabel>
 								<FormDescription className="text-gray-300">
-									Select the features you're most interested in trying.
+									Select the features you&apos;re most interested in trying.
 								</FormDescription>
 							</div>
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-3">

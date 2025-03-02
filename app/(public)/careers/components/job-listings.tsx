@@ -110,7 +110,7 @@ export function JobListings() {
 										Requirements
 									</h4>
 									<ul className="list-disc pl-5 mb-6 space-y-1 text-gray-300">
-										{job.requirements.map((req, index) => (
+										{job.requirements.map((req: string, index: number) => (
 											<li key={index}>{req}</li>
 										))}
 									</ul>

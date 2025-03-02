@@ -51,8 +51,8 @@ export function ContactForm() {
 					Message Received!
 				</h3>
 				<p className="text-gray-300 mb-8 max-w-md">
-					Thanks for reaching out! We've received your message and will get back
-					to you as soon as possible, usually within 24 hours.
+					Thanks for reaching out! We&apos;ve received your message and will get
+					back to you as soon as possible, usually within 24 hours.
 				</p>
 				<Button
 					onClick={() => setIsSubmitted(false)}
@@ -69,7 +69,7 @@ export function ContactForm() {
 			<CardHeader className="border-b border-[#63d392]/20 pb-6">
 				<CardTitle className="text-white text-2xl">Send a Message</CardTitle>
 				<CardDescription className="text-gray-300">
-					Fill out the form below and we'll respond as soon as possible.
+					Fill out the form below and we&apos;ll respond as soon as possible.
 				</CardDescription>
 			</CardHeader>
 

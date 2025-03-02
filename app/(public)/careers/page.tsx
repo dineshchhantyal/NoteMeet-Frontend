@@ -31,8 +31,8 @@ export default function CareersPage() {
 						</span>
 					</h1>
 					<p className="text-xl text-gray-300 max-w-3xl mx-auto">
-						We're building the future of meeting productivity and looking for
-						talented individuals to join our mission.
+						We&apos;re building the future of meeting productivity and looking
+						for talented individuals to join our mission.
 					</p>
 				</div>
 
@@ -84,11 +84,11 @@ export default function CareersPage() {
 
 						<div className="mt-8 text-lg text-gray-300">
 							<p>
-								At NoteMeet, we're building the future of meeting productivity.
-								We're looking for passionate individuals who are excited about
-								using technology to solve real-world problems. If you're
-								innovative, collaborative, and ready to make an impact, we want
-								to hear from you!
+								At NoteMeet, we&apos;re building the future of meeting
+								productivity. We&apos;re looking for passionate individuals who
+								are excited about using technology to solve real-world problems.
+								If you&apos;re innovative, collaborative, and ready to make an
+								impact, we want to hear from you!
 							</p>
 						</div>
 					</div>

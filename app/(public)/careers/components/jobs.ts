@@ -1,4 +1,4 @@
-const jobs: Job[] = [
+const jobs = [
 	{
 		id: 1, // changed from 'dev-001' to number
 		title: 'Full Stack Developer',

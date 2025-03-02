@@ -95,6 +95,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 			return token;
 		},
 	},
+	// @ts-expect-error
 	adapter: adapter,
 	session: { strategy: 'jwt' },
 	...authConfig,

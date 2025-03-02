@@ -29,9 +29,9 @@ export default function EarlyAccessPage() {
 						</span>
 					</h1>
 					<p className="text-xl text-gray-300 max-w-2xl mx-auto">
-						Be among the first to experience NoteMeet's revolutionary meeting
-						management platform. Join our exclusive early access program and
-						help shape the future of productive meetings.
+						Be among the first to experience NoteMeet&apos;s revolutionary
+						meeting management platform. Join our exclusive early access program
+						and help shape the future of productive meetings.
 					</p>
 				</div>
 

@@ -1,15 +1,6 @@
 import { Metadata } from 'next';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import {
-	ArrowRight,
-	Lightbulb,
-	Lock,
-	ShieldCheck,
-	Sparkles,
-	Brain,
-	FileText,
-} from 'lucide-react';
+import { ArrowRight, Lock, ShieldCheck, Sparkles } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { FaLinkedinIn } from 'react-icons/fa';
 import Image from 'next/image';
@@ -43,9 +34,9 @@ export default function AboutPage() {
 					</h1>
 					<div className="max-w-3xl mx-auto">
 						<p className="text-xl text-gray-300 mb-6">
-							At NoteMeet, we're on a mission to revolutionize the way teams
-							collaborate and communicate. We believe that every meeting should
-							be productive, insightful, and actionable.
+							At NoteMeet, we&apos;re on a mission to revolutionize the way
+							teams collaborate and communicate. We believe that every meeting
+							should be productive, insightful, and actionable.
 						</p>
 					</div>
 				</div>
@@ -86,9 +77,9 @@ export default function AboutPage() {
 							eliminate the need for manual note-taking.
 						</p>
 						<p className="text-lg text-gray-300">
-							We're dedicated to creating a future where meetings are no longer
-							a source of frustration, but rather a catalyst for innovation,
-							collaboration, and meaningful outcomes.
+							We&apos;re dedicated to creating a future where meetings are no
+							longer a source of frustration, but rather a catalyst for
+							innovation, collaboration, and meaningful outcomes.
 						</p>
 					</div>
 				</section>
@@ -212,8 +203,8 @@ export default function AboutPage() {
 					<div className="relative z-10 text-center py-16 px-4">
 						<h2 className="text-3xl font-semibold mb-4">Join Our Journey</h2>
 						<p className="text-xl mb-8 max-w-2xl mx-auto">
-							We're always looking for talented individuals to join our team and
-							help shape the future of meetings.
+							We&apos;re always looking for talented individuals to join our
+							team and help shape the future of meetings.
 						</p>
 						<Button
 							size="lg"

@@ -30,8 +30,8 @@ export default function ContactPage() {
 						</span>
 					</h1>
 					<p className="text-xl text-gray-300 max-w-2xl mx-auto">
-						Have questions about NoteMeet? We're here to help you transform your
-						meeting experience.
+						Have questions about NoteMeet? We&apos;re here to help you transform
+						your meeting experience.
 					</p>
 				</div>
 

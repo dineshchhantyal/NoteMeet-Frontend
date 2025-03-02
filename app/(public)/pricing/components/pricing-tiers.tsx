@@ -2,13 +2,8 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Check, HelpCircle } from 'lucide-react';
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Check } from 'lucide-react';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
 
 export function PricingTiers() {
