@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { Meeting, MeetingStatus } from '@/types/meeting';
 import { Summary } from '@/types/summary';
 import { Prisma } from '@prisma/client';
+import { getObject, S3BucketType } from '@/lib/s3';
 
 // Define a more specific type for the prisma meeting with relations
 type DBMeetingWithRelations = Prisma.MeetingGetPayload<{
@@ -45,8 +46,10 @@ function validateProvider(provider: string): 'zoom' | 'teams' | 'google-meet' {
 		return provider as 'zoom' | 'teams' | 'google-meet';
 	}
 	// Default to zoom if the value is unexpected
-	console.warn(`Invalid provider value: ${provider}. Using default: zoom`);
-	return 'zoom';
+	console.warn(
+		`Invalid provider value: ${provider}. Using default: google-meet`,
+	);
+	return 'google-meet';
 }
 
 /**
@@ -86,13 +89,12 @@ export async function getMeetingTranscript(
 
 		if (!meeting?.transcriptKey) return null;
 
-		// Fetch from S3 or your storage service
-		const response = await fetch(`/api/meetings/${meetingId}/transcript`);
-
-		if (!response.ok) return null;
-
-		const data = await response.json();
-		const transcript = data.transcript || '';
+		// Fetch directly from S3 instead of using API
+		const transcript =
+			(await getObject(
+				'recordings/transcript/' + meeting.transcriptKey,
+				S3BucketType.MAIN_BUCKET,
+			)) ?? '';
 
 		// Handle JSON transcripts
 		if (typeof transcript === 'string' && transcript.startsWith('{')) {
@@ -122,7 +124,7 @@ export async function getMeetingTranscript(
 
 		return transcript;
 	} catch (error) {
-		console.error('Error fetching transcript:', error);
+		console.error('Error fetching transcript from S3:', error);
 		return null;
 	}
 }

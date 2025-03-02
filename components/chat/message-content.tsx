@@ -20,10 +20,12 @@ import { SourcePart } from './message-parts/source-part';
 
 interface MessageContentProps {
 	message: ExtendedChatMessage;
+	highlightContent?: (content: string) => React.ReactNode;
 }
 
 export const MessageContent = memo(function MessageContent({
 	message,
+	highlightContent,
 }: MessageContentProps) {
 	// Standard message with no parts
 	if (
@@ -33,41 +35,47 @@ export const MessageContent = memo(function MessageContent({
 	) {
 		return (
 			<div className="prose dark:prose-invert prose-sm max-w-none">
-				<Markdown
-					remarkPlugins={[remarkGfm, remarkMath]}
-					rehypePlugins={[rehypeKatex]}
-					components={{
-						a: (props) => (
-							<a
-								{...props}
-								className="text-[#63d392] hover:underline"
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-						// Type the code component props correctly
-						code: ({ className, children, ...props }) => {
-							return (
-								<code
-									className={`block px-1 py-0.5 bg-[#0a4a4e]/70 rounded text-gray-200 ${className || ''}`}
+				{highlightContent ? (
+					<div className="whitespace-pre-wrap">
+						{highlightContent(message.content)}
+					</div>
+				) : (
+					<Markdown
+						remarkPlugins={[remarkGfm, remarkMath]}
+						rehypePlugins={[rehypeKatex]}
+						components={{
+							a: (props) => (
+								<a
+									{...props}
+									className="text-[#63d392] hover:underline"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+							// Type the code component props correctly
+							code: ({ className, children, ...props }) => {
+								return (
+									<code
+										className={`block px-1 py-0.5 bg-[#0a4a4e]/70 rounded text-gray-200 ${className || ''}`}
+										{...props}
+									>
+										{children}
+									</code>
+								);
+							},
+							pre: ({ children, ...props }) => (
+								<pre
+									className="p-2 bg-[#0a4a4e]/70 rounded overflow-auto text-gray-200 my-2"
 									{...props}
 								>
 									{children}
-								</code>
-							);
-						},
-						pre: ({ children, ...props }) => (
-							<pre
-								className="p-2 bg-[#0a4a4e]/70 rounded overflow-auto text-gray-200 my-2"
-								{...props}
-							>
-								{children}
-							</pre>
-						),
-					}}
-				>
-					{message.content}
-				</Markdown>
+								</pre>
+							),
+						}}
+					>
+						{message.content}
+					</Markdown>
+				)}
 			</div>
 		);
 	}

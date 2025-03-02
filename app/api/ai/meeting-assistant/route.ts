@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createMeetingTools } from '@/lib/ai/meeting-tools';
 import { streamText } from 'ai';
 import { google } from '@ai-sdk/google';
+import {
+	getMeetingById,
+	getMeetingTranscript,
+} from '@/lib/actions/meeting-actions';
 
 export async function POST(req: NextRequest) {
 	try {
@@ -16,6 +20,8 @@ export async function POST(req: NextRequest) {
 
 		// Fetch real meeting data from the database
 		const meetingData = await fetchMeetingData(meetingId);
+
+		console.log('Fetched meeting data:', meetingData);
 
 		try {
 			const systemMessage = `You are NoteMeet's AI Meeting Assistant, a helpful AI that answers questions about meetings.
@@ -68,31 +74,17 @@ When answering questions:
 async function fetchMeetingData(meetingId: string) {
 	try {
 		// First attempt to get data from your real API
-		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_API_URL}/api/meetings/${meetingId}`,
-		);
 
-		if (response.ok) {
-			const data = await response.json();
+		const meeting = await getMeetingById(meetingId);
 
-			// Also fetch transcript if available
-			let transcript = '';
-			if (data.data.transcriptKey) {
-				const transcriptResponse = await fetch(
-					`${process.env.NEXT_PUBLIC_API_URL}/api/meetings/${meetingId}/transcript`,
-				);
-				if (transcriptResponse.ok) {
-					const transcriptData = await transcriptResponse.json();
-					transcript = transcriptData.transcript || '';
-				}
-			}
-
+		if (meeting) {
+			const transcript = await getMeetingTranscript(meetingId);
 			return {
-				title: data.data.title,
+				title: meeting.title,
 				transcript: transcript,
-				summary: data.data.summary || '',
-				date: data.data.date,
-				participants: data.data.participants || [],
+				summary: meeting.summary,
+				date: meeting.date,
+				participants: meeting.participants,
 			};
 		}
 	} catch (error) {

@@ -15,12 +15,12 @@ import {
 } from '@/components/ui/alert-dialog';
 import { ExtendedChatMessage } from './types';
 import { ChatHeader } from './chat-header';
-import { VirtualizedChatMessages } from './virtualized-chat-messages';
 import { ChatSuggestions } from './chat-suggestions';
 import { ChatInput } from './chat-input';
 import { Button } from '@/components/ui/button';
 import { ArrowDown, Search } from 'lucide-react';
 import { useDebounce } from '@/lib/hooks/use-debounce';
+import { ChatMessagesList } from './chat-messages-list';
 
 interface AIMeetingAssistantProps {
 	meeting: Meeting;
@@ -234,15 +234,11 @@ export function AIMeetingAssistant({ meeting }: AIMeetingAssistantProps) {
 
 					<div
 						ref={messagesContainerRef}
-						className="flex-1 overflow-auto relative"
+						className="flex-1 overflow-hidden relative h-full" // Added h-full and changed overflow-auto to overflow-hidden
 						onScroll={handleScroll}
 					>
-						{debouncedSearchQuery && filteredMessages.length === 0 ? (
-							<div className="flex flex-col items-center justify-center h-full p-6">
-								<p className="text-gray-400">No messages match your search</p>
-							</div>
-						) : (
-							<VirtualizedChatMessages
+						{
+							<ChatMessagesList
 								messages={
 									debouncedSearchQuery ? filteredMessages : extendedMessages
 								}
@@ -251,6 +247,7 @@ export function AIMeetingAssistant({ meeting }: AIMeetingAssistantProps) {
 								copiedMessageId={copiedMessageId}
 								isEmpty={messages.length === 0}
 								searchQuery={debouncedSearchQuery}
+								isLoading={isLoading}
 								renderSuggestions={() => (
 									<ChatSuggestions
 										onSelect={(text) => {
@@ -260,7 +257,7 @@ export function AIMeetingAssistant({ meeting }: AIMeetingAssistantProps) {
 									/>
 								)}
 							/>
-						)}
+						}
 
 						{hasNewMessages && !scrolledToBottom && (
 							<div className="absolute bottom-4 right-4">

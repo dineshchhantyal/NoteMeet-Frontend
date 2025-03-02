@@ -11,12 +11,14 @@ interface ChatMessageProps {
 	message: ExtendedChatMessage;
 	onCopy: (messageId: string, content: string) => void;
 	isCopied: boolean;
+	highlightContent?: (content: string) => React.ReactNode;
 }
 
 export const ChatMessage = memo(function ChatMessage({
 	message,
 	onCopy,
 	isCopied,
+	highlightContent,
 }: ChatMessageProps) {
 	const isUser = message.role === 'user';
 	const timestamp = message.createdAt
@@ -33,7 +35,7 @@ export const ChatMessage = memo(function ChatMessage({
 		>
 			<Avatar
 				className={cn(
-					'h-8 w-8 mt-1',
+					'h-8 w-8 mt-1 flex items-center justify-center',
 					isUser ? 'bg-[#63d392]/20' : 'bg-[#0d5559]/70',
 				)}
 			>
@@ -43,7 +45,6 @@ export const ChatMessage = memo(function ChatMessage({
 					<Bot className="h-5 w-5 text-[#63d392]" />
 				)}
 			</Avatar>
-
 			<div className="flex flex-col flex-1 space-y-1 overflow-hidden">
 				<div className="flex items-center text-xs text-gray-400">
 					<div>{isUser ? 'You' : 'NoteMeet AI'}</div>
@@ -69,7 +70,10 @@ export const ChatMessage = memo(function ChatMessage({
 							: 'bg-[#0d5559]/70 text-gray-100',
 					)}
 				>
-					<MessageContent message={message} />
+					<MessageContent
+						message={message}
+						highlightContent={highlightContent}
+					/>
 				</div>
 			</div>
 		</div>
