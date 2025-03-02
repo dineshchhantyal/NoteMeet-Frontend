@@ -136,6 +136,7 @@ model Meeting {
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
+  shares MeetingShare[]
 
   @@map("meetings")
 }
@@ -362,4 +363,31 @@ model CouponCode {
   // Discount details
   type     String // percentage or fixed
   amount   Decimal @db.Decimal(10, 2)
+}
+
+// Add this enum for share permission types
+enum SharePermission {
+  VIEW
+  EDIT
+  ADMIN
+}
+
+// Add this model for meeting shares
+model MeetingShare {
+  id           String          @id @default(cuid())
+  meetingId    String
+  meeting      Meeting         @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  email        String          // The email of the person it's shared with
+  permission   SharePermission @default(VIEW)
+  token        String          @unique // Unique token for accepting invitation
+  status       String          @default("pending") // pending, accepted, rejected
+  createdBy    String          // User ID who created the share
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  lastAccessAt DateTime?       // When the share was last accessed
+
+  @@unique([meetingId, email]) // Prevent duplicate shares to same email
+  @@index([meetingId])
+  @@index([token])
+  @@map("meeting_shares")
 }

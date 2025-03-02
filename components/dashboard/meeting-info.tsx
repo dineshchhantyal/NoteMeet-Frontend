@@ -30,6 +30,9 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { MeetingStatus } from '@/types/meeting';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
+import { ShareManagement } from '../share/share-management';
+import { useState } from 'react';
 
 interface MeetingInfoProps {
 	meeting: MeetingInterface;
@@ -37,6 +40,8 @@ interface MeetingInfoProps {
 }
 
 export function MeetingInfo({ meeting, onMeetingDelete }: MeetingInfoProps) {
+	const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+
 	const getStatusColor = (status: MeetingStatus) => {
 		switch (status) {
 			case MeetingStatus.Completed:
@@ -224,9 +229,10 @@ export function MeetingInfo({ meeting, onMeetingDelete }: MeetingInfoProps) {
 								<TooltipTrigger asChild>
 									<Button
 										variant="outline"
-										className="bg-[#0d5559]/50 hover:bg-[#0d5559] text-white border-[#63d392]/30 hover:border-[#63d392]/50 w-full"
+										onClick={() => setIsShareDialogOpen(true)}
+										className="bg-[#63d392] hover:bg-[#4fb77a] text-[#0a3638] font-medium border-[#63d392] hover:border-[#4fb77a] w-full"
 									>
-										<Share2 className="mr-2 h-4 w-4 text-[#63d392]" />
+										<Share2 className="mr-2 h-4 w-4" />
 										Share Meeting
 									</Button>
 								</TooltipTrigger>
@@ -238,6 +244,17 @@ export function MeetingInfo({ meeting, onMeetingDelete }: MeetingInfoProps) {
 					</div>
 				</div>
 			</CardContent>
+
+			{meeting && (
+				<Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
+					<DialogContent className="bg-[#0d5559] border-[#63d392]/30 text-white sm:max-w-xl w-[90vw]">
+						<DialogHeader>
+							<DialogTitle className="text-white">Share Meeting</DialogTitle>
+						</DialogHeader>
+						<ShareManagement meeting={meeting} />
+					</DialogContent>
+				</Dialog>
+			)}
 		</Card>
 	);
 }

@@ -152,7 +152,11 @@ export default function DashboardPage() {
 						<Menu className="h-5 w-5" />
 					</Button>
 
-					<DashboardHeader handleMeetingCreated={handleMeetingCreated} />
+					<DashboardHeader
+						handleMeetingCreated={handleMeetingCreated}
+						meeting={selectedMeeting}
+						showShareButton={true}
+					/>
 				</header>
 
 				{selectedMeeting ? (

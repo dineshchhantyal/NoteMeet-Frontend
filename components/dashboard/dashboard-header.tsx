@@ -4,7 +4,7 @@ import { NewMeetingDialog } from './new-meeting-dialog';
 import { NotificationDropdown } from './notification-dropdown';
 import { UserButtonClient } from './user-button-client';
 import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
+import { Search, Share2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 

@@ -60,7 +60,6 @@ export default async function RootLayout({
 			>
 				<SessionProvider session={session}>
 					<Toaster />
-
 					{children}
 				</SessionProvider>
 			</body>
