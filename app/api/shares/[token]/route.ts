@@ -36,11 +36,12 @@ export async function GET(
 			);
 		}
 
-		// Update the share status if it's pending
+		// Update the pending share:
 		if (share.status === 'pending') {
 			await db.meetingShare.update({
 				where: { id: share.id },
 				data: {
+					// No userId or user field, just update the status
 					status: 'accepted',
 					lastAccessAt: new Date(),
 				},

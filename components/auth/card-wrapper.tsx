@@ -30,8 +30,8 @@ export function CardWrapper({
 	return (
 		<Card
 			className={cn(
-				'w-full max-w-md shadow-md',
-				'bg-[#156469]/30 backdrop-blur-sm border border-[#63d392]/20 text-white',
+				'w-full sm:w-[400px] md:w-[450px] shadow-lg',
+				'bg-[#0d5559]/95 backdrop-blur-sm border-[#63d392]/30 text-white',
 				className,
 			)}
 		>
