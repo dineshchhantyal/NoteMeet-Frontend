@@ -1,12 +1,5 @@
 import { Button } from '@/components/ui/button';
-import {
-	ChevronDown,
-	ChevronUp,
-	Download,
-	RefreshCcw,
-	Search,
-	MessageSquare,
-} from 'lucide-react';
+import { Download, RefreshCcw, Search, MessageSquare } from 'lucide-react';
 
 interface ChatHeaderProps {
 	expanded: boolean;
@@ -76,19 +69,6 @@ export function ChatHeader({
 						<Download className="h-4 w-4" />
 					</Button>
 				)}
-
-				<Button
-					variant="ghost"
-					size="sm"
-					className="text-white hover:bg-[#156469]/50 p-0 h-8 w-8"
-					title={expanded ? 'Collapse' : 'Expand'}
-				>
-					{expanded ? (
-						<ChevronUp className="h-5 w-5" />
-					) : (
-						<ChevronDown className="h-5 w-5" />
-					)}
-				</Button>
 			</div>
 		</div>
 	);
