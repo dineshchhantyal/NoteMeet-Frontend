@@ -37,6 +37,7 @@ export default function InvitationPage({
 		permission: string;
 		status: string;
 	} | null>(null);
+	const [expired, setExpired] = useState(false);
 
 	const router = useRouter();
 	const { token } = params;
@@ -85,6 +86,21 @@ export default function InvitationPage({
 				}
 
 				const data = await response.json();
+
+				// Check if share is expired
+				const shareCreatedAt = new Date(data.share.createdAt);
+				const currentDate = new Date();
+				const daysSinceCreation = Math.floor(
+					(currentDate.getTime() - shareCreatedAt.getTime()) /
+						(1000 * 60 * 60 * 24),
+				);
+
+				if (daysSinceCreation > 7) {
+					// Links expire after 7 days
+					setExpired(true);
+					throw new Error('This invitation link has expired');
+				}
+
 				setMeeting(data.meeting);
 				setInvitationDetails({
 					email: data.share.email,
@@ -121,7 +137,7 @@ export default function InvitationPage({
 
 			toast.success('Invitation accepted successfully');
 			// Redirect to meeting page
-			router.push(`/meetings/${meeting?.id}`);
+			router.push(`/dashboard`);
 		} catch (error) {
 			console.error('Error accepting invitation:', error);
 			toast.error(
@@ -190,7 +206,7 @@ export default function InvitationPage({
 							Meeting Invitation
 						</h1>
 						<p className="text-gray-300 text-center">
-							You've been invited to join a meeting in NoteMeet
+							You&apos;ve been invited to join a meeting in NoteMeet
 						</p>
 					</div>
 
@@ -212,6 +228,27 @@ export default function InvitationPage({
 									<Skeleton className="h-10 w-28 bg-[#0d5559]/70 rounded-md" />
 									<Skeleton className="h-10 w-28 bg-[#0d5559]/70 rounded-md" />
 								</div>
+							</CardContent>
+						</Card>
+					) : expired ? (
+						<Card className="bg-[#156469]/30 backdrop-blur-sm border-[#63d392]/20 text-white shadow-lg">
+							<CardContent className="py-8 text-center">
+								<div className="bg-amber-500/10 p-4 rounded-full mx-auto mb-4 w-16 h-16 flex items-center justify-center">
+									<Clock className="h-8 w-8 text-amber-400" />
+								</div>
+								<h2 className="text-xl font-semibold mb-2">
+									Invitation Expired
+								</h2>
+								<p className="text-gray-300 mb-6">
+									This invitation link has expired. Please ask the meeting owner
+									to generate a new invitation.
+								</p>
+								<Button
+									onClick={() => router.push('/dashboard')}
+									className="bg-[#156469]/50 border-[#63d392]/30 text-white hover:bg-[#156469]/70"
+								>
+									Return to Dashboard
+								</Button>
 							</CardContent>
 						</Card>
 					) : meeting ? (
@@ -301,20 +338,20 @@ export default function InvitationPage({
 										</p>
 									</div>
 
-									{/* Meeting owner */}
+									{/* Meeting owner section - commented out due to missing fields */}
 									{/* <div className="flex items-center gap-3 mt-4">
-										<Avatar className="h-8 w-8 bg-[#0d5559]/70 border border-[#63d392]/30">
-											<AvatarFallback className="text-sm text-[#63d392]">
-												{meeting.user?.name?.substring(0, 2) || 'UN'}
-											</AvatarFallback>
-										</Avatar>
-										<div>
-											<p className="text-sm text-gray-300">Created by</p>
-											<p className="text-white font-medium">
-												{meeting.user?.name || meeting.createdBy || 'Unknown'}
-											</p>
-										</div>
-									</div> */}
+                    <Avatar className="h-8 w-8 bg-[#0d5559]/70 border border-[#63d392]/30">
+                      <AvatarFallback className="text-sm text-[#63d392]">
+                        {meeting.user?.name?.substring(0, 2) || 'UN'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-sm text-gray-300">Created by</p>
+                      <p className="text-white font-medium">
+                        {meeting.user?.name || meeting.createdBy || 'Unknown'}
+                      </p>
+                    </div>
+                  </div> */}
 
 									{/* Action buttons */}
 									{invitationDetails?.status === 'pending' ? (
@@ -362,11 +399,11 @@ export default function InvitationPage({
 
 											{invitationDetails?.status === 'accepted' && (
 												<Button
-													onClick={() => router.push(`/meetings/${meeting.id}`)}
+													onClick={() => router.push(`/dashboard`)}
 													className="w-full mt-4 bg-[#63d392] text-[#0a4a4e] hover:bg-[#63d392]/80"
 												>
 													<ExternalLink className="h-4 w-4 mr-2" />
-													Go to Meeting
+													Go to Dashboard
 												</Button>
 											)}
 										</div>

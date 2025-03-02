@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
 	Dialog,
 	DialogContent,
@@ -20,7 +20,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { ArrowRight, Copy, Mail, Check } from 'lucide-react';
+import { ArrowRight, Copy, Mail, Check, RefreshCw } from 'lucide-react';
 import {
 	Tooltip,
 	TooltipContent,
@@ -46,11 +46,43 @@ export function ShareMeetingDialog({
 	const [isLoading, setIsLoading] = useState(false);
 	const [copied, setCopied] = useState(false);
 	const [showLinkOption, setShowLinkOption] = useState(false);
+	const [shareToken, setShareToken] = useState<string | null>(null);
 
-	// Create a sharing link
-	const shareLink = `${window.location.origin}/invitation/${meetingId}?permission=${permission}`;
+	useEffect(() => {
+		if (showLinkOption && !shareToken) {
+			generateShareLink();
+		}
+	}, [showLinkOption]);
 
-	// Format link for display with more aggressive truncation
+	const generateShareLink = async () => {
+		try {
+			setIsLoading(true);
+			const response = await fetch(`/api/meetings/${meetingId}/share/link`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ permission }),
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to generate share link');
+			}
+
+			const data = await response.json();
+			setShareToken(data.token);
+		} catch (error) {
+			console.error('Error generating share link:', error);
+			toast.error('Failed to generate share link');
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const shareLink = shareToken
+		? `${window.location.origin}/invitation/${shareToken}`
+		: '';
+
 	const formatLinkForDisplay = (url: string) => {
 		if (!url) return '';
 
@@ -202,26 +234,46 @@ export function ShareMeetingDialog({
 									<Tooltip>
 										<TooltipTrigger asChild>
 											<div className="bg-[#156469]/50 border border-[#63d392]/30 rounded-md px-3 py-2 text-sm text-white flex-1 truncate cursor-default">
-												{formatLinkForDisplay(shareLink)}
+												{isLoading
+													? 'Generating...'
+													: formatLinkForDisplay(shareLink)}
 											</div>
 										</TooltipTrigger>
 										<TooltipContent className="max-w-md bg-[#0d5559] text-white border-[#63d392]/20 p-2">
-											<p className="text-xs break-all">{shareLink}</p>
+											<p className="text-xs break-all">
+												{shareLink || 'Generating...'}
+											</p>
 										</TooltipContent>
 									</Tooltip>
 								</TooltipProvider>
-								<Button
-									onClick={copyLink}
-									size="sm"
-									variant="outline"
-									className={`border-[#63d392]/30 ${copied ? 'bg-[#63d392]/20 text-[#63d392]' : 'text-gray-700'} hover:bg-[#156469]/70`}
-								>
-									{copied ? (
-										<Check className="h-4 w-4" />
-									) : (
-										<Copy className="h-4 w-4" />
-									)}
-								</Button>
+								<div className="flex gap-1">
+									<Button
+										onClick={generateShareLink}
+										size="sm"
+										variant="outline"
+										className="border-[#63d392]/30 text-white hover:bg-[#156469]/70"
+										disabled={isLoading}
+									>
+										{isLoading ? (
+											<div className="h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
+										) : (
+											<RefreshCw className="h-4 w-4" />
+										)}
+									</Button>
+									<Button
+										onClick={copyLink}
+										size="sm"
+										variant="outline"
+										className={`border-[#63d392]/30 ${copied ? 'bg-[#63d392]/20 text-[#63d392]' : 'text-white'} hover:bg-[#156469]/70`}
+										disabled={!shareToken || isLoading}
+									>
+										{copied ? (
+											<Check className="h-4 w-4" />
+										) : (
+											<Copy className="h-4 w-4" />
+										)}
+									</Button>
+								</div>
 							</div>
 						</div>
 
