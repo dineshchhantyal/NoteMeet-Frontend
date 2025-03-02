@@ -226,10 +226,32 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 
 	return (
 		<div className="flex flex-col lg:flex-row gap-8 items-center">
-			{/* Left side: Visual workflow */}
+			{/* Left side: Visual workflow - Enhanced with flow diagram */}
 			<div className="w-full lg:w-1/2">
-				<div className="relative w-full h-[500px] bg-[#0d5559] rounded-xl p-6 shadow-lg overflow-hidden">
-					{/* Connection lines */}
+				<div className="relative w-full h-[540px] bg-[#0d5559] rounded-xl p-6 shadow-lg overflow-hidden">
+					{/* Process flow visualization */}
+					<div className="absolute inset-0 flex items-center justify-center opacity-10">
+						<svg width="380" height="380" viewBox="0 0 100 100">
+							<circle
+								cx="50"
+								cy="50"
+								r="45"
+								fill="none"
+								stroke="#63d392"
+								strokeWidth="1"
+							/>
+							<circle
+								cx="50"
+								cy="50"
+								r="38"
+								fill="none"
+								stroke="#63d392"
+								strokeWidth="0.5"
+							/>
+						</svg>
+					</div>
+
+					{/* Connection lines with pulsing effect */}
 					<svg className="absolute inset-0 w-full h-full" viewBox="0 0 500 500">
 						<defs>
 							<linearGradient
@@ -242,39 +264,84 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 								<stop offset="0%" stopColor="#63d392" stopOpacity="0.4" />
 								<stop offset="100%" stopColor="#63d392" stopOpacity="0.8" />
 							</linearGradient>
+
+							{/* Create filter for glow effect */}
+							<filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+								<feGaussianBlur stdDeviation="2" result="blur" />
+								<feMerge>
+									<feMergeNode in="blur" />
+									<feMergeNode in="SourceGraphic" />
+								</feMerge>
+							</filter>
 						</defs>
 
-						{/* Draw connecting paths between steps */}
+						{/* Draw connecting paths between steps with arrows */}
 						{steps.map(
 							(_, index) =>
 								index < steps.length - 1 && (
-									<path
-										key={`path-${index}`}
-										d={`M80 ${80 + index * 80} L420 ${80 + index * 80 + 40}`}
-										stroke="url(#lineGradient)"
-										strokeWidth="2"
-										strokeDasharray="6,4"
-										strokeLinecap="round"
-										fill="none"
-									>
-										<animate
-											attributeName="stroke-dashoffset"
-											from="40"
-											to="0"
-											dur="2s"
-											repeatCount="indefinite"
+									<g key={`path-${index}`}>
+										<path
+											d={`M80 ${80 + index * 70} L400 ${80 + index * 70 + 35}`}
+											stroke="url(#lineGradient)"
+											strokeWidth="2"
+											strokeDasharray="6,4"
+											strokeLinecap="round"
+											fill="none"
+											filter="url(#glow)"
+											className={
+												activeStep === index ? 'opacity-100' : 'opacity-40'
+											}
+										>
+											<animate
+												attributeName="stroke-dashoffset"
+												from="40"
+												to="0"
+												dur="2s"
+												repeatCount="indefinite"
+											/>
+										</path>
+
+										{/* Arrow head */}
+										<polygon
+											points={`395,${75 + index * 70 + 35} 400,${80 + index * 70 + 35} 395,${85 + index * 70 + 35}`}
+											fill="#63d392"
+											className={
+												activeStep === index ? 'opacity-100' : 'opacity-40'
+											}
 										/>
-									</path>
+									</g>
 								),
 						)}
 					</svg>
+
+					{/* Step numbers for clear progression */}
+					<div className="absolute top-4 left-4 flex items-center space-x-1">
+						<div className="p-1 bg-[#63d392]/20 rounded">
+							<svg
+								className="w-4 h-4"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="#63d392"
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth="2"
+									d="M13 5l7 7-7 7M5 5l7 7-7 7"
+								/>
+							</svg>
+						</div>
+						<span className="text-[#63d392] text-xs font-medium">
+							Process Flow
+						</span>
+					</div>
 
 					{/* Steps visualization */}
 					<div className="relative z-10">
 						{steps.map((step, index) => (
 							<motion.div
 								key={index}
-								className={`flex items-center mb-12 cursor-pointer ${
+								className={`flex items-center mb-10 cursor-pointer ${
 									activeStep === index || hoveredStep === index
 										? 'opacity-100'
 										: 'opacity-60'
@@ -286,23 +353,33 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 								onMouseLeave={() => setHoveredStep(null)}
 								onClick={() => setActiveStep(index)}
 							>
-								<motion.div
-									className={`flex items-center justify-center w-16 h-16 rounded-full mr-4 transition-all duration-300 ${
-										activeStep === index || hoveredStep === index
-											? 'bg-[#63d392] shadow-xl shadow-[#63d392]/20'
-											: 'bg-[#156469]'
-									}`}
-									whileHover={{ scale: 1.1 }}
-								>
-									<step.icon
-										size={28}
-										className={
+								<div className="relative">
+									{/* Step number indicator */}
+									<div className="absolute -left-2 -top-2 w-5 h-5 rounded-full bg-[#0a4a4e] border border-[#63d392]/30 flex items-center justify-center">
+										<span className="text-[#63d392] text-xs font-bold">
+											{index + 1}
+										</span>
+									</div>
+
+									<motion.div
+										className={`flex items-center justify-center w-16 h-16 rounded-full mr-4 transition-all duration-300 ${
 											activeStep === index || hoveredStep === index
-												? 'text-[#0a4a4e]'
-												: 'text-white'
-										}
-									/>
-								</motion.div>
+												? 'bg-[#63d392] shadow-xl shadow-[#63d392]/20'
+												: 'bg-[#156469]'
+										}`}
+										whileHover={{ scale: 1.1 }}
+									>
+										<step.icon
+											size={28}
+											className={
+												activeStep === index || hoveredStep === index
+													? 'text-[#0a4a4e]'
+													: 'text-white'
+											}
+										/>
+									</motion.div>
+								</div>
+
 								<div>
 									<h3
 										className={`text-xl font-semibold ${
@@ -313,6 +390,9 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 									>
 										{step.title}
 									</h3>
+									<p className="text-white/70 text-sm max-w-[250px] line-clamp-1">
+										{step.content}
+									</p>
 								</div>
 							</motion.div>
 						))}
@@ -320,7 +400,7 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 				</div>
 			</div>
 
-			{/* Right side: Step details */}
+			{/* Right side: Step details with enhanced visual design */}
 			<div className="w-full lg:w-1/2">
 				<AnimatePresence mode="wait">
 					<motion.div
@@ -331,6 +411,27 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 						transition={{ duration: 0.3 }}
 						className="bg-[#156469] p-8 rounded-xl shadow-xl border border-[#63d392]/30"
 					>
+						{/* Step progress indicator */}
+						<div className="mb-6 flex justify-between items-center">
+							<div className="text-xs text-white/70">
+								STEP {activeStep + 1} OF {steps.length}
+							</div>
+							<div className="flex space-x-1">
+								{steps.map((_, idx) => (
+									<button
+										key={idx}
+										onClick={() => setActiveStep(idx)}
+										className={`w-8 h-1.5 rounded-full transition-all duration-300 ${
+											activeStep === idx
+												? 'bg-[#63d392] w-10'
+												: 'bg-[#63d392]/30'
+										}`}
+										aria-label={`Go to step ${idx + 1}`}
+									/>
+								))}
+							</div>
+						</div>
+
 						<div className="flex items-center mb-6">
 							<div className="p-3 bg-[#63d392]/20 rounded-lg mr-4">
 								{steps[activeStep].icon &&
@@ -344,12 +445,25 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 							</h3>
 						</div>
 
-						<p className="text-white text-lg mb-6">
+						<p className="text-white text-lg mb-8 leading-relaxed">
 							{steps[activeStep].content}
 						</p>
 
-						<div className="mt-6">
-							<h4 className="text-[#63d392] font-semibold mb-3">
+						<div className="p-4 bg-[#0d5559]/70 rounded-lg mb-6 border border-[#63d392]/20">
+							<h4 className="text-[#63d392] font-semibold mb-4 flex items-center">
+								<svg
+									className="w-5 h-5 mr-2"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
+										d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+									/>
+								</svg>
 								Key Benefits:
 							</h4>
 							<ul className="space-y-3">
@@ -387,28 +501,44 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 										(prev) => (prev - 1 + steps.length) % steps.length,
 									)
 								}
-								className="px-4 py-2 bg-[#0a4a4e] text-white rounded-md hover:bg-[#0d5559] transition-colors"
+								className="px-4 py-2 bg-[#0a4a4e] text-white rounded-md hover:bg-[#0d5559] transition-colors flex items-center"
 							>
+								<svg
+									className="w-4 h-4 mr-2"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
+										d="M15 19l-7-7 7-7"
+									/>
+								</svg>
 								Previous
 							</button>
-							<div className="flex space-x-1">
-								{steps.map((_, idx) => (
-									<button
-										key={idx}
-										onClick={() => setActiveStep(idx)}
-										className={`w-2.5 h-2.5 rounded-full ${
-											activeStep === idx ? 'bg-[#63d392]' : 'bg-[#63d392]/30'
-										}`}
-									/>
-								))}
-							</div>
+
 							<button
 								onClick={() =>
 									setActiveStep((prev) => (prev + 1) % steps.length)
 								}
-								className="px-4 py-2 bg-[#63d392] text-[#0a4a4e] font-medium rounded-md hover:bg-[#4fb87a] transition-colors"
+								className="px-4 py-2 bg-[#63d392] text-[#0a4a4e] font-medium rounded-md hover:bg-[#4fb87a] transition-colors flex items-center"
 							>
 								Next
+								<svg
+									className="w-4 h-4 ml-2"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
+										d="M9 5l7 7-7 7"
+									/>
+								</svg>
 							</button>
 						</div>
 					</motion.div>
