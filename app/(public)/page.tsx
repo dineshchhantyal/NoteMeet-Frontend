@@ -1,4 +1,9 @@
 'use client';
+
+import { useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { toast } from 'sonner';
+
 import { HeroSection } from '@/components/hero-section';
 import { WhyNoteMeet } from '@/components/why-notemeet';
 import { InteractiveHowItWorks } from '@/components/home/how-it-works';
@@ -35,6 +40,39 @@ const itemVariants = {
 };
 
 export default function HomePage() {
+	const searchParams = useSearchParams();
+
+	useEffect(() => {
+		// Check if we should show the auth message
+		const showAuthMessage = searchParams.get('showAuthMessage');
+		const prev = searchParams.get('prev');
+
+		if (showAuthMessage === 'true') {
+			// Show a toast message
+			toast.warning(
+				prev?.includes('/invitation')
+					? 'Please sign in to view the meeting invitation'
+					: 'Please sign in to access that page',
+				{
+					description: "You'll be redirected after signing in.",
+					duration: 5000,
+					action: {
+						label: 'Sign In',
+						onClick: () => {
+							// Open your auth modal or redirect to login page
+							// You might want to customize this based on your auth flow
+							(
+								document.querySelector(
+									'[data-auth-trigger="login"]',
+								) as HTMLElement
+							)?.click();
+						},
+					},
+				},
+			);
+		}
+	}, [searchParams]);
+
 	return (
 		<div className="flex flex-col min-h-screen overflow-x-hidden">
 			<main className="flex-grow">

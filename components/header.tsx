@@ -37,6 +37,7 @@ export const Header = async ({ label, transparent = false }: HeaderProps) => {
 						<>
 							<LoginButton mode="modal" asChild>
 								<Button
+									data-auth-trigger="login"
 									variant="outline"
 									className="border-[#63d392] text-[#63d392] hover:bg-[#63d392]/10 hover:text-white"
 								>
