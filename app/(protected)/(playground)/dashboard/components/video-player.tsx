@@ -4,13 +4,15 @@ import { Pause, Play, SkipBack, SkipForward } from 'lucide-react';
 // import { Button } from '@/components/ui/button'
 // import { Play, Pause, SkipBack, SkipForward } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react';
+import { MediaPlayer, MediaProvider } from '@vidstack/react';
+import '@vidstack/react/player/styles/base.css';
 
 interface VideoPlayerProps extends React.HTMLAttributes<HTMLVideoElement> {
 	sources: { src: { url: string; expiresAt: string }; type: string }[];
 	showControls?: boolean;
 }
 
-export function VideoPlayer({
+export function VideoPlayer2({
 	sources,
 	showControls = true,
 	...args
@@ -147,5 +149,29 @@ export function VideoPlayer({
 				)}
 			</CardContent>
 		</Card>
+	);
+}
+
+export function VideoPlayer({
+	sources,
+	showControls = true,
+}: VideoPlayerProps) {
+	const [isPlaying, setIsPlaying] = useState(false);
+	console.log(isPlaying);
+
+	return (
+		<MediaPlayer
+			title="Sprite Fight"
+			src={sources[0].src.url}
+			poster="https://vidstack.io/assets/img/sprite-fight-poster.jpg"
+			controls={showControls}
+			autoplay={false}
+			playsinline
+			loop={false}
+			onPlay={() => setIsPlaying(true)}
+			onPause={() => setIsPlaying(false)}
+		>
+			<MediaProvider />
+		</MediaPlayer>
 	);
 }

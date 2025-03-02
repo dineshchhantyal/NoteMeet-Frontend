@@ -1,127 +1,206 @@
+'use client';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Facebook, Twitter, Linkedin } from 'lucide-react';
+import { Github, Globe, Mail, ArrowRight, ChevronRight } from 'lucide-react';
 import Logo from './ui/Logo';
+import { motion } from 'framer-motion';
 
 export function Footer() {
 	return (
-		<footer className="bg-primary text-white py-12">
-			<div className="container mx-auto px-4">
-				<div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-					<div>
-						<Logo className="h-24 w-24" />
-						<h3 className="font-bold text-lg mb-4">Product</h3>
-						<ul className="space-y-2">
-							{/* <li><Link href="/features" className="hover:underline">Features</Link></li> */}
-							<li>
-								<Link href="/pricing" className="hover:underline">
-									Pricing
-								</Link>
-							</li>
-							{/* <li><Link href="/integrations" className="hover:underline">Integrations</Link></li> */}
+		<footer className="bg-[#0a4a4e] pt-20 pb-12 relative overflow-hidden">
+			{/* Decorative background elements */}
+			<div className="absolute top-0 left-0 w-1/3 h-1/3 bg-[#63d392]/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+			<div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-[#156469]/10 rounded-full blur-3xl translate-x-1/4 translate-y-1/4"></div>
+
+			<div className="container mx-auto px-4 relative">
+				{/* Newsletter Subscription */}
+				<div className="bg-[#156469]/40 backdrop-blur-sm rounded-2xl p-8 mb-16 border border-[#63d392]/20 max-w-4xl mx-auto">
+					<div className="flex flex-col md:flex-row items-center justify-between gap-8">
+						<div className="md:w-1/2 text-center md:text-left">
+							<h3 className="text-2xl font-bold mb-2 text-white">
+								Stay Updated
+							</h3>
+							<p className="text-gray-300">
+								Get the latest features and updates directly to your inbox
+							</p>
+						</div>
+						<div className="md:w-1/2">
+							<form className="flex flex-col sm:flex-row gap-2">
+								<Input
+									type="email"
+									placeholder="Enter your email"
+									className="bg-white/10 border-[#63d392]/30 text-white placeholder:text-gray-400 focus:border-[#63d392] focus:ring-[#63d392]/30"
+								/>
+								<Button
+									type="submit"
+									className="bg-[#63d392] hover:bg-[#4fb87a] text-[#0a4a4e] font-medium border-none transition-colors whitespace-nowrap flex items-center"
+								>
+									Subscribe <ArrowRight className="ml-2 h-4 w-4" />
+								</Button>
+							</form>
+						</div>
+					</div>
+				</div>
+
+				<div className="grid grid-cols-1 md:grid-cols-12 gap-x-8 gap-y-5">
+					{/* Logo and About */}
+					<div className="md:col-span-4">
+						<div className="flex items-center mb-6">
+							<Logo className="h-10 w-10 mr-3" />
+							<span className="text-2xl font-bold text-white">NoteMeet</span>
+						</div>
+						<p className="text-gray-300 mb-6 leading-relaxed">
+							Transform your meetings with AI-powered recording, transcription,
+							and automatic summary generation.
+						</p>
+					</div>
+
+					{/* Links Section */}
+					<div className="md:col-span-2">
+						<h3 className="font-bold text-lg mb-4 text-white">Product</h3>
+						<ul className="space-y-3">
+							{['About', 'Pricing'].map((item) => (
+								<li key={item}>
+									<Link
+										href={`/${item.toLowerCase()}`}
+										className="text-gray-300 hover:text-[#63d392] transition-colors flex items-center"
+									>
+										<ChevronRight className="h-4 w-4 mr-1 text-[#63d392]" />
+										{item}
+									</Link>
+								</li>
+							))}
 						</ul>
 					</div>
-					<div>
-						<h3 className="font-bold text-lg mb-4">Company</h3>
-						<ul className="space-y-2">
-							<li>
-								<Link href="/about" className="hover:underline">
-									About Us
-								</Link>
-							</li>
-							<li>
-								<Link href="/careers" className="hover:underline">
-									Careers
-								</Link>
-							</li>
-							<li>
-								<Link href="/contact" className="hover:underline">
-									Contact
-								</Link>
-							</li>
+
+					<div className="md:col-span-2">
+						<h3 className="font-bold text-lg mb-4 text-white">Company</h3>
+						<ul className="space-y-3">
+							{['Careers', 'Contact', 'Blog'].map((item) => (
+								<li key={item}>
+									<Link
+										href={`/${item.toLowerCase()}`}
+										className="text-gray-300 hover:text-[#63d392] transition-colors flex items-center"
+									>
+										<ChevronRight className="h-4 w-4 mr-1 text-[#63d392]" />
+										{item}
+									</Link>
+								</li>
+							))}
 						</ul>
 					</div>
-					<div>
-						<h3 className="font-bold text-lg mb-4">Resources</h3>
-						<ul className="space-y-2">
+
+					<div className="md:col-span-2">
+						<h3 className="font-bold text-lg mb-4 text-white">Resources</h3>
+						<ul className="space-y-3">
+							{['Privacy', 'Terms'].map((item) => (
+								<li key={item}>
+									<Link
+										href={`/${item.toLowerCase().replace(' ', '-')}`}
+										className="text-gray-300 hover:text-[#63d392] transition-colors flex items-center"
+									>
+										<ChevronRight className="h-4 w-4 mr-1 text-[#63d392]" />
+										{item}
+									</Link>
+								</li>
+							))}
+						</ul>
+					</div>
+
+					<div className="md:col-span-2">
+						<h3 className="font-bold text-lg mb-4 text-white">Support</h3>
+						<ul className="space-y-3">
 							<li>
-								<Link href="/early-access" className="hover:underline">
+								<Link
+									href="/early-access"
+									className="text-gray-300 hover:text-[#63d392] transition-colors flex items-center"
+								>
+									<ChevronRight className="h-4 w-4 mr-1 text-[#63d392]" />
 									Early Access
 								</Link>
 							</li>
 							<li>
-								<Link href="/blog" className="hover:underline">
-									Blog
-								</Link>
-							</li>
-							<li>
-								<Link href="/help" className="hover:underline">
-									Help Center
-								</Link>
-							</li>
-							<li>
-								<Link href="/api-docs" className="hover:underline">
-									API Documentation
+								<Link
+									href="/contact"
+									className="text-gray-300 hover:text-[#63d392] transition-colors flex items-center"
+								>
+									<ChevronRight className="h-4 w-4 mr-1 text-[#63d392]" />
+									Request Demo
 								</Link>
 							</li>
 						</ul>
 					</div>
-					<div>
-						<h3 className="font-bold text-lg mb-4">Stay Connected</h3>
-						<form className="mb-4">
-							<Input
-								type="email"
-								placeholder="Enter your email"
-								className="mb-2 bg-white/10 border-white/20 text-white placeholder-gray-500"
-							/>
-							<Button
-								variant="secondary"
-								type="submit"
-								className="w-full bg-foreground hover:bg-white/20 text-white border-white/20 p-4"
-							>
-								Subscribe to Newsletter
-							</Button>
-						</form>
-						<div className="flex space-x-4">
+				</div>
+
+				{/* Credits and Legal */}
+				<div className="mt-16 pt-8 border-t border-[#63d392]/20">
+					<div className="flex flex-col md:flex-row justify-between items-center">
+						<p className="text-gray-400 mb-6 md:mb-0">
+							&copy; {new Date().getFullYear()} NoteMeet. All rights reserved.
+						</p>
+
+						<div className="flex flex-wrap gap-4 md:gap-8 justify-center">
 							<Link
-								href="#"
-								aria-label="Facebook"
-								className="hover:text-secondary transition-colors"
+								href="/privacy"
+								className="text-gray-400 hover:text-[#63d392] transition-colors text-sm"
 							>
-								<Facebook className="h-6 w-6" />
+								Privacy Policy
 							</Link>
 							<Link
-								href="#"
-								aria-label="Twitter"
-								className="hover:text-secondary transition-colors"
+								href="/terms"
+								className="text-gray-400 hover:text-[#63d392] transition-colors text-sm"
 							>
-								<Twitter className="h-6 w-6" />
+								Terms of Service
 							</Link>
 							<Link
-								href="#"
-								aria-label="LinkedIn"
-								className="hover:text-secondary transition-colors"
+								href="/cookies"
+								className="text-gray-400 hover:text-[#63d392] transition-colors text-sm"
 							>
-								<Linkedin className="h-6 w-6" />
+								Cookie Policy
 							</Link>
 						</div>
 					</div>
-				</div>
-				<div className="border-t border-white/20 pt-8 text-center">
-					<p className="mb-4">&copy; 2024 NoteMeet. All rights reserved.</p>
-					<div className="flex justify-center space-x-4 mb-4">
-						<Link href="/privacy" className="hover:underline">
-							Privacy Policy
-						</Link>
-						<Link href="/terms" className="hover:underline">
-							Terms of Service
-						</Link>
+
+					<div className="mt-12 pt-6 border-t border-[#156469]/50 flex flex-col items-center">
+						<motion.div
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.5 }}
+							className="bg-gradient-to-r from-[#156469] to-[#0a4a4e] p-4 rounded-xl border border-[#63d392]/20 shadow-lg mb-4"
+						>
+							<p className="text-sm text-[#63d392] font-medium mb-2 text-center">
+								Designed & Developed with ❤️ by Dinesh Chhantyal
+							</p>
+							<div className="flex flex-wrap justify-center items-center gap-3">
+								<Link
+									href="https://www.dineshchhantyal.com"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="inline-flex items-center px-3 py-1.5 rounded-full bg-[#63d392]/10 hover:bg-[#63d392]/20 text-[#63d392] transition-all duration-300 text-xs"
+								>
+									<Globe className="h-3 w-3 mr-1.5" />
+									dineshchhantyal.com
+								</Link>
+								<Link
+									href="https://github.com/dineshchhantyal"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="inline-flex items-center px-3 py-1.5 rounded-full bg-[#63d392]/10 hover:bg-[#63d392]/20 text-[#63d392] transition-all duration-300 text-xs"
+								>
+									<Github className="h-3 w-3 mr-1.5" />
+									@dineshchhantyal
+								</Link>
+								<Link
+									href="mailto:myagdichhantyal@gmail.com"
+									className="inline-flex items-center px-3 py-1.5 rounded-full bg-[#63d392]/10 hover:bg-[#63d392]/20 text-[#63d392] transition-all duration-300 text-xs"
+								>
+									<Mail className="h-3 w-3 mr-1.5" />
+									myagdichhantyal@gmail.com
+								</Link>
+							</div>
+						</motion.div>
 					</div>
-					{/* <div className="flex justify-center space-x-4">
-            <img src="/gdpr-compliant.svg" alt="GDPR Compliant" className="h-8" />
-            <img src="/iso-certified.svg" alt="ISO Certified" className="h-8" />
-          </div> */}
 				</div>
 			</div>
 		</footer>

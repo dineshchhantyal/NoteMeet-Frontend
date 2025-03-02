@@ -24,7 +24,7 @@ const benefits = [
 
 export function WhyNoteMeet2() {
 	return (
-		<section className="py-20 bg-[#F5F7FA]">
+		<section className="py-20 bg-[#0a4a4e]">
 			<div className="container mx-auto px-4">
 				<h2 className="text-xl font-bold text-center mb-6">Why NoteMeet?</h2>
 				<p className="text-xl text-center mb-12 max-w-2xl mx-auto">

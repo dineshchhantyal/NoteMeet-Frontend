@@ -1,22 +1,27 @@
 'use client';
-
 import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Search, Download, Edit } from 'lucide-react';
+import { Search, Download, Copy, Clock } from 'lucide-react';
+
 import {
 	VideoTranscriptResponse,
 	Word as OriginalWord,
 } from '@/types/video-transcript';
+import { useToast } from '@/hooks/use-toast';
 
 interface Word extends OriginalWord {
 	segments?: { text: string; isHighlighted: boolean }[];
 }
 
-interface TranscriptViewerProps {
-	transcript: VideoTranscriptResponse | null;
+interface Sentence {
+	text: string;
+	startTime: number;
+	endTime: number;
+	confidence: number;
+	words: Word[];
 }
 
 interface TranscriptViewerProps {
@@ -25,107 +30,130 @@ interface TranscriptViewerProps {
 
 export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 	const [searchTerm, setSearchTerm] = useState('');
+	const { toast } = useToast();
 
-	const formattedTranscript = useMemo(() => {
-		if (!transcript) return [];
+	const sentences = useMemo(() => {
+		if (!transcript?.words) return [];
 
-		return transcript.words.reduce((acc: Word[][], word: Word) => {
-			if (acc.length === 0 || word.speaker !== acc[acc.length - 1][0].speaker) {
-				acc.push([word]);
-			} else {
-				acc[acc.length - 1].push(word);
+		const sentences: Sentence[] = [];
+		let currentSentence: Word[] = [];
+
+		transcript.words.forEach((word, index) => {
+			currentSentence.push(word);
+
+			// Check if word ends with sentence-ending punctuation or is last word
+			if (word.text.match(/[.!?]$/) || index === transcript.words.length - 1) {
+				const sentenceText = currentSentence.map((w) => w.text).join(' ');
+				const avgConfidence =
+					currentSentence.reduce((acc, w) => acc + w.confidence, 0) /
+					currentSentence.length;
+
+				sentences.push({
+					text: sentenceText,
+					startTime: currentSentence[0].start,
+					endTime: currentSentence[currentSentence.length - 1].end,
+					confidence: avgConfidence,
+					words: [...currentSentence],
+				});
+
+				currentSentence = [];
 			}
-			return acc;
-		}, []);
-	}, [transcript]);
+		});
 
-	const highlightedTranscript = useMemo(() => {
-		if (searchTerm === '') return formattedTranscript;
+		return sentences;
+	}, [transcript?.words]);
 
-		const regex = new RegExp(`(${searchTerm})`, 'gi');
-		return formattedTranscript.map((speakerGroup) =>
-			speakerGroup.map((word) => ({
-				...word,
-				segments: word.text.split(regex).map((segment, index) => ({
-					text: segment,
-					isHighlighted: index % 2 === 1,
-				})),
-			})),
-		);
-	}, [formattedTranscript, searchTerm]);
-
-	const formatTime = (seconds: number) => {
-		const date = new Date(seconds * 1000);
-		return date.toISOString().substr(11, 8);
+	const formatTimestamp = (ms: number) => {
+		const seconds = Math.floor(ms / 1000);
+		const minutes = Math.floor(seconds / 60);
+		return `${minutes}:${String(seconds % 60).padStart(2, '0')}`;
 	};
 
-	if (!transcript) {
+	const copyToClipboard = () => {
+		if (transcript) {
+			navigator.clipboard.writeText(transcript.text);
+			toast({
+				title: 'Copied to clipboard',
+				duration: 2000,
+			});
+		}
+	};
+
+	const highlightSearchTerm = (text: string) => {
+		if (!searchTerm) return text;
+		const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
 		return (
-			<Card>
-				<CardHeader>
-					<CardTitle>Meeting Transcript</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<p className="text-gray-600">No transcript available.</p>
-				</CardContent>
-			</Card>
+			<span>
+				{parts.map((part, i) =>
+					part.toLowerCase() === searchTerm.toLowerCase() ? (
+						<span key={i} className="bg-yellow-200 dark:bg-yellow-800">
+							{part}
+						</span>
+					) : (
+						part
+					),
+				)}
+			</span>
 		);
-	}
+	};
 
 	return (
-		<Card>
-			<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-				<CardTitle>Transcript</CardTitle>
-				<div className="flex space-x-2">
-					<Button variant="outline" size="icon">
-						<Download className="h-4 w-4" />
-					</Button>
-					<Button variant="outline" size="icon">
-						<Edit className="h-4 w-4" />
-					</Button>
-				</div>
-			</CardHeader>
-			<CardContent>
-				<div className="flex items-center space-x-2 mb-4">
-					<Search className="h-4 w-4 text-gray-600" />
+		<Card className="h-full">
+			<CardHeader className="space-y-4">
+				<CardTitle className="flex items-center justify-between">
+					<span>Transcript</span>
+					<div className="space-x-2">
+						<Button variant="outline" size="sm" onClick={copyToClipboard}>
+							<Copy className="h-4 w-4 mr-2" />
+							Copy
+						</Button>
+						<Button variant="outline" size="sm">
+							<Download className="h-4 w-4 mr-2" />
+							Download
+						</Button>
+					</div>
+				</CardTitle>
+				<div className="relative">
+					<Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
 					<Input
-						type="search"
 						placeholder="Search transcript..."
+						className="pl-8"
 						value={searchTerm}
 						onChange={(e) => setSearchTerm(e.target.value)}
 					/>
 				</div>
-				<ScrollArea className="h-[400px] pr-4">
-					{highlightedTranscript.map((speakerGroup, groupIndex) => (
-						<div key={groupIndex} className="mb-4">
-							<div className="font-semibold text-sm text-white mb-1">
-								{speakerGroup[0].speaker || `Speaker ${groupIndex + 1}`}
-							</div>
-							<p className="text-sm leading-relaxed">
-								{speakerGroup.map((word, wordIndex) => (
-									<span key={wordIndex} className="relative group">
-										{word.segments ? (
-											word.segments.map((segment, segmentIndex) => (
-												<span
-													key={segmentIndex}
-													className={
-														segment.isHighlighted ? 'bg-yellow-200' : ''
-													}
-												>
-													{segment.text}
-												</span>
-											))
-										) : (
-											<span>{word.text}</span>
-										)}{' '}
-										<span className="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-											{formatTime(word.start / 1000)}
-										</span>
+			</CardHeader>
+			<CardContent>
+				<ScrollArea className="h-[500px] pr-4">
+					<div className="space-y-6">
+						{sentences.map((sentence, index) => (
+							<div
+								key={index}
+								className="flex items-start space-x-4 p-4 rounded-lg border border-border hover:bg-muted/50 transition-colors"
+							>
+								<div className="flex flex-col items-center space-y-1 min-w-[80px] justify-center">
+									<Clock className="h-4 w-4 text-muted-foreground" />
+									<span className="text-xs text-muted-foreground">
+										{formatTimestamp(sentence.startTime)}
 									</span>
-								))}
-							</p>
-						</div>
-					))}
+								</div>
+								<div className="flex-1 space-y-2 items-center justify-center">
+									<p className="text-sm leading-relaxed">
+										{highlightSearchTerm(sentence.text)}
+									</p>
+									{/* <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+										<span>
+											Duration:{' '}
+											{formatTimestamp(sentence.endTime - sentence.startTime)}
+										</span>
+										<span>
+											Confidence: {Math.round(sentence.confidence * 100)}%
+										</span>
+									</div> */}
+								</div>
+							</div>
+						))}
+					</div>
 				</ScrollArea>
 			</CardContent>
 		</Card>

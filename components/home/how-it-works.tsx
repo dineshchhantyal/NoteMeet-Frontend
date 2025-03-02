@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { colors } from '@/tailwind.config';
 
 const headlessMethod = [
 	{
@@ -180,16 +179,26 @@ export const methods = [
 
 export function InteractiveHowItWorks() {
 	return (
-		<section className="py-20 bg-white">
+		<section className="py-20 bg-[#0a4a4e]">
 			<div className="container mx-auto px-4">
-				<h2 className="text-center text-3xl font-bold mb-12">How It Works</h2>
+				<h2 className="text-center text-3xl font-bold mb-12 text-white">
+					How <span className="text-[#63d392]">It Works</span>
+				</h2>
 
 				<Tabs defaultValue="browser-extension">
-					<TabsList className="grid w-full grid-cols-2">
-						<TabsTrigger value="browser-extension">
+					<TabsList className="grid w-full grid-cols-2 bg-[#156469]/30 mb-8">
+						<TabsTrigger
+							value="browser-extension"
+							className="data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-gray-300"
+						>
 							Browser Extension Method
 						</TabsTrigger>
-						<TabsTrigger value="headless">Headless Method</TabsTrigger>
+						<TabsTrigger
+							value="headless"
+							className="data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-gray-300"
+						>
+							Headless Method
+						</TabsTrigger>
 					</TabsList>
 					<TabsContent value="browser-extension">
 						<HowItWorksStep steps={browserExtensionMethod} />
@@ -217,8 +226,8 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 						x2="100%"
 						y2="100%"
 					>
-						<stop offset="0%" stopColor="#60a5fa" />
-						<stop offset="100%" stopColor="#3b82f6" />
+						<stop offset="0%" stopColor="#63d392" />
+						<stop offset="100%" stopColor="#4fb87a" />
 					</linearGradient>
 				</defs>
 				<circle
@@ -226,7 +235,8 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 					cy="350"
 					r="300"
 					fill="none"
-					stroke={colors.cambridgeBlue}
+					stroke="#63d392"
+					strokeOpacity="0.3"
 					strokeWidth="2"
 				/>
 				{steps.map((step, index) => {
@@ -248,12 +258,12 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 								cx={x}
 								cy={y}
 								r="40"
-								fill={'#63d392'}
+								fill="#63d392"
 								initial={{ scale: 1 }}
-								whileHover={{ scale: 1.1, fill: colors.deepBlue }}
+								whileHover={{ scale: 1.1, fill: '#4fb87a' }}
 							/>
 							<foreignObject x={x - 20} y={y - 20} width="40" height="40">
-								<div className="flex items-center justify-center w-full h-full text-white">
+								<div className="flex items-center justify-center w-full h-full text-[#0a4a4e]">
 									<step.icon size={24} />
 								</div>
 							</foreignObject>
@@ -261,7 +271,7 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 								x={x}
 								y={y + 60}
 								textAnchor="middle"
-								fill="#4b5563"
+								fill="#e2e8f0"
 								fontSize="14"
 							>
 								{step.title}
@@ -270,7 +280,8 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 								<path
 									d={`M${x} ${y} Q${400} ${350} ${nextX} ${nextY}`}
 									fill="none"
-									stroke={colors.softRed}
+									stroke="#63d392"
+									strokeOpacity="0.5"
 									strokeWidth="2"
 									strokeDasharray="5,5"
 								>
@@ -287,7 +298,7 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 					);
 				})}
 				<g transform="translate(400, 350)">
-					<circle cx="0" cy="0" r="80" fill={colors.deepBlue} />
+					<circle cx="0" cy="0" r="80" fill="#156469" />
 					<text
 						x="0"
 						y="4"
@@ -307,10 +318,10 @@ function HowItWorksStep({ steps }: { steps: typeof headlessMethod }) {
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: 20 }}
 						transition={{ duration: 0.2 }}
-						className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#63d392] p-6 rounded-lg shadow-lg max-w-sm w-full text-center"
+						className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-6 rounded-lg shadow-lg max-w-sm w-full text-center"
 						style={{
-							background: '#0a4a4e',
-							border: '1px solid #cce3ff',
+							background: '#156469',
+							border: '1px solid #63d392',
 						}}
 					>
 						<h3 className="text-2xl font-semibold mb-2 text-[#63d392]">

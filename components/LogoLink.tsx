@@ -7,17 +7,12 @@ interface LogoLinkProps {
 
 const LogoLink = ({ showText = true }: LogoLinkProps) => {
 	return (
-		<Link href="/" className="flex items-center space-x-2">
-			{/* <Image
-				src="/logo.svg"
-				alt="NoteMeet Logo"
-				width={40}
-				height={40}
-			/> */}
-			<Logo className="h-14 w-14" />
+		<Link href="/" className="flex items-center space-x-2 group">
+			<Logo className="h-10 w-10 transition-transform duration-300 group-hover:rotate-6" />
 			{showText && (
-				<span className="hidden md:block text-2xl text-foreground ">
-					<span className="font-bold">note</span>meet
+				<span className="hidden md:block text-2xl text-white">
+					<span className="font-bold">note</span>
+					<span className="text-[#63d392] font-medium">meet</span>
 				</span>
 			)}
 		</Link>
