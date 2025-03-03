@@ -256,7 +256,7 @@ model SubscriptionPlan {
   public      Boolean          @default(true) // if false, the plan is just a draft
 
   // Pricing
-  basePrice Decimal @db?.Decimal(10, 2)
+  basePrice Decimal @db.Decimal(10, 2)
   currency  String  @default("USD")
 
   // Features and Limits
@@ -295,10 +295,10 @@ model Subscription {
 
   // Billing amounts
   quantity   Int      @default(1)
-  basePrice  Decimal  @db?.Decimal(10, 2)
-  discount   Decimal? @db?.Decimal(10, 2)
-  tax        Decimal? @db?.Decimal(10, 2)
-  totalPrice Decimal  @db?.Decimal(10, 2)
+  basePrice  Decimal  @db.Decimal(10, 2)
+  discount   Decimal? @db.Decimal(10, 2)
+  tax        Decimal? @db.Decimal(10, 2)
+  totalPrice Decimal  @db.Decimal(10, 2)
   currency   String   @default("USD")
 
   // Payment tracking
@@ -329,9 +329,9 @@ model Invoice {
 
   // Invoice details
   number   String   @unique
-  amount   Decimal  @db?.Decimal(10, 2)
-  tax      Decimal? @db?.Decimal(10, 2)
-  total    Decimal  @db?.Decimal(10, 2)
+  amount   Decimal  @db.Decimal(10, 2)
+  tax      Decimal? @db.Decimal(10, 2)
+  total    Decimal  @db.Decimal(10, 2)
   currency Currency @default(USD)
   status   String // pending, paid, void, etc.
 
@@ -361,7 +361,7 @@ model CouponCode {
 
   // Discount details
   type     String // percentage or fixed
-  amount   Decimal @db?.Decimal(10, 2)
+  amount   Decimal @db.Decimal(10, 2)
 }
 
 // Add this enum for share permission types
