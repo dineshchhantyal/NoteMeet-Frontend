@@ -1,20 +1,16 @@
-import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { auth } from './auth';
 
 export async function middleware(request: NextRequest) {
 	// Get the auth token from the cookies
 	const session = await auth();
 
 	// If there's no token and the user is trying to access protected routes
-	if (!session && request.nextUrl.pathname !== '/') {
-		// Build the URL with previous path and a showAuthMessage flag
-		const redirectUrl = new URL(
-			`/?prev=${encodeURIComponent(request.nextUrl.pathname + request.nextUrl.search)}&showAuthMessage=true`,
-			request.nextUrl.origin,
-		);
+	if (!session && request.nextUrl.pathname != '/') {
+		// Redirect to the home page
 
-		return NextResponse.redirect(redirectUrl);
+		return NextResponse.redirect(new URL('/', request.url));
 	}
 
 	return NextResponse.next();

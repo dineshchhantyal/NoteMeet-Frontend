@@ -1,6 +1,6 @@
 'use client';
 import Video from 'next-video';
-import NoteMeetAction from '/videos/NoteMeetAction.mp4';
+import NoteMeetAction from '../videos/NoteMeetAction.mp4';
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import { useState } from 'react';

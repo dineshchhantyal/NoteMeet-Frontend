@@ -41,6 +41,9 @@ const nextConfig = {
 			],
 		}));
 	},
+	experimental: {
+		turbo: {},
+	},
 };
 
 export default withNextVideo(nextConfig);

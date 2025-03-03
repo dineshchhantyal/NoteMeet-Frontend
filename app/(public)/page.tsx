@@ -15,6 +15,7 @@ import { ProductDemo } from '@/components/product-demo';
 import { IntegrationsHighlight } from '@/components/integrations-highlight';
 import { motion } from 'framer-motion';
 import { FeatureShowcase } from '@/components/home/feature-showcase';
+import { useCurrentUser } from '@/hooks/use-current-user';
 
 // Animation variants for staggered children
 const containerVariants = {
@@ -42,6 +43,7 @@ const itemVariants = {
 export default function HomePage() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
+	const user = useCurrentUser();
 
 	useEffect(() => {
 		// Check if we should show the auth message
@@ -95,7 +97,7 @@ export default function HomePage() {
 						<HeroSection
 							onGetStarted={() => {
 								// If logged in, go to dashboard, otherwise show sign up dialog
-								if (status === 'authenticated') {
+								if (user && user.id) {
 									handleNavigation('/dashboard');
 								} else {
 									// Open login/register dialog
@@ -113,7 +115,7 @@ export default function HomePage() {
 							onLogin={() => {
 								handleNavigation('/early-access');
 							}}
-							isLoggedIn={status === 'authenticated'}
+							isLoggedIn={!!user && !!user.id}
 						/>
 					</motion.div>
 

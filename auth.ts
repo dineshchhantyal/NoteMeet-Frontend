@@ -1,19 +1,12 @@
 import NextAuth from 'next-auth';
-import authConfig from '@/auth.config';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import { UserRole } from '@prisma/client';
+
+import { db } from '@/lib/db';
 import { getUserById } from '@/data/user';
 import { getTwoFactorConfoirmationByUserId } from '@/data/two-factor-confirmation';
-import { getAccountByUserId } from './data/account';
-
-// Only import and use PrismaAdapter when not in Edge Runtime
-const adapter =
-	process.env.NEXT_RUNTIME === 'edge'
-		? undefined
-		: (async () => {
-				const { PrismaAdapter } = await import('@auth/prisma-adapter');
-				const { PrismaClient } = await import('@prisma/client');
-				const prisma = new PrismaClient();
-				return PrismaAdapter(prisma);
-			})();
+import { getAccountByUserId } from '@/data/account';
+import authConfig from './auth.config';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
 	pages: {
@@ -22,7 +15,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 	},
 	events: {
 		async linkAccount({ user }) {
-			const { db } = await import('@/lib/db');
 			await db.user.update({
 				where: { id: user.id },
 				data: { emailVerified: new Date() },
@@ -47,7 +39,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
 					if (!twoFactorConfirmation) return false;
 
-					const { db } = await import('@/lib/db');
 					await db.twoFactorConfirmation.delete({
 						where: { id: twoFactorConfirmation.id },
 					});
@@ -62,12 +53,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 			}
 
 			if (token.role && session.user) {
-				session.user.role = token.role;
+				session.user.role = token.role as UserRole;
 			}
 
-			if (token.isTwoFactorEnabled && session.user) {
-				session.user.isTwoFactorEnabled = token.isTwoFactorEnabled;
-			}
+			// if (token.isTwoFactorEnabled && session.user) {
+			//   session.user.isTwoFactorEnabled = token.isTwoFactorEnabled;
+			// }
 
 			if (session.user) {
 				session.user.name = token.name;
@@ -95,8 +86,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 			return token;
 		},
 	},
-	// @ts-expect-error
-	adapter: adapter,
+	adapter: PrismaAdapter(db),
 	session: { strategy: 'jwt' },
 	...authConfig,
 });
