@@ -122,10 +122,7 @@ export default function HomePage() {
 					{/* Core Feature Showcase */}
 					<motion.div variants={itemVariants}>
 						<FeatureShowcase
-							onFeatureClick={(featureId) => {
-								// Can direct to specific feature documentation or demo pages
-								handleNavigation(`/features/${featureId}`);
-							}}
+							onTryFreeClick={() => handleNavigation('/early-access')}
 						/>
 					</motion.div>
 
@@ -147,7 +144,9 @@ export default function HomePage() {
 
 					<motion.div variants={itemVariants} className="scroll-reveal">
 						<PricingSection
-							onSelectPlan={(planId) => handleNavigation(`/pricing/${planId}`)}
+							onSelectPlan={(planId) =>
+								handleNavigation(`/pricing?plan=${planId}`)
+							}
 							onContactSales={() => handleNavigation('/contact')}
 						/>
 					</motion.div>
@@ -157,7 +156,9 @@ export default function HomePage() {
 					</motion.div>
 
 					<motion.div variants={itemVariants} className="scroll-reveal">
-						<ProductDemo />
+						<ProductDemo
+							onGetStarted={() => handleNavigation('/early-access')}
+						/>
 					</motion.div>
 
 					<motion.div variants={itemVariants} className="scroll-reveal">

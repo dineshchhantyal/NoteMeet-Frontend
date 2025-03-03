@@ -2,6 +2,7 @@
 import { Check, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 const trialFeatures = [
 	'Full access to all core features',
@@ -11,6 +12,7 @@ const trialFeatures = [
 ];
 
 export function FreeTrial() {
+	const router = useRouter();
 	return (
 		<div className="relative">
 			<motion.div
@@ -50,6 +52,9 @@ export function FreeTrial() {
 						<Button
 							size="lg"
 							className="bg-[#63d392] text-[#0a4a4e] hover:bg-[#4fb87a] hover:shadow-lg hover:shadow-[#63d392]/20 transition-all flex items-center"
+							onClick={() => {
+								router.push('/early-access');
+							}}
 						>
 							Start Free Trial <ArrowRight className="ml-2 h-5 w-5" />
 						</Button>

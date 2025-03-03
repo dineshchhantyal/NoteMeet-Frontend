@@ -119,7 +119,7 @@ export default function BrowserExtension() {
 								))}
 							</motion.div>
 
-							<div className="flex flex-col sm:flex-row items-center gap-4">
+							<div className="flex flex-col xl:flex-row items-center gap-4">
 								<Button
 									size="lg"
 									className="w-full sm:w-auto bg-[#63d392] text-[#0a4a4e] hover:bg-[#4fb87a] hover:text-[#0a4a4e] transition-all duration-300"

@@ -1,7 +1,7 @@
 'use client';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Mic, FileAudio, Mail, CheckCircle, FileText } from 'lucide-react';
+import { Mic, FileAudio, Mail, CheckCircle } from 'lucide-react';
 
 // Define brand colors as constants for consistency with other components
 const brandColors = {
@@ -15,13 +15,6 @@ const brandColors = {
 	textColor: 'text-[#63d392]', // Text accent color
 };
 const features = [
-	{
-		id: 'transcript',
-		title: 'Automated Transcription',
-		description:
-			'AI-powered transcription creates accurate meeting notes in real-time.',
-		icon: <FileText size={24} />,
-	},
 	{
 		id: 'meetingRecording',
 		icon: <Mic size={24} />,
@@ -61,8 +54,10 @@ const features = [
 ];
 export function FeatureShowcase({
 	onFeatureClick,
+	onTryFreeClick,
 }: {
 	onFeatureClick?: (featureId: string) => void;
+	onTryFreeClick?: () => void;
 }) {
 	const { ref, inView } = useInView({
 		threshold: 0.2,
@@ -217,6 +212,7 @@ export function FeatureShowcase({
 						whileHover={{ scale: 1.05 }}
 						whileTap={{ scale: 0.98 }}
 						className={`px-8 py-3 rounded-lg bg-gradient-to-r ${brandColors.buttonGradient} text-[#0a4a4e] font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-300`}
+						onClick={onTryFreeClick}
 					>
 						Try NoteMeet Free
 					</motion.button>

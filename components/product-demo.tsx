@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import { useState } from 'react';
 
-export function ProductDemo() {
+export function ProductDemo({ onGetStarted }: { onGetStarted: () => void }) {
 	const [isPlaying, setIsPlaying] = useState(false);
 
 	const handlePlayClick = () => {
@@ -93,6 +93,7 @@ export function ProductDemo() {
 						whileHover={{ scale: 1.05 }}
 						whileTap={{ scale: 0.98 }}
 						className="px-8 py-3 rounded-lg bg-gradient-to-r from-[#63d392] to-[#4fb87a] text-[#0a4a4e] font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+						onClick={onGetStarted}
 					>
 						Get Started Free
 					</motion.button>

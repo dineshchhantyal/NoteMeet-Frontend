@@ -1,7 +1,6 @@
 'use client';
 
 import { CalendarClock, Code, Users, Database } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
 const addOns = [
@@ -75,12 +74,6 @@ export function AddOnServices() {
 									<span className="text-[#63d392] font-medium">
 										{addon.priceLabel}
 									</span>
-									<Button
-										variant="outline"
-										className="border-[#63d392]/30 text-[#63d392] hover:bg-[#63d392]/10 hover:text-[#63d392]"
-									>
-										Learn More
-									</Button>
 								</div>
 							</div>
 						</div>

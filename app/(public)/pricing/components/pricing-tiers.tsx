@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
@@ -149,7 +148,7 @@ export function PricingTiers() {
 								))}
 							</ul>
 
-							<div className="mt-auto">
+							{/* <div className="mt-auto">
 								<Button
 									className={`w-full ${
 										tier.highlight
@@ -159,7 +158,7 @@ export function PricingTiers() {
 								>
 									{tier.ctaText}
 								</Button>
-							</div>
+							</div> */}
 						</motion.div>
 					))}
 				</TooltipProvider>
