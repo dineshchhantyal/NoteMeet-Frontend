@@ -1,17 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
 	JobApplicationInterface,
 	JobApplicationStatus,
 } from '@/schemas/job-application';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useEffect } from 'react';
-import { Briefcase } from 'lucide-react';
+import { Briefcase, Loader2 } from 'lucide-react';
 import { getAdminJobApplications } from '@/data/job-application';
 import { DataTable } from './data-table';
 import { columns } from './columns';
+import { cn } from '@/lib/utils';
+import { AdminPageHeader } from '@/components/admin/admin-page-header';
 
 export default function JobApplicationsPage() {
 	const [applications, setApplications] = useState<JobApplicationInterface[]>(
@@ -34,100 +35,130 @@ export default function JobApplicationsPage() {
 
 	if (loading) {
 		return (
-			<div className="flex items-center justify-center h-screen">
-				Loading...
+			<div className="flex items-center justify-center h-screen bg-[#0a4a4e]">
+				<div className="flex flex-col items-center text-white">
+					<Loader2 className="h-8 w-8 animate-spin text-[#63d392] mb-2" />
+					<span>Loading applications...</span>
+				</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="container mx-auto py-10">
-			<div className="flex items-center space-x-4 mb-8">
-				<Briefcase className="h-8 w-8 text-white" />
-				<div>
-					<h1 className="text-3xl font-bold tracking-tight">
-						Job Applications
-					</h1>
-					<p className="text-gray-600">
-						Manage and review all job applications
-					</p>
+		<div className="p-8 min-h-screen bg-[#0a4a4e]">
+			<div className="max-w-7xl mx-auto">
+				<AdminPageHeader
+					title="Job Applications"
+					icon={<Briefcase className="h-8 w-8 text-[#63d392]" />}
+				/>
+
+				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+					<StatCard
+						title="Total Applications"
+						value={applications.length}
+						color="bg-[#156469]/50"
+					/>
+					<StatCard
+						title="Pending Review"
+						value={filterApplications(JobApplicationStatus.PENDING).length}
+						color="bg-yellow-500/20"
+						textColor="text-yellow-400"
+					/>
+					<StatCard
+						title="Approved"
+						value={filterApplications(JobApplicationStatus.APPROVED).length}
+						color="bg-green-500/20"
+						textColor="text-green-400"
+					/>
+					<StatCard
+						title="Rejected"
+						value={filterApplications(JobApplicationStatus.REJECTED).length}
+						color="bg-red-500/20"
+						textColor="text-red-400"
+					/>
+				</div>
+
+				<div className="bg-[#156469]/30 backdrop-blur-sm rounded-xl border border-[#63d392]/20 overflow-hidden mt-8 p-6">
+					<Tabs defaultValue="all" className="w-full">
+						<TabsList className="bg-[#0d5559]/60 border border-[#63d392]/20 p-1">
+							<TabsTrigger
+								value="all"
+								className="data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-white data-[state=active]:shadow"
+							>
+								All Applications
+							</TabsTrigger>
+							<TabsTrigger
+								value="pending"
+								className="data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-white data-[state=active]:shadow"
+							>
+								Pending
+							</TabsTrigger>
+							<TabsTrigger
+								value="approved"
+								className="data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-white data-[state=active]:shadow"
+							>
+								Approved
+							</TabsTrigger>
+							<TabsTrigger
+								value="rejected"
+								className="data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-white data-[state=active]:shadow"
+							>
+								Rejected
+							</TabsTrigger>
+						</TabsList>
+						<div className="mt-4">
+							<TabsContent value="all">
+								<DataTable columns={columns} data={applications} />
+							</TabsContent>
+							<TabsContent value="pending">
+								<DataTable
+									columns={columns}
+									data={filterApplications(JobApplicationStatus.PENDING)}
+								/>
+							</TabsContent>
+							<TabsContent value="approved">
+								<DataTable
+									columns={columns}
+									data={filterApplications(JobApplicationStatus.APPROVED)}
+								/>
+							</TabsContent>
+							<TabsContent value="rejected">
+								<DataTable
+									columns={columns}
+									data={filterApplications(JobApplicationStatus.REJECTED)}
+								/>
+							</TabsContent>
+						</div>
+					</Tabs>
 				</div>
 			</div>
-
-			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-				<Card>
-					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="text-sm font-medium">
-							Total Applications
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className="text-2xl font-bold">{applications.length}</div>
-					</CardContent>
-				</Card>
-				<Card>
-					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="text-sm font-medium">
-							Pending Review
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className="text-2xl font-bold">
-							{filterApplications(JobApplicationStatus.PENDING).length}
-						</div>
-					</CardContent>
-				</Card>
-				<Card>
-					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="text-sm font-medium">Approved</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className="text-2xl font-bold">
-							{filterApplications(JobApplicationStatus.APPROVED).length}
-						</div>
-					</CardContent>
-				</Card>
-				<Card>
-					<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-						<CardTitle className="text-sm font-medium">Rejected</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<div className="text-2xl font-bold">
-							{filterApplications(JobApplicationStatus.REJECTED).length}
-						</div>
-					</CardContent>
-				</Card>
-			</div>
-
-			<Tabs defaultValue="all" className="mt-8">
-				<TabsList>
-					<TabsTrigger value="all">All Applications</TabsTrigger>
-					<TabsTrigger value="pending">Pending</TabsTrigger>
-					<TabsTrigger value="approved">Approved</TabsTrigger>
-					<TabsTrigger value="rejected">Rejected</TabsTrigger>
-				</TabsList>
-				<TabsContent value="all">
-					<DataTable columns={columns} data={applications} />
-				</TabsContent>
-				<TabsContent value="pending">
-					<DataTable
-						columns={columns}
-						data={filterApplications(JobApplicationStatus.PENDING)}
-					/>
-				</TabsContent>
-				<TabsContent value="approved">
-					<DataTable
-						columns={columns}
-						data={filterApplications(JobApplicationStatus.APPROVED)}
-					/>
-				</TabsContent>
-				<TabsContent value="rejected">
-					<DataTable
-						columns={columns}
-						data={filterApplications(JobApplicationStatus.REJECTED)}
-					/>
-				</TabsContent>
-			</Tabs>
 		</div>
+	);
+}
+
+interface StatCardProps {
+	title: string;
+	value: number;
+	color?: string;
+	textColor?: string;
+}
+
+function StatCard({
+	title,
+	value,
+	color = 'bg-[#156469]/50',
+	textColor = 'text-white',
+}: StatCardProps) {
+	return (
+		<Card className={cn('border border-[#63d392]/20', color)}>
+			<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+				<CardTitle className="text-sm font-medium text-gray-200">
+					{title}
+				</CardTitle>
+			</CardHeader>
+			<CardContent>
+				<div className={cn('text-2xl font-bold', textColor)}>{value}</div>
+			</CardContent>
+		</Card>
 	);
 }

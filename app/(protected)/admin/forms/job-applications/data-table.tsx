@@ -6,10 +6,10 @@ import {
 	getCoreRowModel,
 	useReactTable,
 	getPaginationRowModel,
-	getSortedRowModel,
 	SortingState,
-	getFilteredRowModel,
+	getSortedRowModel,
 	ColumnFiltersState,
+	getFilteredRowModel,
 } from '@tanstack/react-table';
 
 import {
@@ -20,10 +20,17 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useState } from 'react';
+import { Input } from '@/components/ui/input';
+import {
+	Pagination,
+	PaginationContent,
+	PaginationEllipsis,
+	PaginationItem,
+	PaginationLink,
+	PaginationNext,
+	PaginationPrevious,
+} from '@/components/ui/pagination';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -54,26 +61,33 @@ export function DataTable<TData, TValue>({
 
 	return (
 		<div>
+			{/* Search */}
 			<div className="flex items-center py-4">
 				<Input
-					placeholder="Filter by position..."
-					value={
-						(table.getColumn('position')?.getFilterValue() as string) ?? ''
-					}
+					placeholder="Filter by name or position..."
+					value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
 					onChange={(event) =>
-						table.getColumn('position')?.setFilterValue(event.target.value)
+						table.getColumn('name')?.setFilterValue(event.target.value)
 					}
-					className="max-w-sm"
+					className="max-w-sm bg-[#0d5559]/50 border-[#63d392]/30 text-white placeholder:text-gray-400"
 				/>
 			</div>
-			<div className="rounded-md border">
+
+			{/* Table */}
+			<div className="rounded-md overflow-hidden border border-[#63d392]/20">
 				<Table>
-					<TableHeader>
+					<TableHeader className="bg-[#0d5559]/60">
 						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id}>
+							<TableRow
+								key={headerGroup.id}
+								className="hover:bg-transparent border-[#63d392]/20"
+							>
 								{headerGroup.headers.map((header) => {
 									return (
-										<TableHead key={header.id}>
+										<TableHead
+											key={header.id}
+											className="text-[#63d392] font-medium"
+										>
 											{header.isPlaceholder
 												? null
 												: flexRender(
@@ -92,9 +106,10 @@ export function DataTable<TData, TValue>({
 								<TableRow
 									key={row.id}
 									data-state={row.getIsSelected() && 'selected'}
+									className="border-[#63d392]/10 hover:bg-[#156469]/50"
 								>
 									{row.getVisibleCells().map((cell) => (
-										<TableCell key={cell.id}>
+										<TableCell key={cell.id} className="text-gray-300">
 											{flexRender(
 												cell.column.columnDef.cell,
 												cell.getContext(),
@@ -107,7 +122,7 @@ export function DataTable<TData, TValue>({
 							<TableRow>
 								<TableCell
 									colSpan={columns.length}
-									className="h-24 text-center"
+									className="h-24 text-center text-white"
 								>
 									No results.
 								</TableCell>
@@ -116,23 +131,60 @@ export function DataTable<TData, TValue>({
 					</TableBody>
 				</Table>
 			</div>
-			<div className="flex items-center justify-end space-x-2 py-4">
-				<Button
-					variant="outline"
-					size="sm"
-					onClick={() => table.previousPage()}
-					disabled={!table.getCanPreviousPage()}
-				>
-					Previous
-				</Button>
-				<Button
-					variant="outline"
-					size="sm"
-					onClick={() => table.nextPage()}
-					disabled={!table.getCanNextPage()}
-				>
-					Next
-				</Button>
+
+			{/* Pagination */}
+			<div className="flex items-center justify-between mt-4">
+				<div className="text-sm text-gray-300">
+					Showing{' '}
+					{table.getState().pagination.pageIndex *
+						table.getState().pagination.pageSize +
+						1}{' '}
+					to{' '}
+					{Math.min(
+						(table.getState().pagination.pageIndex + 1) *
+							table.getState().pagination.pageSize,
+						table.getFilteredRowModel().rows.length,
+					)}{' '}
+					of {table.getFilteredRowModel().rows.length} entries
+				</div>
+
+				<Pagination>
+					<PaginationContent>
+						<PaginationItem>
+							<PaginationPrevious
+								onClick={() => table.previousPage()}
+								className={`${!table.getCanPreviousPage() ? 'pointer-events-none opacity-50' : ''} text-white hover:text-[#63d392]`}
+							/>
+						</PaginationItem>
+
+						{Array.from({ length: Math.min(5, table.getPageCount()) }).map(
+							(_, i) => (
+								<PaginationItem key={i}>
+									<PaginationLink
+										onClick={() => table.setPageIndex(i)}
+										isActive={table.getState().pagination.pageIndex === i}
+										className={`${
+											table.getState().pagination.pageIndex === i
+												? 'bg-[#63d392] text-[#0a4a4e]'
+												: 'text-white hover:text-[#63d392]'
+										}`}
+									>
+										{i + 1}
+									</PaginationLink>
+								</PaginationItem>
+							),
+						)}
+
+						{table.getPageCount() > 5 && <PaginationEllipsis />}
+
+						<PaginationItem>
+							<PaginationNext
+								onClick={() => table.nextPage()}
+								className={`${!table.getCanNextPage() ? 'pointer-events-none opacity-50' : ''} text-white hover:text-[#63d392]`}
+							/>
+						</PaginationItem>
+					</PaginationContent>
+				</Pagination>
 			</div>
 		</div>
 	);
