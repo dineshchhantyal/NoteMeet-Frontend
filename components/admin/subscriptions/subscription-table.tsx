@@ -22,7 +22,6 @@ import {
 	MoreHorizontal,
 	Pencil,
 	Trash2,
-	Eye,
 	Check,
 	X,
 	Loader2,
@@ -125,7 +124,7 @@ export function SubscriptionPlanTable() {
 
 			setPlans(plans.filter((p) => p.id !== planToDelete.id));
 			toast.success(`${planToDelete.name} plan deleted successfully`);
-		} catch (error) {
+		} catch {
 			toast.error('Failed to delete plan');
 		} finally {
 			setDeleting(false);
@@ -148,7 +147,7 @@ export function SubscriptionPlanTable() {
 			toast.success(
 				`${plan.name} plan ${plan.isActive ? 'deactivated' : 'activated'} successfully`,
 			);
-		} catch (error) {
+		} catch {
 			toast.error('Failed to update plan status');
 		}
 	};

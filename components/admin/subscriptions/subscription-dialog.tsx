@@ -109,16 +109,6 @@ export function SubscriptionFormDialog({
 			// Replace with actual API call
 			await new Promise((resolve) => setTimeout(resolve, 1000));
 
-			const planData = {
-				id: mode === 'edit' && plan ? plan.id : crypto.randomUUID(),
-				name,
-				description,
-				price: parseFloat(price),
-				interval,
-				features: filteredFeatures,
-				isActive,
-			};
-
 			toast.success(
 				mode === 'create'
 					? 'Subscription plan created successfully!'
@@ -127,7 +117,7 @@ export function SubscriptionFormDialog({
 
 			onOpenChange(false);
 			resetForm();
-		} catch (error) {
+		} catch {
 			toast.error(
 				mode === 'create'
 					? 'Failed to create subscription plan'
