@@ -35,7 +35,6 @@ import {
 	ChevronLeft,
 	ChevronRight,
 	Trash2,
-	Edit,
 	MailCheck,
 	MailX,
 	Loader2,

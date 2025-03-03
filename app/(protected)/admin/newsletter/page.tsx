@@ -63,7 +63,6 @@ type PaginationData = {
 };
 
 export default function AdminNewsletterPage() {
-	const router = useRouter();
 	const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
 	const [pagination, setPagination] = useState<PaginationData>({
 		total: 0,

@@ -70,8 +70,8 @@ export function NewsletterUnsubscribe() {
 					Unsubscribe from Newsletter
 				</h2>
 				<p className="text-gray-300">
-					We're sorry to see you go. Enter your email to unsubscribe from our
-					newsletter.
+					We&apos;re sorry to see you go. Enter your email to unsubscribe from
+					our newsletter.
 				</p>
 			</div>
 

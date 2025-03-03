@@ -125,7 +125,9 @@ export default function EarlyAccessSubmissionsPage() {
 
 			// Update local state
 			const updatedSubmissions = submissions.map((sub) =>
-				sub.id === submission.id ? { ...sub, status: newStatus as any } : sub,
+				sub.id === submission.id
+					? { ...sub, status: newStatus as EarlyAccessSubmission['status'] }
+					: sub,
 			);
 
 			setSubmissions(updatedSubmissions);
