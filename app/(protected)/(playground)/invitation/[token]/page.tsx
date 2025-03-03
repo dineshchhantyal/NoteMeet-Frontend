@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import {
 	Users,
 	Calendar,
@@ -23,11 +23,10 @@ import { toast } from 'sonner';
 import { MeetingInterface } from '@/types';
 import { MeetingStatus } from '@/types/meeting';
 
-export default function InvitationPage({
-	params,
-}: {
-	params: { token: string };
-}) {
+export default function InvitationPage() {
+	const params = useParams();
+	const token = params.token as string;
+
 	const [meeting, setMeeting] = useState<MeetingInterface | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [accepting, setAccepting] = useState(false);
@@ -40,7 +39,6 @@ export default function InvitationPage({
 	const [expired, setExpired] = useState(false);
 
 	const router = useRouter();
-	const { token } = params;
 
 	// Helper functions
 	const getStatusColor = (status: MeetingStatus) => {
