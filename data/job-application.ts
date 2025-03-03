@@ -13,7 +13,7 @@ import { UserRole } from '@prisma/client';
 export const getAdminJobApplications = async () => {
 	try {
 		await checkAdmin();
-		const jobApplications = await db.jobApplication.findMany();
+		const jobApplications = await db?.jobApplication.findMany();
 
 		return jobApplications;
 	} catch (error) {
@@ -26,7 +26,7 @@ export const getAdminJobApplicationById = async (id: number) => {
 	try {
 		const user = await checkAdmin();
 
-		const jobApplication = await db.jobApplication.update({
+		const jobApplication = await db?.jobApplication.update({
 			where: { id },
 			data: {
 				isRead: true,
@@ -59,7 +59,7 @@ export const updateAdminJobApplicationStatus = async (
 ) => {
 	try {
 		const user = await checkAdmin();
-		const jobApplication = await db.jobApplication.update({
+		const jobApplication = await db?.jobApplication.update({
 			where: { id },
 			data: {
 				status,
@@ -78,7 +78,7 @@ export const updateAdminJobApplicationStatus = async (
 export const deleteAdminJobApplication = async (id: number) => {
 	try {
 		await checkAdmin();
-		const jobApplication = await db.jobApplication.delete({ where: { id } });
+		const jobApplication = await db?.jobApplication.delete({ where: { id } });
 
 		return jobApplication;
 	} catch (error) {
@@ -90,7 +90,7 @@ export const deleteAdminJobApplication = async (id: number) => {
 export const deleteAdminManyJobApplications = async (ids: number[]) => {
 	try {
 		await checkAdmin();
-		const jobApplications = await db.jobApplication.deleteMany({
+		const jobApplications = await db?.jobApplication.deleteMany({
 			where: { id: { in: ids } },
 		});
 

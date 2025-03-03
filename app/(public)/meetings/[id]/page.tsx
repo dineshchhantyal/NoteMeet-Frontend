@@ -5,10 +5,14 @@ import { VideoPlayer } from '@/components/video-player';
 import { TranscriptViewer } from '@/components/transcript-viewer';
 import { SummarySection } from '@/components/summary-section';
 
-export default function MeetingPage({ params }: { params: { id: string } }) {
+export default async function MeetingPage({
+	params,
+}: {
+	params: Promise<{ id: string }>;
+}) {
 	// In a real application, you would fetch the meeting data based on the ID
 	const meetingData = {
-		id: params.id,
+		id: (await params).id,
 		title: 'Project Kickoff Meeting',
 		date: '2024-03-20',
 		time: '10:00 AM',

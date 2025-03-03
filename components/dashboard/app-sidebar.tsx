@@ -212,7 +212,7 @@ export function AppSidebar({
 											'w-full justify-start text-left p-3 h-auto mb-1 rounded-lg transition-all',
 											selectedMeeting?.id === meeting.id
 												? 'bg-[#63d392]/20 text-white hover:bg-[#63d392]/30 border-l-2 border-[#63d392]'
-												: 'hover:bg-[#156469]/50 text-white',
+												: 'hover:bg-[#156469]/50 text-white hover:text-green-200',
 										)}
 										onClick={() => {
 											onSelectMeeting(meeting);

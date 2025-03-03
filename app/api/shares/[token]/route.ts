@@ -5,7 +5,7 @@ import { currentUser } from '@/lib/auth';
 // GET - Access shared meeting by token
 export async function GET(
 	req: NextRequest,
-	{ params }: { params: { token: string } },
+	{ params }: { params: Promise<{ token: string }> },
 ) {
 	try {
 		const user = await currentUser();
@@ -14,10 +14,10 @@ export async function GET(
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 		}
 
-		const { token } = params;
+		const { token } = await params;
 
 		// Find the share by token
-		const share = await db.meetingShare.findUnique({
+		const share = await db?.meetingShare.findUnique({
 			where: { token },
 			include: {
 				meeting: true,
@@ -38,7 +38,7 @@ export async function GET(
 
 		// Update the pending share:
 		if (share.status === 'pending') {
-			await db.meetingShare.update({
+			await db?.meetingShare.update({
 				where: { id: share.id },
 				data: {
 					// No userId or user field, just update the status
@@ -48,7 +48,7 @@ export async function GET(
 			});
 		} else {
 			// Just update the last access time
-			await db.meetingShare.update({
+			await db?.meetingShare.update({
 				where: { id: share.id },
 				data: {
 					lastAccessAt: new Date(),

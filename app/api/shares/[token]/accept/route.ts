@@ -4,7 +4,7 @@ import { currentUser } from '@/lib/auth';
 
 export async function POST(
 	req: NextRequest,
-	{ params }: { params: { token: string } },
+	{ params }: { params: Promise<{ token: string }> },
 ) {
 	const user = await currentUser();
 
@@ -12,11 +12,11 @@ export async function POST(
 		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
-	const { token } = params;
+	const { token } = await params;
 
 	try {
 		// Find the share by token
-		const share = await db.meetingShare.findUnique({
+		const share = await db?.meetingShare.findUnique({
 			where: { token },
 			include: {
 				meeting: true,
@@ -39,7 +39,7 @@ export async function POST(
 		}
 
 		// Update the share status
-		const updatedShare = await db.meetingShare.update({
+		const updatedShare = await db?.meetingShare.update({
 			where: { id: share.id },
 			data: {
 				status: 'accepted',

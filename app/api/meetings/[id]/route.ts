@@ -50,7 +50,7 @@ export async function PUT(req: NextRequest) {
 			await checkMeetingUserAuthorization(user, id!);
 		}
 
-		const updatedMeeting = await db.meeting.update({
+		const updatedMeeting = await db?.meeting.update({
 			where: { id: id! },
 			data: body,
 		});
@@ -81,7 +81,7 @@ export async function DELETE(req: NextRequest) {
 		}
 
 		await checkMeetingUserAuthorization(user, id!);
-		const meeting = await db.meeting.findUnique({
+		const meeting = await db?.meeting.findUnique({
 			where: { id },
 		});
 
@@ -130,7 +130,7 @@ export async function DELETE(req: NextRequest) {
 		}
 
 		try {
-			await db.participant.deleteMany({
+			await db?.participant.deleteMany({
 				where: { meetingId: id! },
 			});
 		} catch (error) {
@@ -140,7 +140,7 @@ export async function DELETE(req: NextRequest) {
 		}
 
 		try {
-			await db.notification.delete({
+			await db?.notification.delete({
 				where: { meetingId: id! },
 			});
 		} catch (error) {
@@ -150,7 +150,7 @@ export async function DELETE(req: NextRequest) {
 		}
 
 		try {
-			await db.meeting.delete({
+			await db?.meeting.delete({
 				where: { id: id! },
 			});
 		} catch (error) {

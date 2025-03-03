@@ -18,18 +18,18 @@ async function authorizeAdmin() {
 // API route to get users by subscription plan
 export async function GET(
 	req: NextRequest,
-	{ params }: { params: { id: string } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
 		// Authorize admin access
 		await authorizeAdmin();
 
-		const subscriptionPlanId = params.id;
+		const subscriptionPlanId = (await params).id;
 
 		// Check if the subscription plan exists
 		let subscriptionPlan;
 		try {
-			subscriptionPlan = await db.subscriptionPlan.findUnique({
+			subscriptionPlan = await db?.subscriptionPlan.findUnique({
 				where: { id: subscriptionPlanId },
 			});
 
@@ -48,7 +48,7 @@ export async function GET(
 		}
 
 		// Fetch users associated with the subscription plan
-		const users = await db.subscription.findMany({
+		const users = await db?.subscription.findMany({
 			where: {
 				planId: subscriptionPlanId,
 			},
@@ -83,7 +83,7 @@ export async function GET(
 
 export async function DELETE(
 	req: NextRequest,
-	{ params }: { params: { id: string } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
 		const body = await req.json();
@@ -96,7 +96,7 @@ export async function DELETE(
 			);
 		}
 
-		const planId = params.id;
+		const planId = (await params).id;
 
 		if (!planId) {
 			return NextResponse.json(

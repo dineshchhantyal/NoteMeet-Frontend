@@ -7,7 +7,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
 	try {
-		const forms = await db.earlyAccessForm.findMany({
+		const forms = await db?.earlyAccessForm.findMany({
 			orderBy: { createdAt: 'desc' },
 		});
 		return NextResponse.json({ success: true, data: forms });
@@ -24,14 +24,22 @@ export async function PATCH(request: Request) {
 	try {
 		const loggedInUser = await isApproved();
 		const { id, status, isVerified } = await request.json();
-		const updatedEntry = await db.earlyAccessForm.update({
+		const updatedEntry = await db?.earlyAccessForm.update({
 			where: { id },
 			data: {
 				status,
 				isVerified,
 			},
 		});
-		const user = await db.user.findUnique({
+
+		if (!updatedEntry) {
+			return NextResponse.json(
+				{ success: false, error: 'Entry not found' },
+				{ status: 404 },
+			);
+		}
+
+		const user = await db?.user.findUnique({
 			where: { email: updatedEntry.email },
 		});
 

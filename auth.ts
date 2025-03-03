@@ -15,7 +15,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 	},
 	events: {
 		async linkAccount({ user }) {
-			await db.user.update({
+			await db?.user.update({
 				where: { id: user.id },
 				data: { emailVerified: new Date() },
 			});
@@ -39,7 +39,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
 					if (!twoFactorConfirmation) return false;
 
-					await db.twoFactorConfirmation.delete({
+					await db?.twoFactorConfirmation.delete({
 						where: { id: twoFactorConfirmation.id },
 					});
 				}
@@ -86,7 +86,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 			return token;
 		},
 	},
-	adapter: PrismaAdapter(db),
+	adapter: PrismaAdapter(db!),
 	session: { strategy: 'jwt' },
 	...authConfig,
 });

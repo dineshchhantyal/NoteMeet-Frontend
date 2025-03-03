@@ -52,14 +52,14 @@ export const newPassword = async (
 
 	const hashedPassword = await bcrypt.hash(password, 10);
 
-	await db.user.update({
+	await db?.user.update({
 		where: { id: exitingUser.id },
 		data: {
 			password: hashedPassword,
 		},
 	});
 
-	await db.passwordResetToken.delete({
+	await db?.passwordResetToken.delete({
 		where: { id: existingToken.id },
 	});
 

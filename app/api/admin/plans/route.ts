@@ -4,7 +4,7 @@ import { currentUser } from '@/lib/auth';
 import { UserRole } from '@prisma/client';
 
 export async function GET() {
-	const subscriptions = await db.subscriptionPlan.findMany();
+	const subscriptions = await db?.subscriptionPlan.findMany();
 	return NextResponse.json(subscriptions);
 }
 
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 	await authorizeAdmin();
 	const body = await req.json();
 
-	const subscriptionPlan = await db.subscriptionPlan.create({
+	const subscriptionPlan = await db?.subscriptionPlan.create({
 		data: body,
 	});
 	return NextResponse.json(subscriptionPlan);

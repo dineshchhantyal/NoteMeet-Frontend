@@ -56,7 +56,7 @@ class UserSubscriptionService {
 			}
 
 			// Retrieve the user's subscription plan by their user ID
-			const userSubscriptions = await db.subscription.findMany({
+			const userSubscriptions = await db?.subscription.findMany({
 				where: { userId: user.id, status: SubscriptionStatus.ACTIVE },
 				include: {
 					plan: true,
@@ -101,10 +101,10 @@ class UserSubscriptionService {
 
 	async getUserRemainingLimits(userId: string) {
 		const totalLimits = await this.getUserTotalLimits(userId);
-		const meetingsCount = await db.meeting.count({ where: { userId } });
+		const meetingsCount = (await db?.meeting.count({ where: { userId } })) ?? 0;
 
 		// if not storage, create one
-		const storage = await db.userStorage.upsert({
+		const storage = await db?.userStorage.upsert({
 			where: { userId },
 			create: { userId, usedStorage: 0 },
 			update: {},
@@ -134,7 +134,7 @@ class UserSubscriptionService {
 			throw new Error('User already has an active subscription');
 		}
 
-		const subscription = await db.subscription.create({
+		const subscription = await db?.subscription.create({
 			data: {
 				userId,
 				planId,
@@ -150,7 +150,7 @@ class UserSubscriptionService {
 	}
 
 	async userCancelAllActiveSubscriptions(userId: string) {
-		const subscription = await db.subscription.updateMany({
+		const subscription = await db?.subscription.updateMany({
 			where: {
 				userId,
 				status: SubscriptionStatus.ACTIVE,
@@ -163,7 +163,7 @@ class UserSubscriptionService {
 	async userCancelSubscription(userId: string, planId: string) {
 		console.log('userId', userId);
 		console.log('planId', planId);
-		const subscription = await db.subscription.updateMany({
+		const subscription = await db?.subscription.updateMany({
 			where: {
 				planId,
 				userId,
@@ -176,7 +176,7 @@ class UserSubscriptionService {
 	}
 
 	async cancelSubscription(subscriptionId: string) {
-		const subscription = await db.subscription.update({
+		const subscription = await db?.subscription.update({
 			where: { id: subscriptionId },
 			data: { status: SubscriptionStatus.CANCELED, updatedAt: new Date() },
 		});
@@ -184,7 +184,7 @@ class UserSubscriptionService {
 	}
 
 	async renewSubscription(subscriptionId: string) {
-		const subscription = await db.subscription.update({
+		const subscription = await db?.subscription.update({
 			where: { id: subscriptionId },
 			data: { status: SubscriptionStatus.ACTIVE, updatedAt: new Date() },
 		});
@@ -192,7 +192,7 @@ class UserSubscriptionService {
 	}
 
 	async isUserSubscribedToEarlyAccessPlan(userId: string) {
-		const subscription = await db.subscription.findFirst({
+		const subscription = await db?.subscription.findFirst({
 			where: {
 				userId,
 				planId: UserSubscriptionService.earlyAccessPlanId,

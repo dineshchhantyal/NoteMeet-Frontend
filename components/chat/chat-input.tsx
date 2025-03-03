@@ -9,7 +9,7 @@ interface ChatInputProps {
 	isLoading: boolean;
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	onSubmit: (e: FormEvent<HTMLFormElement>) => void;
-	inputRef: React.RefObject<HTMLInputElement>;
+	inputRef: React.RefObject<HTMLInputElement> | null;
 }
 
 export function ChatInput({

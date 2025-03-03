@@ -41,7 +41,7 @@ export async function createSubscriptionPlan(
 
 		try {
 			// Create the subscription plan in the database
-			const newPlan = await db.subscriptionPlan.create({
+			const newPlan = await db?.subscriptionPlan.create({
 				data: {
 					name,
 					tier: tier as SubscriptionTier,
@@ -80,7 +80,7 @@ export async function updateSubscriptionPlan(
 
 		const { id, ...rest } = data;
 
-		const updatedPlan = await db.subscriptionPlan.update({
+		const updatedPlan = await db?.subscriptionPlan.update({
 			where: { id: id },
 			data: rest,
 		});
@@ -102,7 +102,7 @@ export async function addUserToSubscriptionPlan(
 		}
 		const { email, subscriptionPlanId } = data;
 
-		const customer = await db.user.findFirst({
+		const customer = await db?.user.findFirst({
 			where: { email },
 		});
 
@@ -131,7 +131,7 @@ export async function getUserByEmail(
 ): Promise<User | null> {
 	try {
 		if (includeActiveSubscriptions) {
-			const user = await db.user.findUnique({
+			const user = await db?.user.findUnique({
 				where: { email },
 				include: {
 					activeSubscriptions: {
@@ -142,12 +142,21 @@ export async function getUserByEmail(
 					storage: includeStorage,
 				},
 			});
+
+			if (!user) {
+				return null;
+			}
 			return user;
 		} else {
-			const user = await db.user.findUnique({
+			const user = await db?.user.findUnique({
 				where: { email },
 				include: { storage: includeStorage },
 			});
+
+			if (!user) {
+				return null;
+			}
+
 			return user;
 		}
 	} catch (error) {

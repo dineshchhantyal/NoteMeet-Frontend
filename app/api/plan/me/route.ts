@@ -17,7 +17,7 @@ export async function GET() {
 	}
 
 	try {
-		const subscription = await db.subscription.findUnique({
+		const subscription = await db?.subscription.findUnique({
 			where: { id: user.subscriptionId },
 		});
 		if (!subscription) {

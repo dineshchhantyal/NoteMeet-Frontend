@@ -41,6 +41,10 @@ export const login = async (
 			existingUser.email,
 		);
 
+		if (!verificationToken) {
+			return { error: 'Failed to generate verification token!' };
+		}
+
 		await sendVerificationEmail(
 			verificationToken.email,
 			verificationToken.token,
@@ -65,7 +69,7 @@ export const login = async (
 				return { error: 'Code expired!' };
 			}
 
-			await db.twoFactorToken.delete({
+			await db?.twoFactorToken.delete({
 				where: { id: twoFactorToken.id },
 			});
 
@@ -74,18 +78,22 @@ export const login = async (
 			);
 
 			if (existingConfirmation) {
-				await db.twoFactorConfirmation.delete({
+				await db?.twoFactorConfirmation.delete({
 					where: { id: existingUser.id },
 				});
 			}
 
-			await db.twoFactorConfirmation.create({
+			await db?.twoFactorConfirmation.create({
 				data: {
 					userId: existingUser.id,
 				},
 			});
 		} else {
 			const twoFactorToken = await generateTwoFactorToken(existingUser.email);
+
+			if (!twoFactorToken) {
+				return { error: 'Failed to generate two factor token!' };
+			}
 
 			await sendTwoFactorTokenEmail(twoFactorToken.email, twoFactorToken.token);
 

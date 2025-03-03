@@ -13,7 +13,7 @@ export async function checkMeetingUserAuthorization(
 		throw new Error('Unauthorized');
 	}
 
-	const meeting = await db.meeting.findUnique({
+	const meeting = await db?.meeting.findUnique({
 		where: { id: meetingId },
 		include: { participants: true },
 	});

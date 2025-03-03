@@ -6,7 +6,7 @@ import { currentUser } from '@/lib/auth';
 // Get all shares for a meeting
 export async function GET(
 	req: NextRequest,
-	{ params }: { params: { id: string } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
 	const user = await currentUser();
 
@@ -14,11 +14,11 @@ export async function GET(
 		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
-	const { id } = params;
+	const { id } = await params;
 
 	try {
 		// Check if user has access to this meeting
-		const meeting = await db.meeting.findFirst({
+		const meeting = await db?.meeting.findFirst({
 			where: {
 				id,
 				OR: [
@@ -44,7 +44,7 @@ export async function GET(
 		}
 
 		// Get all shares
-		const shares = await db.meetingShare.findMany({
+		const shares = await db?.meetingShare.findMany({
 			where: { meetingId: id },
 			orderBy: { createdAt: 'desc' },
 		});
@@ -62,7 +62,7 @@ export async function GET(
 // Create a new share
 export async function POST(
 	req: NextRequest,
-	{ params }: { params: { id: string } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
 	const currentAuthUser = await currentUser();
 
@@ -70,11 +70,11 @@ export async function POST(
 		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
-	const { id } = params;
+	const { id } = await params;
 
 	try {
 		// Check if user has access to this meeting
-		const meeting = await db.meeting.findFirst({
+		const meeting = await db?.meeting.findFirst({
 			where: {
 				id,
 				OR: [
@@ -109,7 +109,7 @@ export async function POST(
 		const { email, permission } = schema.parse(body);
 
 		// Check if share already exists
-		const existingShare = await db.meetingShare.findFirst({
+		const existingShare = await db?.meetingShare.findFirst({
 			where: { meetingId: id, email },
 		});
 
@@ -121,7 +121,7 @@ export async function POST(
 		}
 
 		// Create new share
-		const share = await db.meetingShare.create({
+		const share = await db?.meetingShare.create({
 			data: {
 				meetingId: id,
 				email,

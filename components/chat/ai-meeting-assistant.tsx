@@ -134,7 +134,7 @@ export function AIMeetingAssistant({ meeting }: AIMeetingAssistantProps) {
 
 	// Scroll to bottom
 	const scrollToBottom = useCallback(() => {
-		if (messagesEndRef.current) {
+		if (messagesEndRef?.current) {
 			messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
 			setHasNewMessages(false);
 		}
@@ -242,7 +242,9 @@ export function AIMeetingAssistant({ meeting }: AIMeetingAssistantProps) {
 								messages={
 									debouncedSearchQuery ? filteredMessages : extendedMessages
 								}
-								messagesEndRef={messagesEndRef}
+								messagesEndRef={
+									messagesEndRef as React.RefObject<HTMLDivElement>
+								}
 								onCopy={copyMessageToClipboard}
 								copiedMessageId={copiedMessageId}
 								isEmpty={messages.length === 0}
@@ -278,7 +280,7 @@ export function AIMeetingAssistant({ meeting }: AIMeetingAssistantProps) {
 						isLoading={isLoading}
 						onChange={handleInputChange}
 						onSubmit={handleSubmit}
-						inputRef={inputRef}
+						inputRef={inputRef as React.RefObject<HTMLInputElement>}
 					/>
 				</>
 			)}

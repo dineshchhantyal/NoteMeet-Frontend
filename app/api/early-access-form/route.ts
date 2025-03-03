@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 		} = await req.json();
 
 		try {
-			const newEntry = await db.earlyAccessForm.create({
+			const newEntry = await db?.earlyAccessForm.create({
 				data: {
 					name,
 					email,

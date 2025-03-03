@@ -27,7 +27,7 @@ export const createJobApplication = async (
 	);
 
 	try {
-		const jobApplication = await db.jobApplication.create({
+		const jobApplication = await db?.jobApplication.create({
 			data: {
 				name,
 				email,

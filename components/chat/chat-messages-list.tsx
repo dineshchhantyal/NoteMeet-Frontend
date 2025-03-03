@@ -8,7 +8,7 @@ import { Bot, Loader2 } from 'lucide-react';
 
 interface ChatMessagesListProps {
 	messages: ExtendedChatMessage[];
-	messagesEndRef: React.RefObject<HTMLDivElement>;
+	messagesEndRef: React.RefObject<HTMLDivElement> | null;
 	onCopy: (messageId: string, content: string) => void;
 	copiedMessageId: string | null;
 	isEmpty: boolean;
@@ -31,7 +31,7 @@ export function ChatMessagesList({
 
 	// Auto-scroll to bottom when new messages arrive
 	useEffect(() => {
-		if (messagesEndRef.current) {
+		if (messagesEndRef && messagesEndRef.current) {
 			messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
 		}
 	}, [messages.length]);

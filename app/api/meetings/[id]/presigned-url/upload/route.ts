@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
 			bucketType: S3BucketType.RAW_RECORDINGS_BUCKET,
 		});
 
-		await db.meeting.update({
+		await db?.meeting.update({
 			where: { id: meetingId },
 			data: { status: MeetingStatus.InProgress, videoKey: meetingId },
 		});

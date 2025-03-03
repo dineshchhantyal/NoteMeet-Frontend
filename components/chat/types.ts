@@ -49,5 +49,5 @@ export interface TextPart extends MessagePart {
 
 export interface ChatSuggestion {
 	text: string;
-	icon?: JSX.Element;
+	icon?: React.ReactNode;
 }

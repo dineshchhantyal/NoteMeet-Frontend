@@ -44,7 +44,7 @@ export async function GET() {
 		}
 
 		const uid = uuidv4();
-		const meeting = await db.meeting.create({
+		const meeting = await db?.meeting.create({
 			data: {
 				id: uid,
 				userId: user.id,

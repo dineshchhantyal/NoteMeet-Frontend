@@ -59,7 +59,7 @@ export async function getMeetingById(
 	meetingId: string,
 ): Promise<Meeting | null> {
 	try {
-		const meeting = await db.meeting.findUnique({
+		const meeting = await db?.meeting.findUnique({
 			where: { id: meetingId },
 			include: {
 				participants: true,
@@ -82,7 +82,7 @@ export async function getMeetingTranscript(
 	meetingId: string,
 ): Promise<string | null> {
 	try {
-		const meeting = await db.meeting.findUnique({
+		const meeting = await db?.meeting.findUnique({
 			where: { id: meetingId },
 			select: { transcriptKey: true },
 		});
@@ -136,7 +136,7 @@ export async function getMeetingSummary(
 	meetingId: string,
 ): Promise<string | null> {
 	try {
-		const meeting = await db.meeting.findUnique({
+		const meeting = await db?.meeting.findUnique({
 			where: { id: meetingId },
 			select: { summary: true },
 		});

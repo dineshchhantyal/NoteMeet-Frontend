@@ -14,7 +14,7 @@ export async function GET() {
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 		}
 
-		const meetings = await db.meeting.findMany({
+		const meetings = await db?.meeting.findMany({
 			where: { status: MeetingStatus.Scheduled, userId },
 		});
 

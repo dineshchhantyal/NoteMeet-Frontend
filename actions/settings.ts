@@ -41,6 +41,11 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
 		}
 
 		const verificationToken = await generateVerificationToken(values.email);
+
+		if (!verificationToken) {
+			return { error: 'Failed to generate verification token!' };
+		}
+
 		await sendVerificationEmail(
 			verificationToken.email,
 			verificationToken.token,
@@ -71,7 +76,7 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
 		return { error: 'Unauthorized' };
 	}
 
-	await db.user.update({
+	await db?.user.update({
 		where: { id: user.id },
 		data: {
 			...values,

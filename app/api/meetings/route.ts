@@ -14,7 +14,7 @@ export async function GET() {
 	}
 
 	const userIdString = Array.isArray(userId) ? userId[0] : userId;
-	const meetings = await db.meeting.findMany({
+	const meetings = await db?.meeting.findMany({
 		where: { userId: userIdString },
 		orderBy: [
 			{
@@ -56,7 +56,7 @@ export async function POST(req: Request) {
 			notifications,
 		} = body;
 
-		const meeting = await db.meeting.create({
+		const meeting = await db?.meeting.create({
 			data: {
 				title,
 				date: new Date(date),
@@ -111,7 +111,7 @@ export async function POST(req: Request) {
 		// const schedulerResponse = await scheduler.createSchedule(params).promise();
 
 		// Update the meeting with AWS Scheduler details
-		// await db.meeting.update({
+		// await db?.meeting.update({
 		// 	where: { id: meeting.id },
 		// 	data: {
 		// 		awsSchedulerArn: schedulerResponse.ScheduleArn,

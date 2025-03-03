@@ -6,7 +6,7 @@ import { currentUser } from '@/lib/auth';
 // Update a share's permission
 export async function PATCH(
 	req: NextRequest,
-	{ params }: { params: { id: string; shareId: string } },
+	{ params }: { params: Promise<{ id: string; shareId: string }> },
 ) {
 	const user = await currentUser();
 
@@ -14,11 +14,11 @@ export async function PATCH(
 		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
-	const { id, shareId } = params;
+	const { id, shareId } = await params;
 
 	try {
 		// Check if user has access to this meeting
-		const meeting = await db.meeting.findFirst({
+		const meeting = await db?.meeting.findFirst({
 			where: {
 				id,
 				OR: [
@@ -52,7 +52,7 @@ export async function PATCH(
 		const { permission } = schema.parse(body);
 
 		// Update the share
-		const share = await db.meetingShare.update({
+		const share = await db?.meetingShare.update({
 			where: { id: shareId },
 			data: { permission },
 		});
@@ -73,7 +73,7 @@ export async function PATCH(
 // Delete a share
 export async function DELETE(
 	req: NextRequest,
-	{ params }: { params: { id: string; shareId: string } },
+	{ params }: { params: Promise<{ id: string; shareId: string }> },
 ) {
 	const user = await currentUser();
 
@@ -81,11 +81,11 @@ export async function DELETE(
 		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
-	const { id, shareId } = params;
+	const { id, shareId } = await params;
 
 	try {
 		// Check if user has access to this meeting
-		const meeting = await db.meeting.findFirst({
+		const meeting = await db?.meeting.findFirst({
 			where: {
 				id,
 				OR: [
@@ -111,7 +111,7 @@ export async function DELETE(
 		}
 
 		// Delete the share
-		await db.meetingShare.delete({
+		await db?.meetingShare.delete({
 			where: { id: shareId },
 		});
 

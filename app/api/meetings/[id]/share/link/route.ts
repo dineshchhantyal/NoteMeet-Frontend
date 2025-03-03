@@ -6,7 +6,7 @@ import crypto from 'crypto';
 
 export async function POST(
 	req: NextRequest,
-	{ params }: { params: { id: string } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
 	const currentAuthUser = await currentUser();
 
@@ -14,11 +14,11 @@ export async function POST(
 		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
-	const { id } = params;
+	const { id } = await params;
 
 	try {
 		// Check if user has access to this meeting
-		const meeting = await db.meeting.findFirst({
+		const meeting = await db?.meeting.findFirst({
 			where: {
 				id,
 				OR: [
@@ -57,7 +57,7 @@ export async function POST(
 		expiry.setDate(expiry.getDate() + 7); // Token expires in 7 days
 
 		// Create or update the share link
-		const share = await db.meetingShare.create({
+		const share = await db?.meetingShare.create({
 			data: {
 				meetingId: id,
 				email: `link_${token.substring(0, 8)}@shareable.link`, // Create a placeholder email
@@ -68,6 +68,13 @@ export async function POST(
 				// Set an expiry time for the link (not in schema yet)
 			},
 		});
+
+		if (!share) {
+			return NextResponse.json(
+				{ error: 'Failed to create share link' },
+				{ status: 500 },
+			);
+		}
 
 		return NextResponse.json(
 			{

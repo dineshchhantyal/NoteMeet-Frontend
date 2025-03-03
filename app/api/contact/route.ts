@@ -12,14 +12,14 @@ export async function POST(req: NextRequest) {
 		}
 
 		if (
-			await db.contactMessage.findFirst({ where: { email, isRead: false } })
+			await db?.contactMessage.findFirst({ where: { email, isRead: false } })
 		) {
 			return NextResponse.json(
 				{ error: 'You have already sent a message' },
 				{ status: 400 },
 			);
 		} else {
-			await db.contactMessage.create({
+			await db?.contactMessage.create({
 				data: { name, email, subject, message },
 			});
 
