@@ -94,10 +94,6 @@ export function SubscriptionFormDialog({
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
-		const filteredFeatures = features.filter(
-			(feature) => feature.trim() !== '',
-		);
-
 		if (!name || !description || !price) {
 			toast.error('Please fill all required fields');
 			return;
