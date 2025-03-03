@@ -1,20 +1,24 @@
+'use client';
 import * as React from 'react';
 import Link from 'next/link';
 import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu';
 import { ChevronDown } from 'lucide-react';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
 
 const FORM_ROUTES = [
 	{
 		route: '/admin/forms/early-access-submissions',
 		label: 'Early Access Submissions',
 		description: 'View and manage early access submissions',
+		icon: 'FileText',
 	},
 	{
 		route: '/admin/forms/job-applications',
 		label: 'Job Applications',
 		description: 'View and manage job applications',
+		icon: 'Briefcase',
 	},
 ];
 
@@ -23,6 +27,7 @@ const SUBSCRIPTION_ROUTES = [
 		route: '/admin/plans',
 		label: 'Plans',
 		description: 'View and manage plans',
+		icon: 'Package',
 	},
 ];
 
@@ -31,11 +36,13 @@ const BILLING_ROUTES = [
 		route: '/admin/billings/invoices',
 		label: 'Invoices',
 		description: 'View and manage invoices',
+		icon: 'Receipt',
 	},
 	{
 		route: '/admin/billings/payments',
 		label: 'Payments',
 		description: 'View and manage payments',
+		icon: 'CreditCard',
 	},
 ];
 
@@ -44,6 +51,7 @@ const USER_ROUTES = [
 		route: '/admin/users/list',
 		label: 'User List',
 		description: 'View and manage users',
+		icon: 'Users',
 	},
 ];
 
@@ -52,6 +60,16 @@ const ALL_ROUTES = [
 		route: '/admin/all/overview',
 		label: 'Overview',
 		description: 'View and manage all',
+		icon: 'Layout',
+	},
+];
+
+const NEWSLETTER_ROUTES = [
+	{
+		route: '/admin/newsletter',
+		label: 'Subscribers',
+		description: 'View and manage newsletter subscribers',
+		icon: 'Mail',
 	},
 ];
 
@@ -59,22 +77,32 @@ const LINKS = [
 	{
 		label: 'Forms',
 		routes: FORM_ROUTES,
+		icon: 'ClipboardList',
 	},
 	{
 		label: 'Users',
 		routes: USER_ROUTES,
+		icon: 'Users',
 	},
 	{
 		label: 'Billing',
 		routes: BILLING_ROUTES,
+		icon: 'CreditCard',
 	},
 	{
 		label: 'Subscriptions',
 		routes: SUBSCRIPTION_ROUTES,
+		icon: 'Package',
+	},
+	{
+		label: 'Newsletter',
+		routes: NEWSLETTER_ROUTES,
+		icon: 'Mail',
 	},
 	{
 		label: 'All',
 		routes: ALL_ROUTES,
+		icon: 'Grid',
 	},
 ];
 
@@ -114,7 +142,7 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName;
 const NavigationMenuItem = NavigationMenuPrimitive.Item;
 
 const navigationMenuTriggerStyle = cva(
-	'group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50',
+	'group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50',
 );
 
 const NavigationMenuTrigger = React.forwardRef<
@@ -142,7 +170,7 @@ const NavigationMenuContent = React.forwardRef<
 	<NavigationMenuPrimitive.Content
 		ref={ref}
 		className={cn(
-			' w-full data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 md:absolute md:w-auto ',
+			'w-full data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 md:absolute md:w-auto',
 			className,
 		)}
 		{...props}
@@ -159,7 +187,7 @@ const NavigationMenuViewport = React.forwardRef<
 	<div className={cn('absolute left-0 top-full flex justify-center')}>
 		<NavigationMenuPrimitive.Viewport
 			className={cn(
-				'origin-top-center relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]',
+				'origin-top-center relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border bg-[#0d5559] text-white shadow data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]',
 				className,
 			)}
 			ref={ref}
@@ -182,48 +210,89 @@ const NavigationMenuIndicator = React.forwardRef<
 		)}
 		{...props}
 	>
-		<div className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-border shadow-md" />
+		<div className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-[#63d392] shadow-md" />
 	</NavigationMenuPrimitive.Indicator>
 ));
 NavigationMenuIndicator.displayName =
 	NavigationMenuPrimitive.Indicator.displayName;
 
 const AdminSubHeader = () => {
+	const pathname = usePathname();
+
+	// Helper function to determine if a route is active
+	const isRouteActive = (route: string) => {
+		return pathname.startsWith(route);
+	};
+
+	// Helper function to determine if any route in a category is active
+	const isCategoryActive = (routes: Array<{ route: string }>) => {
+		return routes.some((item) => isRouteActive(item.route));
+	};
+
 	return (
-		<header className="bg-white shadow-sm">
+		<header className="bg-[#0a4a4e] shadow-lg border-b border-[#63d392]/20">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="flex justify-between h-16 items-center">
-					<h1 className="text-2xl font-semibold text-gray-900">Admin</h1>
+					<h1 className="text-2xl font-semibold text-white">Admin Dashboard</h1>
 					<NavigationMenu>
 						<NavigationMenuList>
-							{LINKS.map((link) => (
-								<NavigationMenuItem key={link.label}>
-									<div className="flex items-center">
-										<NavigationMenuTrigger>{link.label}</NavigationMenuTrigger>
-										<NavigationMenuContent>
-											<ul className="flex flex-row p-2">
-												{link.routes.map((route) => (
-													<li
-														key={route.route}
-														className="flex flex-col p-2 hover:bg-gray-100 rounded-md group"
-													>
-														<NavigationMenuLink asChild>
-															<Link href={route.route}>
-																<p className="text-sm font-medium">
-																	{route.label}
-																</p>
-																<p className="text-xs text-gray-600">
-																	{route.description}
-																</p>
-															</Link>
-														</NavigationMenuLink>
-													</li>
-												))}
-											</ul>
-										</NavigationMenuContent>
-									</div>
-								</NavigationMenuItem>
-							))}
+							{LINKS.map((link) => {
+								const isActive = isCategoryActive(link.routes);
+								return (
+									<NavigationMenuItem key={link.label}>
+										<div className="flex items-center">
+											<NavigationMenuTrigger
+												className={cn(
+													'text-gray-200 hover:bg-[#156469]/50 hover:text-white',
+													isActive &&
+														'bg-[#156469]/70 text-[#63d392] font-semibold',
+												)}
+											>
+												{link.label}
+											</NavigationMenuTrigger>
+											<NavigationMenuContent>
+												<ul className="grid w-[400px] gap-2 p-4 md:grid-cols-1">
+													{link.routes.map((route) => {
+														const isRouteHighlighted = isRouteActive(
+															route.route,
+														);
+														return (
+															<li key={route.route}>
+																<NavigationMenuLink asChild>
+																	<Link
+																		href={route.route}
+																		className={cn(
+																			'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors',
+																			isRouteHighlighted
+																				? 'bg-[#156469] text-[#63d392]'
+																				: 'hover:bg-[#156469]/50 text-gray-100',
+																		)}
+																	>
+																		<div className="flex items-center justify-between">
+																			<div>
+																				<div className="text-sm font-medium leading-none mb-1">
+																					{route.label}
+																				</div>
+																				<p className="line-clamp-2 text-xs leading-snug text-gray-300">
+																					{route.description}
+																				</p>
+																			</div>
+																			{isRouteHighlighted && (
+																				<div className="w-2 h-2 rounded-full bg-[#63d392]" />
+																			)}
+																		</div>
+																	</Link>
+																</NavigationMenuLink>
+															</li>
+														);
+													})}
+												</ul>
+											</NavigationMenuContent>
+											{isActive && <NavigationMenuIndicator />}
+										</div>
+									</NavigationMenuItem>
+								);
+							})}
 						</NavigationMenuList>
 					</NavigationMenu>
 				</div>
