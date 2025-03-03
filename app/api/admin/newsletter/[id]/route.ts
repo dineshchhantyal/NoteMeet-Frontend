@@ -21,7 +21,7 @@ async function authorizeAdmin() {
 // PATCH - Update subscriber status
 export async function PATCH(
 	req: NextRequest,
-	context: { params: { id: string } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
 		await authorizeAdmin();
@@ -30,7 +30,7 @@ export async function PATCH(
 			throw new Error('Database connection not available');
 		}
 
-		const { id } = context.params;
+		const { id } = await params;
 		const body = await req.json();
 		const { status } = body;
 
@@ -67,7 +67,7 @@ export async function PATCH(
 // DELETE - Remove a subscriber
 export async function DELETE(
 	req: NextRequest,
-	context: { params: { id: string } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
 		await authorizeAdmin();
@@ -76,7 +76,7 @@ export async function DELETE(
 			throw new Error('Database connection not available');
 		}
 
-		const { id } = context.params;
+		const { id } = await params;
 
 		await db.newsletterSubscription.delete({
 			where: { id },
