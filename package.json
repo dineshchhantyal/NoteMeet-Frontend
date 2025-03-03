@@ -16,7 +16,7 @@
 	"dependencies": {
 		"@ai-sdk/google": "^1.1.17",
 		"@ai-sdk/react": "^1.1.19",
-		"@auth/prisma-adapter": "^1.0.12",
+		"@auth/prisma-adapter": "^2.8.0",
 		"@aws-sdk/client-s3": "^3.749.0",
 		"@aws-sdk/s3-request-presigner": "^3.717.0",
 		"@hookform/resolvers": "^3.3.4",
