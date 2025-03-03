@@ -2,14 +2,69 @@
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Github, Globe, Mail, ArrowRight, ChevronRight } from 'lucide-react';
+import {
+	Github,
+	Globe,
+	Mail,
+	ArrowRight,
+	ChevronRight,
+	Loader2,
+} from 'lucide-react';
 import Logo from './ui/Logo';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { z } from 'zod';
+
+const subscribeSchema = z.object({
+	email: z.string().email('Please enter a valid email address'),
+});
 
 export function Footer() {
+	const [email, setEmail] = useState('');
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const handleSubscribe = async (e: React.FormEvent) => {
+		e.preventDefault();
+
+		try {
+			// Validate email
+			subscribeSchema.parse({ email });
+
+			setIsSubmitting(true);
+
+			const response = await fetch('/api/newsletter/subscribe', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ email }),
+			});
+
+			const data = await response.json();
+
+			if (!response.ok) {
+				throw new Error(data.message || 'Failed to subscribe');
+			}
+
+			toast.success(data.message);
+			setEmail('');
+		} catch (error) {
+			if (error instanceof z.ZodError) {
+				toast.error(error.errors[0].message);
+			} else if (error instanceof Error) {
+				toast.error(error.message);
+			} else {
+				toast.error('Failed to subscribe. Please try again later.');
+			}
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
+
 	return (
 		<footer className="bg-[#0a4a4e] pt-20 pb-12 relative overflow-hidden">
-			{/* Decorative background elements */}
+			{/* Background elements */}
 			<div className="absolute top-0 left-0 w-1/3 h-1/3 bg-[#63d392]/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
 			<div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-[#156469]/10 rounded-full blur-3xl translate-x-1/4 translate-y-1/4"></div>
 
@@ -26,17 +81,34 @@ export function Footer() {
 							</p>
 						</div>
 						<div className="md:w-1/2">
-							<form className="flex flex-col sm:flex-row gap-2">
+							<form
+								className="flex flex-col sm:flex-row gap-2"
+								onSubmit={handleSubscribe}
+							>
 								<Input
 									type="email"
 									placeholder="Enter your email"
 									className="bg-white/10 border-[#63d392]/30 text-white placeholder:text-gray-400 focus:border-[#63d392] focus:ring-[#63d392]/30"
+									value={email}
+									onChange={(e) => setEmail(e.target.value)}
+									required
+									disabled={isSubmitting}
 								/>
 								<Button
 									type="submit"
 									className="bg-[#63d392] hover:bg-[#4fb87a] text-[#0a4a4e] font-medium border-none transition-colors whitespace-nowrap flex items-center"
+									disabled={isSubmitting}
 								>
-									Subscribe <ArrowRight className="ml-2 h-4 w-4" />
+									{isSubmitting ? (
+										<>
+											<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+											Subscribing
+										</>
+									) : (
+										<>
+											Subscribe <ArrowRight className="ml-2 h-4 w-4" />
+										</>
+									)}
 								</Button>
 							</form>
 						</div>
