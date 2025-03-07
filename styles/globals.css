@@ -12,6 +12,11 @@ body,
 	.text-balance {
 		text-wrap: balance;
 	}
+
+	.bg-clip-text {
+		-webkit-background-clip: text;
+		background-clip: text;
+	}
 }
 
 @layer base {
