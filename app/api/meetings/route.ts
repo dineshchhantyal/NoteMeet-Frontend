@@ -2,6 +2,19 @@ import { MeetingInterface } from '@/types';
 import { currentUser } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { generatePresignedUrl } from '@/lib/presigned-url';
+import { S3BucketType } from '@/lib/s3';
+import UserSubscriptionService from '@/actions/user-subscription-plan';
+import {
+	EventBridgeClient,
+	PutRuleCommand,
+	PutTargetsCommand,
+} from '@aws-sdk/client-eventbridge';
+
+// AWS Configuration for EventBridge - using SDK v3
+const eventBridgeClient = new EventBridgeClient({
+	region: process.env.AWS_REGION || 'us-east-1',
+});
 
 export async function GET() {
 	const user = await currentUser();
@@ -39,7 +52,25 @@ export async function POST(req: Request) {
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 		}
 
-		// const scheduler = new AWS.Scheduler();
+		const userSubscriptionService = new UserSubscriptionService(user);
+
+		// Check user meeting limits
+		const remainingLimits =
+			await userSubscriptionService.getUserRemainingLimits(userId);
+
+		if (remainingLimits.meetingsAllowed <= 0) {
+			return NextResponse.json(
+				{ error: 'You have reached your meeting limit' },
+				{ status: 403 },
+			);
+		}
+
+		if (remainingLimits.storageLimit <= 0) {
+			return NextResponse.json(
+				{ error: 'You have reached your storage limit' },
+				{ status: 403 },
+			);
+		}
 
 		const userIdString = Array.isArray(userId) ? userId[0] : userId;
 		const body: MeetingInterface = await req.json();
@@ -56,15 +87,25 @@ export async function POST(req: Request) {
 			notifications,
 		} = body;
 
+		// Validate required fields
+		if (!meetingLink && provider) {
+			return NextResponse.json(
+				{ error: 'Meeting link is required when provider is selected' },
+				{ status: 400 },
+			);
+		}
+		const meetingDate = new Date(`${date}T${time}`);
+
+		// Create the meeting in the database
 		const meeting = await db?.meeting.create({
 			data: {
 				title,
-				date: new Date(date),
+				date: new Date(date), // Ensure date is properly formatted as a Date object
 				time,
-				duration: Number.parseFloat(duration),
-				description,
-				provider,
-				meetingLink,
+				duration: Number.parseFloat(duration.toString()),
+				description: description || '',
+				provider: provider || null,
+				meetingLink: meetingLink || '',
 				userId: userIdString,
 				participants: {
 					create: participants.map((participant: string) => ({
@@ -73,60 +114,193 @@ export async function POST(req: Request) {
 				},
 				notification: {
 					create: {
-						sendTranscript: notifications.sendTranscript,
-						sendSummary: notifications.sendSummary,
+						sendTranscript: notifications?.sendTranscript || false,
+						sendSummary: notifications?.sendSummary || false,
 					},
 				},
+				videoKey: '', // Initialize with empty string
 			},
 		});
-		// Schedule AWS Lambda function
-		// const lambdaArn = process.env.MEETING_RECORDING_LAMBDA_FUNCTION_ARN;
-		// const roleArn = process.env.MEETING_RECORDING_AWS_ROLE_ARN;
 
-		// if (!lambdaArn || !roleArn) {
-		// throw new Error('Required AWS ARNs are not configured');
-		// return NextResponse.json(
-		// {
-		// error:
-		// 'Although the meeting was created, the AWS ARNs are not configured',
-		// },
-		// { status: 500 },
-		// );
-		// }
+		if (!meeting) {
+			throw new Error('Failed to create meeting record');
+		}
 
-		// const jobName = `Meeting-${meeting.id}`;
-		// const scheduleExpression = `at(${date}T${time})`;
+		// Update the videoKey after meeting creation
+		await db?.meeting.update({
+			where: { id: meeting.id },
+			data: {
+				videoKey: meeting.id, // Now we can access meeting.id
+			},
+		});
 
-		// const params = {
-		// 	Name: jobName,
-		// 	ScheduleExpression: scheduleExpression,
-		// 	Target: {
-		// 		Arn: lambdaArn,
-		// 		RoleArn: roleArn,
-		// 		Input: JSON.stringify({ meetingId: meeting.id }),
-		// 	},
-		// 	FlexibleTimeWindow: { Mode: 'OFF' },
-		// };
+		// Only schedule recording if meeting link is provided and meeting is in the future
+		if (meetingLink && duration && meetingDate > new Date()) {
+			console.log('Scheduling recording for meeting:', meeting.id);
+			try {
+				// Generate presigned URL for S3 upload
+				// Duration in minutes + 10 minutes buffer
+				const expiresIn = parseInt(duration) * 60 + 10 * 60;
 
-		// const schedulerResponse = await scheduler.createSchedule(params).promise();
+				const { url: presignedUrl } = await generatePresignedUrl({
+					key: meeting.id,
+					bucketType: S3BucketType.RAW_RECORDINGS_BUCKET,
+					expiresIn: expiresIn,
+				});
 
-		// Update the meeting with AWS Scheduler details
-		// await db?.meeting.update({
-		// 	where: { id: meeting.id },
-		// 	data: {
-		// 		awsSchedulerArn: schedulerResponse.ScheduleArn,
-		// 		awsJobId: jobName,
-		// 	},
-		// });
+				// Schedule the meeting recording with EventBridge
+				// Format date and time for EventBridge cron expression
+				const timeParts = time.split(':');
+				meetingDate.setHours(parseInt(timeParts[0]), parseInt(timeParts[1]));
 
+				// Create an ISO string and format it for EventBridge schedule
+				const scheduledTimeISO = meetingDate.toISOString();
+				// Format for EventBridge: at(yyyy-mm-ddThh:mm:ss)
+				const scheduledTime = scheduledTimeISO.replace(/\.\d{3}Z$/, '');
+
+				// Rule name must be unique - use the meeting ID
+				const ruleName = `meeting-recording-${meeting.id}`;
+
+				// ECS Task details
+				const ecsCluster = process.env.ECS_CLUSTER_ARN;
+				const ecsTaskDefinition = process.env.ECS_TASK_DEFINITION_ARN;
+				const ecsSubnet = process.env.ECS_SUBNET_ID;
+				const ecsSecurityGroup = process.env.ECS_SECURITY_GROUP_ID;
+
+				if (
+					!ecsCluster ||
+					!ecsTaskDefinition ||
+					!ecsSubnet ||
+					!ecsSecurityGroup
+				) {
+					throw new Error('ECS configuration is incomplete');
+				}
+
+				// Create EventBridge rule with target to run ECS task - using SDK v3
+				const putRuleCommand = new PutRuleCommand({
+					Name: ruleName,
+					ScheduleExpression: `at(${scheduledTime})`,
+					State: 'ENABLED',
+					Description: `Recording scheduler for meeting: ${title}`,
+				});
+
+				// Create the rule
+				const ruleResponse = await eventBridgeClient.send(putRuleCommand);
+
+				if (!ruleResponse.RuleArn) {
+					throw new Error('Failed to create EventBridge rule');
+				}
+
+				// Set up the ECS task target with environment variables
+				const putTargetsCommand = new PutRuleCommand({
+					Name: ruleName,
+					// Targets: [
+					// 	{
+					// 		Id: `ecs-task-${meeting.id}`,
+					// 		Arn: ecsCluster,
+					// 		RoleArn: process.env.ECS_ROLE_ARN,
+					// 		EcsParameters: {
+					// 			TaskDefinitionArn: ecsTaskDefinition,
+					// 			TaskCount: 1,
+					// 			LaunchType: 'FARGATE',
+					// 			NetworkConfiguration: {
+					// 				awsvpcConfiguration: {
+					// 					Subnets: [ecsSubnet],
+					// 					SecurityGroups: [ecsSecurityGroup],
+					// 					AssignPublicIp: 'ENABLED',
+					// 				},
+					// 			},
+					// 			PlatformVersion: 'LATEST',
+					// 			// Removed Overrides - not supported in SDK v3
+					// 		},
+					// 		// Use Input field to provide the container overrides as JSON
+					// 		Input: JSON.stringify({
+					// 			containerOverrides: [
+					// 				{
+					// 					name: 'meeting-recording-container',
+					// 					environment: [
+					// 						{ name: 'MEETING_URL', value: meetingLink },
+					// 						{ name: 'USERNAME_GROUP', value: user.name || 'User' },
+					// 						{ name: 'DURATION_MINUTES', value: duration.toString() },
+					// 						{ name: 'S3_PRESIGNED_UPLOAD_URL', value: presignedUrl },
+					// 						{ name: 'MEETING_ID', value: meeting.id },
+					// 					],
+					// 				},
+					// 			],
+					// 		}),
+					// 	},
+					// ],
+				});
+
+				// Attach target to the rule
+				const event = await eventBridgeClient.send(putTargetsCommand);
+				console.log('EventBridge rule created:', event);
+
+				// Update meeting with EventBridge and ECS details
+				await db?.meeting.update({
+					where: { id: meeting.id },
+					data: {
+						awsSchedulerArn: ruleResponse.RuleArn,
+						awsJobId: ruleName,
+						// We'll set ecsTaskId when the task actually runs, as we don't have it yet
+					},
+				});
+
+				console.log(
+					`Successfully scheduled recording for meeting ${meeting.id}`,
+				);
+
+				return NextResponse.json(
+					{
+						data: meeting,
+						message: 'Meeting created and recording scheduled',
+					},
+					{ status: 200 },
+				);
+			} catch (err) {
+				console.error('Failed to schedule meeting recording:', err);
+
+				// Meeting was created but scheduling failed, so we update the user
+				return NextResponse.json(
+					{
+						data: meeting,
+						warning: 'Meeting created but recording scheduling failed',
+						error:
+							err instanceof Error
+								? err.message
+								: 'Failed to schedule recording',
+					},
+					{ status: 207 },
+				);
+			}
+		}
+
+		// This handles the case where no recording is scheduled
 		return NextResponse.json(
 			{ data: meeting, message: 'Meeting created successfully' },
 			{ status: 200 },
 		);
-	} catch (error) {
-		console.error('Error creating meeting:', error);
+	} catch (error: any) {
+		// Improved error logging for Prisma errors
+		console.error('Error creating meeting:');
+		if (error.name === 'PrismaClientKnownRequestError') {
+			console.error('Prisma error code:', error.code);
+			console.error('Prisma error message:', error.message);
+			console.error('Prisma error meta:', error.meta);
+		} else if (error.name === 'PrismaClientValidationError') {
+			console.error('Prisma validation error:', error.message);
+		} else if (error instanceof Error) {
+			console.error(error.name, error.message);
+			console.error(error.stack);
+		} else {
+			console.error('Unknown error type:', error);
+		}
+
 		return NextResponse.json(
-			{ error: 'Failed to create meeting' },
+			{
+				error:
+					error instanceof Error ? error.message : 'Failed to create meeting',
+			},
 			{ status: 500 },
 		);
 	}
