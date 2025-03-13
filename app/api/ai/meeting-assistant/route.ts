@@ -28,6 +28,9 @@ export async function POST(req: NextRequest) {
 You're currently discussing a meeting called "${meetingData.title}" from ${meetingData.date}.
 The meeting had these participants: ${meetingData.participants.join(', ')}.
 
+This is the complete information about the meeting:
+- ${JSON.stringify(meetingData, null, 2)}
+
 You have access to the meeting transcript and summary. Use the provided tools to search for specific information.
 When answering questions:
 - Be concise but thorough

@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, ListTodo, SparkleIcon } from 'lucide-react';
+import { FileText, ListTodo, SparkleIcon, Brain } from 'lucide-react';
 
 const features = [
 	{
@@ -16,9 +16,9 @@ const features = [
 	},
 	{
 		icon: SparkleIcon,
-		title: 'Ask NoteMeet AI',
+		title: 'MeetMind AI',
 		description:
-			'Have questions about your meetings? Simply ask NoteMeet AI, and get detailed, accurate answers instantly.',
+			'Your personal meeting intelligence that understands your priorities. Simply chat with MeetMind AI to get detailed, contextual answers about any meeting.',
 	},
 	{
 		icon: ListTodo,

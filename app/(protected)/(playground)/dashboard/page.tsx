@@ -24,6 +24,7 @@ import {
 	fetchMeetings,
 	selectMeeting,
 	deleteMeeting,
+	setMeetings,
 } from '@/lib/redux/features/meetings/meetingsSlice';
 
 // Dashboard Components
@@ -120,6 +121,7 @@ export default function DashboardPage() {
 	};
 
 	const handleMeetingCreated = (newMeeting: MeetingInterface) => {
+		dispatch(setMeetings([...meetings, newMeeting]));
 		dispatch(selectMeeting(newMeeting));
 	};
 

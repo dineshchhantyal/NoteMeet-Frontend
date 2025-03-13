@@ -62,13 +62,13 @@ export function HeroSection({
 					>
 						<motion.div variants={fadeUp}>
 							<span className="inline-block py-1 px-3 rounded-full bg-[#63d392]/20 text-[#63d392] text-sm font-medium mb-6">
-								Transform Meeting Productivity
+								Never Miss Important Meeting Details Again
 							</span>
 							<h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
 								<span className="bg-clip-text text-transparent bg-gradient-to-r from-[#63d392] to-[#8ae9b3]">
-									Revolutionize
+									Smart Meeting
 								</span>{' '}
-								Your Meeting Experience
+								Notes Just For You
 							</h1>
 						</motion.div>
 
@@ -78,6 +78,14 @@ export function HeroSection({
 						>
 							Save hours with AI-powered recording, smart transcription, and
 							automated summaries that capture every crucial detail.
+						</motion.p>
+
+						<motion.p
+							className="text-xl md:text-2xl text-gray-300 font-light leading-relaxed"
+							variants={fadeUp}
+						>
+							Record meetings, get accurate transcripts, and receive highlights
+							that matter to you - all without taking a single note yourself.
 						</motion.p>
 
 						<motion.div
@@ -119,7 +127,7 @@ export function HeroSection({
 								<div className="bg-[#63d392]/20 p-2 rounded-lg mr-3">
 									<Clock className="h-5 w-5 text-[#63d392]" />
 								</div>
-								<p className="text-sm">Save 5+ hrs weekly</p>
+								<p className="text-sm">No More Note-Taking</p>
 							</motion.div>
 
 							<motion.div
@@ -133,7 +141,7 @@ export function HeroSection({
 								<div className="bg-[#63d392]/20 p-2 rounded-lg mr-3">
 									<Brain className="h-5 w-5 text-[#63d392]" />
 								</div>
-								<p className="text-sm">AI-Powered Insights</p>
+								<p className="text-sm">Finds What Matters</p>
 							</motion.div>
 
 							<motion.div
@@ -147,7 +155,7 @@ export function HeroSection({
 								<div className="bg-[#63d392]/20 p-2 rounded-lg mr-3">
 									<Sparkles className="h-5 w-5 text-[#63d392]" />
 								</div>
-								<p className="text-sm">99% Accuracy</p>
+								<p className="text-sm">Made For You</p>
 							</motion.div>
 						</motion.div>
 					</motion.div>

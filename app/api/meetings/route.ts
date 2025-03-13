@@ -192,44 +192,42 @@ export async function POST(req: Request) {
 				}
 
 				// Set up the ECS task target with environment variables
-				const putTargetsCommand = new PutRuleCommand({
-					Name: ruleName,
-					// Targets: [
-					// 	{
-					// 		Id: `ecs-task-${meeting.id}`,
-					// 		Arn: ecsCluster,
-					// 		RoleArn: process.env.ECS_ROLE_ARN,
-					// 		EcsParameters: {
-					// 			TaskDefinitionArn: ecsTaskDefinition,
-					// 			TaskCount: 1,
-					// 			LaunchType: 'FARGATE',
-					// 			NetworkConfiguration: {
-					// 				awsvpcConfiguration: {
-					// 					Subnets: [ecsSubnet],
-					// 					SecurityGroups: [ecsSecurityGroup],
-					// 					AssignPublicIp: 'ENABLED',
-					// 				},
-					// 			},
-					// 			PlatformVersion: 'LATEST',
-					// 			// Removed Overrides - not supported in SDK v3
-					// 		},
-					// 		// Use Input field to provide the container overrides as JSON
-					// 		Input: JSON.stringify({
-					// 			containerOverrides: [
-					// 				{
-					// 					name: 'meeting-recording-container',
-					// 					environment: [
-					// 						{ name: 'MEETING_URL', value: meetingLink },
-					// 						{ name: 'USERNAME_GROUP', value: user.name || 'User' },
-					// 						{ name: 'DURATION_MINUTES', value: duration.toString() },
-					// 						{ name: 'S3_PRESIGNED_UPLOAD_URL', value: presignedUrl },
-					// 						{ name: 'MEETING_ID', value: meeting.id },
-					// 					],
-					// 				},
-					// 			],
-					// 		}),
-					// 	},
-					// ],
+				const putTargetsCommand = new PutTargetsCommand({
+					Rule: ruleName,
+					Targets: [
+						{
+							Id: `ecs-task-${meeting.id}`,
+							Arn: ecsCluster,
+							RoleArn: process.env.ECS_ROLE_ARN,
+							EcsParameters: {
+								TaskDefinitionArn: ecsTaskDefinition,
+								TaskCount: 1,
+								LaunchType: 'FARGATE',
+								NetworkConfiguration: {
+									awsvpcConfiguration: {
+										Subnets: [ecsSubnet],
+										SecurityGroups: [ecsSecurityGroup],
+										AssignPublicIp: 'ENABLED',
+									},
+								},
+								PlatformVersion: 'LATEST',
+							},
+							Input: JSON.stringify({
+								containerOverrides: [
+									{
+										name: 'meeting-recording-container',
+										environment: [
+											{ name: 'MEETING_URL', value: meetingLink },
+											{ name: 'USERNAME_GROUP', value: user.name || 'User' },
+											{ name: 'DURATION_MINUTES', value: duration.toString() },
+											{ name: 'S3_PRESIGNED_UPLOAD_URL', value: presignedUrl }, // Now using presignedUrl
+											{ name: 'MEETING_ID', value: meeting.id },
+										],
+									},
+								],
+							}),
+						},
+					],
 				});
 
 				// Attach target to the rule
@@ -280,18 +278,18 @@ export async function POST(req: Request) {
 			{ data: meeting, message: 'Meeting created successfully' },
 			{ status: 200 },
 		);
-	} catch (error: any) {
+	} catch (error: Error | unknown) {
 		// Improved error logging for Prisma errors
 		console.error('Error creating meeting:');
-		if (error.name === 'PrismaClientKnownRequestError') {
-			console.error('Prisma error code:', error.code);
-			console.error('Prisma error message:', error.message);
-			console.error('Prisma error meta:', error.meta);
-		} else if (error.name === 'PrismaClientValidationError') {
-			console.error('Prisma validation error:', error.message);
-		} else if (error instanceof Error) {
-			console.error(error.name, error.message);
-			console.error(error.stack);
+		if (error instanceof Error) {
+			if ('code' in error && 'meta' in error) {
+				console.error('Prisma error code:', (error as any).code);
+				console.error('Prisma error message:', error.message);
+				console.error('Prisma error meta:', (error as any).meta);
+			} else {
+				console.error(error.name, error.message);
+				console.error(error.stack);
+			}
 		} else {
 			console.error('Unknown error type:', error);
 		}

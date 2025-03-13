@@ -340,7 +340,7 @@ export function NewMeetingDialog({
 															<Calendar className="ml-1.5 h-3.5 w-3.5 text-[#63d392]/70 cursor-help" />
 														</TooltipTrigger>
 														<TooltipContent className="bg-[#0d5559] text-white border-[#63d392]/30">
-															Today's date is pre-selected
+															Today&apos;s date is pre-selected
 														</TooltipContent>
 													</Tooltip>
 												</TooltipProvider>
