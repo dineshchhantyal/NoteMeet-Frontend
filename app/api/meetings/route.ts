@@ -279,21 +279,6 @@ export async function POST(req: Request) {
 			{ status: 200 },
 		);
 	} catch (error: Error | unknown) {
-		// Improved error logging for Prisma errors
-		console.error('Error creating meeting:');
-		if (error instanceof Error) {
-			if ('code' in error && 'meta' in error) {
-				console.error('Prisma error code:', (error as any).code);
-				console.error('Prisma error message:', error.message);
-				console.error('Prisma error meta:', (error as any).meta);
-			} else {
-				console.error(error.name, error.message);
-				console.error(error.stack);
-			}
-		} else {
-			console.error('Unknown error type:', error);
-		}
-
 		return NextResponse.json(
 			{
 				error:

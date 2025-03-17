@@ -6,6 +6,8 @@ interface MeetingsState {
 	selectedMeeting: MeetingInterface | null;
 	loading: boolean;
 	error: string | null;
+	pendingDeletes: Record<string, MeetingInterface>; // Store meetings being deleted
+	searchTerm: string; // Add searchTerm to state
 }
 
 const initialState: MeetingsState = {
@@ -13,6 +15,8 @@ const initialState: MeetingsState = {
 	selectedMeeting: null,
 	loading: false,
 	error: null,
+	pendingDeletes: {},
+	searchTerm: '', // Initialize as empty string
 };
 
 // Async thunks for API calls
@@ -89,9 +93,21 @@ export const updateMeeting = createAsyncThunk(
 	},
 );
 
+// Updated delete meeting thunk with optimistic updates
 export const deleteMeeting = createAsyncThunk(
 	'meetings/deleteMeeting',
-	async (id: string, { rejectWithValue }) => {
+	async (id: string, { dispatch, rejectWithValue, getState }) => {
+		// Get the meeting before deletion for potential recovery
+		const state = getState() as { meetings: MeetingsState };
+		const meetingToDelete = state.meetings.meetings.find((m) => m.id === id);
+
+		if (!meetingToDelete) {
+			return rejectWithValue('Meeting not found');
+		}
+
+		// Optimistically remove the meeting from UI
+		dispatch(meetingsSlice.actions.optimisticDeleteMeeting(id));
+
 		try {
 			const response = await fetch(`/api/meetings/${id}`, {
 				method: 'DELETE',
@@ -103,8 +119,12 @@ export const deleteMeeting = createAsyncThunk(
 				throw new Error(data.error || 'Failed to delete meeting');
 			}
 
+			// Success case - we've already removed from UI, so just return the ID
 			return id;
 		} catch (error) {
+			// If deletion fails, restore the meeting by undoing the optimistic update
+			dispatch(meetingsSlice.actions.undoDeleteMeeting(meetingToDelete));
+
 			return rejectWithValue(
 				error instanceof Error ? error.message : 'Failed to delete meeting',
 			);
@@ -124,6 +144,45 @@ const meetingsSlice = createSlice({
 		},
 		setMeetings: (state, action: PayloadAction<MeetingInterface[]>) => {
 			state.meetings = action.payload;
+		},
+
+		// Add search term reducer
+		setSearchTerm: (state, action: PayloadAction<string>) => {
+			state.searchTerm = action.payload;
+		},
+
+		// New reducers for optimistic updates
+		optimisticDeleteMeeting: (state, action: PayloadAction<string>) => {
+			const id = action.payload;
+			const meetingToDelete = state.meetings.find((m) => m.id === id);
+
+			// Store the meeting in case we need to restore it later
+			if (meetingToDelete) {
+				state.pendingDeletes[id] = meetingToDelete;
+			}
+
+			// Remove from the meetings list
+			state.meetings = state.meetings.filter((meeting) => meeting.id !== id);
+
+			// If it was selected, deselect it
+			if (state.selectedMeeting?.id === id) {
+				state.selectedMeeting = null;
+			}
+		},
+
+		undoDeleteMeeting: (state, action: PayloadAction<MeetingInterface>) => {
+			const meeting = action.payload;
+
+			// Restore the meeting to the list
+			state.meetings.push(meeting);
+
+			// Sort to maintain order
+			state.meetings.sort(
+				(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+			);
+
+			// Remove from pending deletes
+			delete state.pendingDeletes[meeting.id];
 		},
 	},
 	extraReducers: (builder) => {
@@ -167,22 +226,36 @@ const meetingsSlice = createSlice({
 			},
 		);
 
-		// Delete meeting
+		// Modify delete meeting cases for optimistic updates
+		builder.addCase(deleteMeeting.pending, (state) => {
+			// We've already handled this in the optimisticDeleteMeeting reducer
+			state.loading = true;
+		});
+
 		builder.addCase(
 			deleteMeeting.fulfilled,
 			(state, action: PayloadAction<string>) => {
-				state.meetings = state.meetings.filter(
-					(meeting) => meeting.id !== action.payload,
-				);
-
-				if (state.selectedMeeting?.id === action.payload) {
-					state.selectedMeeting = null;
-				}
+				// The meeting is already removed, just clean up the pending state
+				const id = action.payload;
+				delete state.pendingDeletes[id];
 			},
 		);
+
+		builder.addCase(deleteMeeting.rejected, (state) => {
+			// The undoDeleteMeeting action is dispatched in the thunk itself
+			// So we just need to update the loading state
+			state.loading = false;
+		});
 	},
 });
 
-export const { selectMeeting, clearSelectedMeeting, setMeetings } =
-	meetingsSlice.actions;
+export const {
+	selectMeeting,
+	clearSelectedMeeting,
+	setMeetings,
+	optimisticDeleteMeeting,
+	undoDeleteMeeting,
+	setSearchTerm, // Export the new action
+} = meetingsSlice.actions;
+
 export default meetingsSlice.reducer;

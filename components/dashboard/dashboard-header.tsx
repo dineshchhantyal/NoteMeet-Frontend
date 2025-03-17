@@ -7,13 +7,31 @@ import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSearchTerm } from '@/lib/redux/features/meetings/meetingsSlice';
+import { RootState } from '@/lib/redux/store';
 
 interface DashboardHeaderProps {
 	handleMeetingCreated: (newMeeting: MeetingInterface) => void;
 }
 
 const DashboardHeader = ({ handleMeetingCreated }: DashboardHeaderProps) => {
+	const dispatch = useDispatch();
+	const searchTerm = useSelector(
+		(state: RootState) => state.meetings.searchTerm,
+	);
 	const [showSearch, setShowSearch] = useState(false);
+
+	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		dispatch(setSearchTerm(e.target.value));
+	};
+
+	const handleSearchBlur = () => {
+		// Only hide the search if it's empty
+		if (!searchTerm) {
+			setShowSearch(false);
+		}
+	};
 
 	return (
 		<div className="flex flex-1 items-center gap-4 justify-between">
@@ -28,7 +46,9 @@ const DashboardHeader = ({ handleMeetingCreated }: DashboardHeaderProps) => {
 						placeholder="Search meetings..."
 						className="pl-9 bg-[#0d5559]/60 border-[#63d392]/30 text-white placeholder:text-gray-300 focus-visible:ring-[#63d392]/30 focus-visible:border-[#63d392]/50"
 						autoFocus
-						onBlur={() => setShowSearch(false)}
+						value={searchTerm}
+						onChange={handleSearchChange}
+						onBlur={handleSearchBlur}
 					/>
 				</div>
 			) : (
@@ -39,8 +59,8 @@ const DashboardHeader = ({ handleMeetingCreated }: DashboardHeaderProps) => {
 				<Button
 					variant="ghost"
 					size="icon"
-					onClick={() => setShowSearch(!showSearch)}
-					className="text-white hover:bg-[#156469]/50 focus:ring-1 focus:ring-[#63d392]/30"
+					onClick={() => setShowSearch(true)}
+					className="text-white hover:bg-[#156469]/50 focus:ring-1 focus:ring-[#63d392]/30 hidden md:block"
 					aria-label="Search"
 				>
 					<Search className="h-4.5 w-4.5" />

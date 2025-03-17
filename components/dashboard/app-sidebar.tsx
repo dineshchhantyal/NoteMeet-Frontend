@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import {
 	Search,
 	Users,
@@ -24,6 +23,9 @@ import { MeetingInterface } from '@/types';
 import { MeetingStatus } from '@/types/meeting';
 import { Skeleton } from '@/components/ui/skeleton';
 import { format, parseISO, isValid } from 'date-fns';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSearchTerm } from '@/lib/redux/features/meetings/meetingsSlice';
+import { RootState } from '@/lib/redux/store';
 
 // Brand theme colors for consistent reference
 const BRAND = {
@@ -94,8 +96,10 @@ export function AppSidebar({
 	selectedMeeting,
 	loading = false, // Default to false
 }: AppSidebarProps) {
-	const [searchTerm, setSearchTerm] = useState('');
-	console.log('meetings', meetings);
+	const dispatch = useDispatch();
+	const searchTerm = useSelector(
+		(state: RootState) => state.meetings.searchTerm,
+	);
 
 	const filteredMeetings = meetings.filter(
 		(meeting) =>
@@ -143,7 +147,7 @@ export function AppSidebar({
 							placeholder="Search meetings..."
 							className="pl-8 bg-[#156469]/40 border-[#63d392]/20 text-white placeholder:text-gray-300 focus-visible:ring-[#63d392]/30 focus-visible:border-[#63d392]/50"
 							value={searchTerm}
-							onChange={(e) => setSearchTerm(e.target.value)}
+							onChange={(e) => dispatch(setSearchTerm(e.target.value))}
 						/>
 					</div>
 				</div>

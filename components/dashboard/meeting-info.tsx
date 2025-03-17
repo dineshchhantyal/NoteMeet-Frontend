@@ -25,6 +25,8 @@ import { MeetingStatus } from '@/types/meeting';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { ShareManagement } from '../share/share-management';
 import { useState } from 'react';
+// Import the utility functions
+import { formatDate, formatTime, formatDuration } from '@/lib/utils/date-time';
 
 interface MeetingInfoProps {
 	meeting: MeetingInterface;
@@ -62,20 +64,6 @@ export function MeetingInfo({ meeting, onMeetingDelete }: MeetingInfoProps) {
 			.split('')
 			.reduce((acc, char) => acc + char.charCodeAt(0), 0);
 		return colors[hash % colors.length];
-	};
-
-	const formatDate = (dateStr: string) => {
-		if (!dateStr) return 'Date not set';
-		const date = new Date(dateStr);
-		return date.toLocaleDateString('en-US', {
-			weekday: 'short',
-			month: 'short',
-			day: 'numeric',
-		});
-	};
-
-	const formatTime = (timeStr: string) => {
-		return timeStr || 'Not set';
 	};
 
 	const participants = meeting.participants || ['John D', 'Jane S', 'Mike R'];
@@ -178,7 +166,9 @@ export function MeetingInfo({ meeting, onMeetingDelete }: MeetingInfoProps) {
 						{/* Duration chip */}
 						<div className="bg-[#0d5559]/40 px-3 py-1.5 rounded-full flex items-center">
 							<Timer className="h-3.5 w-3.5 text-[#63d392] mr-1.5" />
-							<span className="text-xs">{meeting.duration || '1 hour'}</span>
+							<span className="text-xs">
+								{formatDuration(meeting.duration)}
+							</span>
 						</div>
 					</div>
 

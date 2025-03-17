@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, ListTodo, SparkleIcon, Brain } from 'lucide-react';
+import { FileText, ListTodo, SparkleIcon } from 'lucide-react';
 
 const features = [
 	{
