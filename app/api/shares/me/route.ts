@@ -10,11 +10,13 @@ export async function GET() {
 			return NextResponse.json({ data: [] });
 		}
 
+		console.log('Fetching shared meetings for:', session.email);
+
 		// Find all shares where the current user is the recipient
 		const userShares = await db?.meetingShare.findMany({
 			where: {
 				email: session.email,
-				status: 'ACCEPTED',
+				status: 'accepted',
 			},
 			include: {
 				meeting: true,

@@ -8,6 +8,8 @@ import {
 	Clock,
 	CalendarCheck2,
 	Share2,
+	Users2,
+	Plus,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -26,6 +28,7 @@ import { format, parseISO, isValid } from 'date-fns';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSearchTerm } from '@/lib/redux/features/meetings/meetingsSlice';
 import { RootState } from '@/lib/redux/store';
+import { SharedMeetingCard } from '../meetings/shared-meeting-card';
 
 // Add this interface near the top of your file
 interface SharedMeetingInterface extends MeetingInterface {
@@ -146,6 +149,7 @@ export function AppSidebar({
 			} transition-transform duration-200 ease-in-out md:relative md:translate-x-0 shadow-lg`}
 		>
 			<div className="flex flex-col h-full text-white">
+				{/* Header Section */}
 				<div className="flex items-center justify-between p-4 border-b border-[#63d392]/20">
 					<div className="flex items-center gap-2">
 						<div className="bg-[#63d392]/20 p-2 rounded-md">
@@ -163,211 +167,79 @@ export function AppSidebar({
 						<X className="h-4 w-4" />
 					</Button>
 				</div>
-				<div className="p-4">
+
+				{/* Search Bar */}
+				<div className="p-4 border-b border-[#63d392]/20">
 					<div className="relative">
-						<Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 transform text-[#63d392]" />
+						<Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
 						<Input
-							type="search"
 							placeholder="Search meetings..."
-							className="pl-8 bg-[#156469]/40 border-[#63d392]/20 text-white placeholder:text-gray-300 focus-visible:ring-[#63d392]/30 focus-visible:border-[#63d392]/50"
+							className="pl-10 bg-[#0d5559]/50 border-[#63d392]/30 text-white"
 							value={searchTerm}
 							onChange={(e) => dispatch(setSearchTerm(e.target.value))}
 						/>
 					</div>
 				</div>
 
-				<div className="flex-1 overflow-auto py-2 px-3">
-					{nextMeeting && (
-						<div className="mb-4 p-3 bg-[#fbbf24]/10 rounded-md border border-[#fbbf24]/30">
-							<h4 className="text-xs uppercase text-[#fbbf24] font-medium flex items-center mb-2">
-								<Calendar className="h-3 w-3 mr-1" /> Next Meeting
-							</h4>
-							<div className="text-sm font-medium">{nextMeeting.title}</div>
-							<div className="flex items-center gap-2 mt-1 text-xs text-gray-300">
-								<Calendar className="h-3 w-3" />
-								{formatDate(nextMeeting.date)}
-								<Clock className="h-3 w-3 ml-2" />
-								{formatTime(nextMeeting.time)}
+				{/* Meetings Lists */}
+				<div className="flex-1 overflow-auto">
+					{/* Your Meetings Section */}
+					<div className="p-4 border-b border-[#63d392]/20">
+						<h3 className="text-xs uppercase text-gray-400 font-medium mb-3">
+							Your Meetings
+						</h3>
+						{loading ? (
+							<div className="space-y-3">
+								<Skeleton className="h-16 w-full bg-[#156469]/30" />
+								<Skeleton className="h-16 w-full bg-[#156469]/30" />
 							</div>
-						</div>
-					)}
-					<h3 className="mb-2 px-4 text-xs font-semibold uppercase tracking-wider text-[#63d392]">
-						Your Meetings
-					</h3>
-
-					{loading ? (
-						// Loading skeletons
-						<div className="space-y-2 px-1 py-2">
-							{[...Array(5)].map((_, i) => (
-								<div
-									key={`skeleton-${i}`}
-									className="flex items-center gap-3 rounded-md p-3 bg-[#156469]/30 animate-pulse"
-								>
-									<div className="rounded-full bg-[#156469]/70 h-8 w-8"></div>
-									<div className="space-y-2 flex-1">
-										<Skeleton className="h-4 w-3/4 bg-[#156469]/70" />
-										<Skeleton className="h-3 w-1/2 bg-[#156469]/50" />
-									</div>
-								</div>
-							))}
-						</div>
-					) : filteredOwnedMeetings.length === 0 &&
-					  filteredSharedMeetings.length === 0 ? (
-						<div className="flex flex-col items-center justify-center p-8 text-center">
-							<div className="bg-[#156469]/40 p-4 rounded-full mb-4">
-								<Calendar className="h-6 w-6 text-[#63d392]/80" />
+						) : filteredOwnedMeetings.length === 0 ? (
+							<div className="text-center py-6 text-gray-500">
+								<Calendar className="h-10 w-10 mx-auto mb-2 opacity-20" />
+								<p className="text-sm">No meetings found</p>
 							</div>
-							<p className="text-gray-300 mb-1">No meetings found</p>
-							<p className="text-xs text-gray-400">
-								{searchTerm
-									? 'Try a different search term'
-									: 'Create your first meeting'}
-							</p>
-						</div>
-					) : (
-						<div className="space-y-6">
-							{/* Display owned meetings */}
-							{filteredOwnedMeetings.length > 0 && (
-								<div className="space-y-2">
-									<h4 className="text-xs uppercase text-gray-400 font-medium px-4 flex items-center">
-										<Users className="h-3 w-3 mr-1" /> Your Meetings
-									</h4>
-									{filteredOwnedMeetings.map((meeting) => (
-										<Button
-											key={meeting.id || Math.random()}
-											variant="ghost"
-											className={cn(
-												'w-full justify-start text-left p-3 h-auto mb-1 rounded-lg transition-all',
-												selectedMeeting?.id === meeting.id
-													? 'bg-[#63d392]/20 text-white hover:bg-[#63d392]/30 border-l-2 border-[#63d392]'
-													: 'hover:bg-[#156469]/50 text-white hover:text-green-200',
-											)}
-											onClick={() => {
-												onSelectMeeting(meeting);
-												onClose();
-											}}
-										>
-											<div className="flex flex-col items-start w-full space-y-2">
-												<span className="font-medium text-sm truncate w-full">
-													{meeting.title}
-												</span>
-												<div className="flex flex-wrap items-center gap-2 w-full">
-													<span className="text-xs text-gray-300 flex items-center gap-1">
-														<Calendar className="h-3 w-3" />
-														{formatDate(meeting.date)}
-													</span>
-													<span className="text-xs text-gray-300 flex items-center gap-1">
-														<Clock className="h-3 w-3" />
-														{formatTime(meeting.time)}
-													</span>
-												</div>
-												<div className="flex flex-wrap items-center gap-2 w-full">
-													<Badge
-														variant="outline"
-														className={`text-xs ${getStatusBadgeStyle(meeting.status as MeetingStatus)}`}
-													>
-														{MeetingStatus[meeting.status as MeetingStatus]}
-													</Badge>
-													{meeting.participants && (
-														<TooltipProvider>
-															<Tooltip delayDuration={300}>
-																<TooltipTrigger asChild>
-																	<Badge
-																		variant="secondary"
-																		className="text-xs flex items-center gap-1 bg-[#156469]/70 hover:bg-[#156469] text-white border-none"
-																	>
-																		<Users className="h-3 w-3" />
-																		{meeting.participants.length}
-																	</Badge>
-																</TooltipTrigger>
-																<TooltipContent className="bg-[#0d5559] text-white border-[#63d392]/20">
-																	<p>
-																		{meeting.participants.length} Participants
-																	</p>
-																</TooltipContent>
-															</Tooltip>
-														</TooltipProvider>
-													)}
-												</div>
-											</div>
-										</Button>
-									))}
-								</div>
-							)}
+						) : (
+							<div className="space-y-2">
+								{filteredOwnedMeetings.map((meeting) => (
+									<SharedMeetingCard
+										key={meeting.id}
+										meeting={meeting}
+										isSelected={selectedMeeting?.id === meeting.id}
+										onSelect={() => onSelectMeeting(meeting)}
+									/>
+								))}
+							</div>
+						)}
+					</div>
 
-							{/* Display shared meetings */}
-							{filteredSharedMeetings.length > 0 && (
-								<div className="space-y-2 mt-4">
-									<h4 className="text-xs uppercase text-gray-400 font-medium px-4 flex items-center">
-										<Share2 className="h-3 w-3 mr-1" /> Shared With You
-									</h4>
-									{filteredSharedMeetings.map((meeting) => (
-										<Button
-											key={meeting.shareId || meeting.id}
-											variant="ghost"
-											className={cn(
-												'w-full justify-start text-left p-3 h-auto mb-1 rounded-lg',
-												selectedMeeting?.id === meeting.id
-													? 'bg-[#63d392]/20 text-white hover:bg-[#63d392]/30 border-l-2 border-[#63d392]'
-													: 'hover:bg-[#156469]/50 text-white',
-											)}
-											onClick={() => {
-												onSelectMeeting(meeting);
-												onClose();
-											}}
-										>
-											<div className="flex flex-col w-full">
-												<div className="flex items-center w-full">
-													<span className="font-medium text-sm truncate flex-1">
-														{meeting.title}
-													</span>
-													<TooltipProvider>
-														<Tooltip>
-															<TooltipTrigger asChild>
-																<Share2 className="h-3 w-3 text-blue-300 ml-2" />
-															</TooltipTrigger>
-															<TooltipContent className="bg-[#0d5559] text-white border-[#63d392]/20">
-																<p>
-																	Shared by:{' '}
-																	{(meeting as SharedMeetingInterface)
-																		.sharedBy || 'Unknown'}
-																</p>
-																<p>
-																	Permission:{' '}
-																	{(meeting as SharedMeetingInterface)
-																		.sharePermission || 'View'}
-																</p>
-															</TooltipContent>
-														</Tooltip>
-													</TooltipProvider>
-												</div>
+					{/* Shared With You Section */}
+					<div className="p-4">
+						<h3 className="text-xs uppercase text-gray-400 font-medium mb-3 flex items-center">
+							<Users2 className="h-3 w-3 mr-1" /> Shared With You
+						</h3>
 
-												{/* Rest of your meeting display code */}
-
-												{/* Add permission badge */}
-												<div className="flex mt-2 items-center gap-2">
-													{/* Your existing status badge */}
-													<Badge
-														variant="outline"
-														className="bg-blue-500/20 text-blue-300 border-blue-500/30 text-xs"
-													>
-														{(meeting as SharedMeetingInterface)
-															.sharePermission || 'Shared'}
-													</Badge>
-												</div>
-											</div>
-										</Button>
-									))}
-								</div>
-							)}
-						</div>
-					)}
-				</div>
-
-				<div className="p-4 border-t border-[#63d392]/20">
-					<p className="text-xs text-center text-gray-400">
-						{meetings.length} total meeting{meetings.length !== 1 ? 's' : ''}
-					</p>
+						{loading ? (
+							<div className="space-y-3">
+								<Skeleton className="h-16 w-full bg-[#156469]/30" />
+							</div>
+						) : filteredSharedMeetings.length === 0 ? (
+							<div className="text-center py-6 text-gray-500">
+								<Share2 className="h-10 w-10 mx-auto mb-2 opacity-20" />
+								<p className="text-sm">No shared meetings</p>
+							</div>
+						) : (
+							<div className="space-y-2">
+								{filteredSharedMeetings.map((meeting) => (
+									<SharedMeetingCard
+										key={meeting.id}
+										meeting={meeting}
+										isSelected={selectedMeeting?.id === meeting.id}
+										onSelect={() => onSelectMeeting(meeting)}
+									/>
+								))}
+							</div>
+						)}
+					</div>
 				</div>
 			</div>
 		</div>

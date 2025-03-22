@@ -10,6 +10,7 @@ import {
 	PutRuleCommand,
 	PutTargetsCommand,
 } from '@aws-sdk/client-eventbridge';
+import { sendMeetingInviteEmail } from '@/lib/mail';
 
 // AWS Configuration for EventBridge - using SDK v3
 const eventBridgeClient = new EventBridgeClient({
@@ -285,6 +286,23 @@ export async function POST(req: Request) {
 					{ status: 207 },
 				);
 			}
+		}
+
+		// create MeetingShare for each participant
+		for (const participant of participants) {
+			const token = crypto.randomUUID();
+			await db?.meetingShare.create({
+				data: {
+					meetingId: meeting.id,
+					email: participant,
+					token,
+					createdBy: userIdString,
+					status: 'pending', // Add default status
+					permission: 'VIEW', // Add default permission if needed
+				},
+			});
+
+			await sendMeetingInviteEmail(participant, meeting.id, token);
 		}
 
 		// This handles the case where no recording is scheduled

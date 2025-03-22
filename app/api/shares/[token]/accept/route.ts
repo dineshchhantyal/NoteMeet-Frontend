@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { currentUser } from '@/lib/auth';
+import crypto from 'crypto'; // Add this import
 
 export async function POST(
 	req: NextRequest,
@@ -38,6 +39,22 @@ export async function POST(
 				lastAccessAt: new Date(),
 			},
 		});
+
+		// For public link shares, create a new personal share
+		if (share && share.email.startsWith('link_')) {
+			// Create a new share with only the necessary fields
+			await db?.meetingShare.create({
+				data: {
+					token: crypto.randomBytes(16).toString('hex'),
+					meetingId: share.meetingId,
+					email: user.email,
+					permission: share.permission,
+					status: 'accepted',
+					createdBy: share.createdBy, // If using string field
+					lastAccessAt: new Date(),
+				},
+			});
+		}
 
 		return NextResponse.json({ success: true, share: updatedShare });
 	} catch (error) {
