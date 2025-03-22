@@ -75,7 +75,9 @@ export default function EarlyAccessSubmissionsPage() {
 			queryParams.set('page', pagination.page.toString());
 			queryParams.set('limit', pagination.limit.toString());
 
-			const response = await fetch(`/api/admin/early-access?${queryParams}`);
+			const response = await fetch(
+				`/api/admin/view-early-access-forms?${queryParams}`,
+			);
 
 			if (!response.ok) {
 				throw new Error('Failed to fetch submissions');
@@ -84,17 +86,15 @@ export default function EarlyAccessSubmissionsPage() {
 			const data = await response.json();
 
 			// Filter by search query if provided
-			let filtered = data.submissions;
+			let filtered = data.data;
 			if (searchQuery) {
-				filtered = data.submissions.filter(
+				filtered = data.data.filter(
 					(sub: EarlyAccessSubmission) =>
 						sub.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
 						sub.name.toLowerCase().includes(searchQuery.toLowerCase()),
 				);
 			}
-
 			setSubmissions(filtered);
-			setPagination(data.pagination);
 		} catch (error) {
 			console.error('Error fetching submissions:', error);
 			toast.error('Failed to load submissions');
@@ -111,13 +111,16 @@ export default function EarlyAccessSubmissionsPage() {
 		if (submission.status === newStatus) return;
 
 		try {
-			const response = await fetch(`/api/admin/early-access/${submission.id}`, {
-				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json',
+			const response = await fetch(
+				`/api/admin/view-early-access-forms/${submission.id}`,
+				{
+					method: 'PATCH',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ status: newStatus }),
 				},
-				body: JSON.stringify({ status: newStatus }),
-			});
+			);
 
 			if (!response.ok) {
 				throw new Error('Failed to update submission status');
@@ -178,7 +181,7 @@ export default function EarlyAccessSubmissionsPage() {
 	// Load data on component mount and when filters change
 	useEffect(() => {
 		fetchSubmissions();
-	}, [pagination.page, statusFilter]);
+	}, [statusFilter]);
 
 	return (
 		<div className="p-8 min-h-screen bg-[#0a4a4e]">
@@ -292,7 +295,7 @@ export default function EarlyAccessSubmissionsPage() {
 											</div>
 										</TableCell>
 									</TableRow>
-								) : submissions.length === 0 ? (
+								) : submissions?.length === 0 ? (
 									<TableRow>
 										<TableCell
 											colSpan={5}
@@ -302,7 +305,7 @@ export default function EarlyAccessSubmissionsPage() {
 										</TableCell>
 									</TableRow>
 								) : (
-									submissions.map((submission) => (
+									submissions?.map((submission) => (
 										<TableRow
 											key={submission.id}
 											className="border-[#63d392]/10 hover:bg-[#156469]/50"
@@ -363,7 +366,7 @@ export default function EarlyAccessSubmissionsPage() {
 					<div className="p-4 border-t border-[#63d392]/20">
 						<div className="flex items-center justify-between">
 							<div className="text-sm text-gray-300">
-								Showing {submissions.length} of {pagination.total} submissions
+								Showing {submissions?.length} of {pagination?.total} submissions
 							</div>
 
 							<Pagination>
