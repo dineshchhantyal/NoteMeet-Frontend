@@ -44,7 +44,8 @@ type EarlyAccessSubmission = {
 	email: string;
 	name: string;
 	createdAt: string;
-	status: 'pending' | 'contacted' | 'rejected';
+	status: 'pending' | 'contacted' | 'rejected' | 'approved'; // Add 'approved'
+	isVerified?: boolean;
 };
 
 type PaginationData = {
@@ -111,25 +112,38 @@ export default function EarlyAccessSubmissionsPage() {
 		if (submission.status === newStatus) return;
 
 		try {
-			const response = await fetch(
-				`/api/admin/view-early-access-forms/${submission.id}`,
-				{
-					method: 'PATCH',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({ status: newStatus }),
+			// If changing to approved status, use the same logic as handleAcceptSubmission
+			if (newStatus === 'approved') {
+				await handleAcceptSubmission(submission);
+				return;
+			}
+
+			const response = await fetch('/api/admin/view-early-access-forms', {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json',
 				},
-			);
+				body: JSON.stringify({
+					id: submission.id,
+					status: newStatus,
+				}),
+			});
 
 			if (!response.ok) {
 				throw new Error('Failed to update submission status');
 			}
 
-			// Update local state
+			// Use type assertion to fix the TypeScript error
 			const updatedSubmissions = submissions.map((sub) =>
 				sub.id === submission.id
-					? { ...sub, status: newStatus as EarlyAccessSubmission['status'] }
+					? {
+							...sub,
+							status: newStatus as
+								| 'pending'
+								| 'contacted'
+								| 'rejected'
+								| 'approved',
+						}
 					: sub,
 			);
 
@@ -138,6 +152,60 @@ export default function EarlyAccessSubmissionsPage() {
 		} catch (error) {
 			console.error('Error updating status:', error);
 			toast.error('Failed to update submission status');
+		}
+	};
+
+	// Add this function to handle accepting a submission
+	const handleAcceptSubmission = async (submission: EarlyAccessSubmission) => {
+		if (submission.status === 'approved') {
+			toast.info('This submission is already approved');
+			return;
+		}
+
+		try {
+			// Show loading toast
+			toast.loading('Processing application...');
+
+			const response = await fetch('/api/admin/view-early-access-forms', {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					id: submission.id,
+					status: 'approved',
+					isVerified: true,
+					// Add the plan ID here
+					planId: 'pro-plan-id', // Use the exact ID from your seed file
+				}),
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to approve submission');
+			}
+
+			const result = await response.json();
+
+			// Fix the TypeScript error by using type assertion
+			const updatedSubmissions = submissions.map((sub) =>
+				sub.id === submission.id
+					? {
+							...sub,
+							status: 'approved' as const, // Use 'as const' to tell TypeScript this is a literal
+							isVerified: true,
+						}
+					: sub,
+			);
+
+			setSubmissions(updatedSubmissions);
+
+			// Dismiss loading toast and show success
+			toast.dismiss();
+			toast.success('Application approved and subscription activated!');
+		} catch (error) {
+			console.error('Error approving submission:', error);
+			toast.dismiss();
+			toast.error('Failed to approve submission');
 		}
 	};
 
@@ -245,6 +313,12 @@ export default function EarlyAccessSubmissionsPage() {
 											>
 												Rejected
 											</SelectItem>
+											<SelectItem
+												value="approved"
+												className="hover:bg-[#156469] focus:bg-[#156469] cursor-pointer"
+											>
+												Approved
+											</SelectItem>
 										</SelectContent>
 									</Select>
 								</div>
@@ -324,6 +398,18 @@ export default function EarlyAccessSubmissionsPage() {
 											</TableCell>
 											<TableCell className="text-right">
 												<div className="flex justify-end gap-2">
+													{submission.status !== 'approved' && (
+														<Button
+															onClick={() => handleAcceptSubmission(submission)}
+															variant="outline"
+															size="sm"
+															className="h-8 bg-blue-500/20 border-blue-500/50 text-blue-400 hover:bg-blue-500/30"
+														>
+															<CheckCircle className="h-3.5 w-3.5 mr-1" />
+															Accept
+														</Button>
+													)}
+
 													<Select
 														value={submission.status}
 														onValueChange={(value) =>
@@ -345,6 +431,12 @@ export default function EarlyAccessSubmissionsPage() {
 																className="hover:bg-[#156469] focus:bg-[#156469] cursor-pointer"
 															>
 																Contacted
+															</SelectItem>
+															<SelectItem
+																value="approved"
+																className="hover:bg-[#156469] focus:bg-[#156469] cursor-pointer"
+															>
+																Approved
 															</SelectItem>
 															<SelectItem
 																value="rejected"
@@ -453,6 +545,13 @@ export default function EarlyAccessSubmissionsPage() {
 // Status badge component for consistent styling
 function StatusBadge({ status }: { status: string }) {
 	switch (status) {
+		case 'approved':
+			return (
+				<span className="inline-flex items-center px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 text-sm">
+					<CheckCircle className="h-4 w-4 mr-1" />
+					Approved
+				</span>
+			);
 		case 'contacted':
 			return (
 				<span className="inline-flex items-center px-2 py-1 rounded-full bg-green-500/20 text-green-400 text-sm">

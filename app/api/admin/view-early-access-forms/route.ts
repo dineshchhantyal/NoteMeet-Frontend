@@ -47,7 +47,7 @@ export async function PATCH(request: Request) {
 			throw new Error('User not found');
 		}
 
-		const earlyAccessPlanId = 'cm5gdkrv00000le8ly7x83j8v'; // early access plan id
+		const earlyAccessPlanId = 'pro-plan-id'; // early access plan id
 
 		const subscriptionService = new UserSubscriptionService(loggedInUser);
 		await subscriptionService.userSubscribeToPlan(user.id, earlyAccessPlanId);
