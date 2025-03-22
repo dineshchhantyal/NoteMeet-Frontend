@@ -12,6 +12,17 @@ interface MeetingsState {
 	searchTerm: string; // Add searchTerm to state
 }
 
+// Add this interface near the top of your file with the other interfaces
+interface SharedMeetingResponse {
+	meeting: MeetingInterface;
+	sharedBy: {
+		name?: string;
+		email?: string;
+	};
+	permission: string;
+	id: string;
+}
+
 const initialState: MeetingsState = {
 	meetings: [],
 	sharedMeetings: [],
@@ -54,6 +65,7 @@ export const fetchSharedMeetings = createAsyncThunk(
 			const data = await response.json();
 			return data.data || [];
 		} catch (error) {
+			console.error('Failed to fetch shared meetings:', error);
 			return []; // Fail silently to maintain compatibility
 		}
 	},
@@ -267,14 +279,17 @@ const meetingsSlice = createSlice({
 			state.loading = false;
 		});
 
+		// Then update the builder.addCase function to use this type
 		builder.addCase(fetchSharedMeetings.fulfilled, (state, action) => {
-			state.sharedMeetings = action.payload.map((share: any) => ({
-				...share.meeting,
-				isShared: true,
-				sharedBy: share.sharedBy?.name || share.sharedBy?.email,
-				sharePermission: share.permission,
-				shareId: share.id,
-			}));
+			state.sharedMeetings = action.payload.map(
+				(share: SharedMeetingResponse) => ({
+					...share.meeting,
+					isShared: true,
+					sharedBy: share.sharedBy?.name || share.sharedBy?.email,
+					sharePermission: share.permission,
+					shareId: share.id,
+				}),
+			);
 			state.allMeetings = [...state.meetings, ...state.sharedMeetings];
 		});
 	},

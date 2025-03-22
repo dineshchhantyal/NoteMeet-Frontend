@@ -16,19 +16,21 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PlanCard } from '@/components/admin/subscriptions/plan-card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { useSubscriptionPlans } from '@/lib/hooks/use-subscription-plans';
 
+// Define type constants for better reusability
+type FilterStatus = 'all' | 'active' | 'inactive';
+type SortOption = 'price' | 'name' | 'tier';
+type ViewMode = 'table' | 'grid';
+
 export default function SubscriptionsPage() {
 	const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-	const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
-	const [filterStatus, setFilterStatus] = useState<
-		'all' | 'active' | 'inactive'
-	>('all');
+	const [viewMode, setViewMode] = useState<ViewMode>('table');
+	const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
 	const [searchQuery, setSearchQuery] = useState('');
-	const [sortBy, setSortBy] = useState<'price' | 'name' | 'tier'>('price');
+	const [sortBy, setSortBy] = useState<SortOption>('price');
 
 	// Use a custom hook to fetch and manage subscription plans
 	const {
@@ -56,7 +58,7 @@ export default function SubscriptionsPage() {
 
 	// Sort plans based on selected sort criteria
 	const sortedPlans = [...filteredPlans].sort((a, b) => {
-		if (sortBy === 'price') return a.price - b.price;
+		if (sortBy === 'price') return a.basePrice - b.basePrice;
 		if (sortBy === 'name') return a.name.localeCompare(b.name);
 		if (sortBy === 'tier') return a.tier.localeCompare(b.tier);
 		return 0;
@@ -70,6 +72,7 @@ export default function SubscriptionsPage() {
 				`Plan ${newStatus ? 'activated' : 'deactivated'} successfully`,
 			);
 		} catch (error) {
+			console.error('Failed to update plan status:', error);
 			toast.error('Failed to update plan status');
 		}
 	};
@@ -77,6 +80,7 @@ export default function SubscriptionsPage() {
 	// Show error toast if fetching fails
 	useEffect(() => {
 		if (error) {
+			console.error('Failed to load subscription plans:', error);
 			toast.error('Failed to load subscription plans');
 		}
 	}, [error]);
@@ -139,7 +143,7 @@ export default function SubscriptionsPage() {
 
 							<Select
 								value={filterStatus}
-								onValueChange={(value: any) => setFilterStatus(value)}
+								onValueChange={(value: FilterStatus) => setFilterStatus(value)}
 							>
 								<SelectTrigger className="w-[120px] bg-[#0a4a4e]/50 border-[#63d392]/20 text-white">
 									<SelectValue placeholder="Status" />
@@ -153,7 +157,7 @@ export default function SubscriptionsPage() {
 
 							<Select
 								value={sortBy}
-								onValueChange={(value: any) => setSortBy(value)}
+								onValueChange={(value: SortOption) => setSortBy(value)}
 							>
 								<SelectTrigger className="w-[120px] bg-[#0a4a4e]/50 border-[#63d392]/20 text-white">
 									<SelectValue placeholder="Sort by" />
@@ -169,7 +173,7 @@ export default function SubscriptionsPage() {
 						<ToggleGroup
 							type="single"
 							value={viewMode}
-							onValueChange={(v) => v && setViewMode(v as any)}
+							onValueChange={(v: string) => v && setViewMode(v as ViewMode)}
 						>
 							<ToggleGroupItem
 								value="table"
@@ -230,24 +234,11 @@ export default function SubscriptionsPage() {
 										New Plan
 									</Button>
 								</div>
-							) : viewMode === 'table' ? (
+							) : (
 								<SubscriptionPlanTable
 									plans={sortedPlans}
 									onStatusToggle={handleStatusToggle}
 								/>
-							) : (
-								<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-									{sortedPlans.map((plan) => (
-										<PlanCard
-											key={plan.id}
-											plan={plan}
-											onStatusToggle={handleStatusToggle}
-											onEdit={() => {
-												/* Add edit handler */
-											}}
-										/>
-									))}
-								</div>
 							)}
 						</>
 					)}

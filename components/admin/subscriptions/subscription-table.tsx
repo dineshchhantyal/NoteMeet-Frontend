@@ -19,19 +19,6 @@ import {
 import { formatCurrency } from '@/lib/utils';
 import { SubscriptionPlan } from '@/types/subscription';
 
-// Add field mapping at the top of the component
-function mapPlanToViewModel(plan: any) {
-	return {
-		...plan,
-		// Map DB fields to view-friendly fields
-		price: plan.basePrice,
-		billingPeriod: plan.billingPeriods,
-		maxMeetings: plan.meetingsAllowed,
-		maxParticipants: plan.meetingDuration,
-		maxStorageGB: plan.storageLimit,
-	};
-}
-
 interface SubscriptionPlanTableProps {
 	plans: SubscriptionPlan[];
 	onStatusToggle: (planId: string, newStatus: boolean) => Promise<void>;
@@ -48,7 +35,6 @@ export function SubscriptionPlanTable({
 	onDuplicate,
 }: SubscriptionPlanTableProps) {
 	// Map plans to view model
-	const viewPlans = plans.map(mapPlanToViewModel);
 
 	return (
 		<div className="overflow-x-auto">
@@ -70,7 +56,7 @@ export function SubscriptionPlanTable({
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{viewPlans.map((plan) => (
+					{plans.map((plan) => (
 						<TableRow
 							key={plan.id}
 							className={`border-b border-[#63d392]/10 hover:bg-[#156469]/30 ${
@@ -86,19 +72,19 @@ export function SubscriptionPlanTable({
 								</Badge>
 							</TableCell>
 							<TableCell className="text-white">
-								{formatCurrency(plan.price, plan.currency)}
+								{formatCurrency(plan.basePrice, plan.currency)}
 							</TableCell>
 							<TableCell className="text-gray-300">
-								{plan.billingPeriod && typeof plan.billingPeriod === 'string'
-									? plan.billingPeriod.charAt(0) +
-										plan.billingPeriod.slice(1).toLowerCase()
+								{plan.billingPeriods && typeof plan.billingPeriods === 'string'
+									? plan.billingPeriods.charAt(0) +
+										plan.billingPeriods.slice(1).toLowerCase()
 									: 'N/A'}
 							</TableCell>
 							<TableCell className="text-gray-300">
-								{plan.maxStorageGB} GB
+								{plan.storageLimit} GB
 							</TableCell>
 							<TableCell className="text-gray-300">
-								{plan.maxMeetings}/month
+								{plan.meetingsAllowed}/month
 							</TableCell>
 							<TableCell>
 								<Switch

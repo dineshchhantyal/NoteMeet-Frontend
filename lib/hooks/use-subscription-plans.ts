@@ -1,21 +1,5 @@
+import { SubscriptionPlan } from '@/types/subscription';
 import { useState, useEffect, useCallback } from 'react';
-
-interface SubscriptionPlan {
-	id: string;
-	name: string;
-	description?: string;
-	price: number;
-	currency: string;
-	billingPeriod: string;
-	tier: string;
-	isActive: boolean;
-	features?: string[];
-	maxMeetings: number;
-	maxParticipants: number;
-	maxStorageGB: number;
-	createdAt: string;
-	updatedAt: string;
-}
 
 interface SubscriptionStats {
 	totalPlans: number;
@@ -59,7 +43,7 @@ export function useSubscriptionPlans() {
 				(p: SubscriptionPlan) => p.isActive,
 			);
 			const totalPrice = fetchedPlans.reduce(
-				(sum: number, plan: SubscriptionPlan) => sum + plan.price,
+				(sum: number, plan: SubscriptionPlan) => sum + plan.basePrice,
 				0,
 			);
 
@@ -73,7 +57,7 @@ export function useSubscriptionPlans() {
 
 				tierCounts[plan.tier]++;
 				if (plan.isActive) {
-					revenueByTier[plan.tier] += plan.price;
+					revenueByTier[plan.tier] += plan.basePrice;
 				}
 			});
 

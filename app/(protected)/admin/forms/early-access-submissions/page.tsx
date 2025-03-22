@@ -184,8 +184,6 @@ export default function EarlyAccessSubmissionsPage() {
 				throw new Error('Failed to approve submission');
 			}
 
-			const result = await response.json();
-
 			// Fix the TypeScript error by using type assertion
 			const updatedSubmissions = submissions.map((sub) =>
 				sub.id === submission.id

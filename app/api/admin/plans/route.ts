@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { currentUser } from '@/lib/auth';
-import { UserRole, SubscriptionTier, BillingPeriod } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 
 export async function GET() {
 	try {
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
 		}
 
 		// Parse request body
-		let formData = await req.json();
+		const formData = await req.json();
 
 		// No need to transform - use the form data directly
 		// The form already matches the schema
@@ -85,26 +85,6 @@ export async function POST(req: NextRequest) {
 			{ status: 500, headers: { 'Content-Type': 'application/json' } },
 		);
 	}
-}
-
-// Helper functions to map string values to Prisma enums
-function mapToBillingPeriodEnum(period: string): BillingPeriod {
-	const mapping: Record<string, BillingPeriod> = {
-		MONTHLY: BillingPeriod.MONTHLY,
-		YEARLY: BillingPeriod.ANNUAL,
-		LIFETIME: BillingPeriod.CUSTOM,
-	};
-	return mapping[period] || BillingPeriod.MONTHLY;
-}
-
-function mapToTierEnum(tier: string): SubscriptionTier {
-	const mapping: Record<string, SubscriptionTier> = {
-		FREE: SubscriptionTier.FREE,
-		BASIC: SubscriptionTier.TRIAL,
-		PRO: SubscriptionTier.PRO,
-		ENTERPRISE: SubscriptionTier.BUSINESS,
-	};
-	return mapping[tier] || SubscriptionTier.FREE;
 }
 
 export async function PUT(req: NextRequest) {

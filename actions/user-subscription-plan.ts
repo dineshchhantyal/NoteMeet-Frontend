@@ -27,7 +27,7 @@ import {
  * @method renewSubscription - Renew a subscription
  */
 class UserSubscriptionService {
-	static earlyAccessPlanId = 'cm5oucr4l0000128d5xzw8qdh';
+	static earlyAccessPlanId = 'pro-plan-id';
 	private loggedInUser: Partial<User>;
 
 	constructor(loggedInUser: Partial<User>) {

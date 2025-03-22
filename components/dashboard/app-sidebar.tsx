@@ -12,7 +12,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import {
 	Tooltip,
@@ -178,6 +177,20 @@ export function AppSidebar({
 				</div>
 
 				<div className="flex-1 overflow-auto py-2 px-3">
+					{nextMeeting && (
+						<div className="mb-4 p-3 bg-[#fbbf24]/10 rounded-md border border-[#fbbf24]/30">
+							<h4 className="text-xs uppercase text-[#fbbf24] font-medium flex items-center mb-2">
+								<Calendar className="h-3 w-3 mr-1" /> Next Meeting
+							</h4>
+							<div className="text-sm font-medium">{nextMeeting.title}</div>
+							<div className="flex items-center gap-2 mt-1 text-xs text-gray-300">
+								<Calendar className="h-3 w-3" />
+								{formatDate(nextMeeting.date)}
+								<Clock className="h-3 w-3 ml-2" />
+								{formatTime(nextMeeting.time)}
+							</div>
+						</div>
+					)}
 					<h3 className="mb-2 px-4 text-xs font-semibold uppercase tracking-wider text-[#63d392]">
 						Your Meetings
 					</h3>

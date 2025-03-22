@@ -47,7 +47,6 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
 import { MeetingInterface } from '@/types';
 import { MeetingStatus } from '@/types/meeting';
 import { cn } from '@/lib/utils';
