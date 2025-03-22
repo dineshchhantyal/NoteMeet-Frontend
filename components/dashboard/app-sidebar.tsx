@@ -7,6 +7,7 @@ import {
 	Calendar,
 	Clock,
 	CalendarCheck2,
+	Share2,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -26,6 +27,14 @@ import { format, parseISO, isValid } from 'date-fns';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSearchTerm } from '@/lib/redux/features/meetings/meetingsSlice';
 import { RootState } from '@/lib/redux/store';
+
+// Add this interface near the top of your file
+interface SharedMeetingInterface extends MeetingInterface {
+	isShared?: boolean;
+	sharedBy?: string;
+	sharePermission?: string;
+	shareId?: string;
+}
 
 // Brand theme colors for consistent reference
 const BRAND = {
@@ -101,7 +110,23 @@ export function AppSidebar({
 		(state: RootState) => state.meetings.searchTerm,
 	);
 
-	const filteredMeetings = meetings.filter(
+	// Get shared meetings from Redux store
+	const sharedMeetings = useSelector(
+		(state: RootState) => state.meetings.sharedMeetings || [],
+	) as SharedMeetingInterface[];
+
+	// Filter both lists separately
+	const filteredOwnedMeetings = meetings.filter(
+		(meeting) =>
+			meeting.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			meeting.date.includes(searchTerm) ||
+			(meeting.status &&
+				MeetingStatus[meeting.status]
+					?.toLowerCase()
+					.includes(searchTerm.toLowerCase())),
+	);
+
+	const filteredSharedMeetings = sharedMeetings.filter(
 		(meeting) =>
 			meeting.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			meeting.date.includes(searchTerm) ||
@@ -173,7 +198,8 @@ export function AppSidebar({
 								</div>
 							))}
 						</div>
-					) : filteredMeetings.length === 0 ? (
+					) : filteredOwnedMeetings.length === 0 &&
+					  filteredSharedMeetings.length === 0 ? (
 						<div className="flex flex-col items-center justify-center p-8 text-center">
 							<div className="bg-[#156469]/40 p-4 rounded-full mb-4">
 								<Calendar className="h-6 w-6 text-[#63d392]/80" />
@@ -186,90 +212,142 @@ export function AppSidebar({
 							</p>
 						</div>
 					) : (
-						<ScrollArea className="flex-1 pr-3">
-							{nextMeeting && (
-								<div className="px-4 py-3 mb-4 bg-[#63d392]/10 border border-[#63d392]/20 rounded-lg mx-4 shadow-inner">
-									<div className="flex items-center gap-2 mb-2">
-										<Clock className="h-3 w-3 text-[#63d392]" />
-										<h3 className="font-semibold text-sm text-[#63d392]">
-											Next Meeting
-										</h3>
-									</div>
-									<p className="text-sm font-medium">{nextMeeting.title}</p>
-									<p className="text-xs text-gray-300 mt-1 flex items-center gap-1">
-										<Calendar className="h-3 w-3" />
-										{formatDate(nextMeeting.date)} -{' '}
-										{formatTime(nextMeeting.time)}
-									</p>
+						<div className="space-y-6">
+							{/* Display owned meetings */}
+							{filteredOwnedMeetings.length > 0 && (
+								<div className="space-y-2">
+									<h4 className="text-xs uppercase text-gray-400 font-medium px-4 flex items-center">
+										<Users className="h-3 w-3 mr-1" /> Your Meetings
+									</h4>
+									{filteredOwnedMeetings.map((meeting) => (
+										<Button
+											key={meeting.id || Math.random()}
+											variant="ghost"
+											className={cn(
+												'w-full justify-start text-left p-3 h-auto mb-1 rounded-lg transition-all',
+												selectedMeeting?.id === meeting.id
+													? 'bg-[#63d392]/20 text-white hover:bg-[#63d392]/30 border-l-2 border-[#63d392]'
+													: 'hover:bg-[#156469]/50 text-white hover:text-green-200',
+											)}
+											onClick={() => {
+												onSelectMeeting(meeting);
+												onClose();
+											}}
+										>
+											<div className="flex flex-col items-start w-full space-y-2">
+												<span className="font-medium text-sm truncate w-full">
+													{meeting.title}
+												</span>
+												<div className="flex flex-wrap items-center gap-2 w-full">
+													<span className="text-xs text-gray-300 flex items-center gap-1">
+														<Calendar className="h-3 w-3" />
+														{formatDate(meeting.date)}
+													</span>
+													<span className="text-xs text-gray-300 flex items-center gap-1">
+														<Clock className="h-3 w-3" />
+														{formatTime(meeting.time)}
+													</span>
+												</div>
+												<div className="flex flex-wrap items-center gap-2 w-full">
+													<Badge
+														variant="outline"
+														className={`text-xs ${getStatusBadgeStyle(meeting.status as MeetingStatus)}`}
+													>
+														{MeetingStatus[meeting.status as MeetingStatus]}
+													</Badge>
+													{meeting.participants && (
+														<TooltipProvider>
+															<Tooltip delayDuration={300}>
+																<TooltipTrigger asChild>
+																	<Badge
+																		variant="secondary"
+																		className="text-xs flex items-center gap-1 bg-[#156469]/70 hover:bg-[#156469] text-white border-none"
+																	>
+																		<Users className="h-3 w-3" />
+																		{meeting.participants.length}
+																	</Badge>
+																</TooltipTrigger>
+																<TooltipContent className="bg-[#0d5559] text-white border-[#63d392]/20">
+																	<p>
+																		{meeting.participants.length} Participants
+																	</p>
+																</TooltipContent>
+															</Tooltip>
+														</TooltipProvider>
+													)}
+												</div>
+											</div>
+										</Button>
+									))}
 								</div>
 							)}
 
-							<div className="space-y-2 px-4">
-								<h3 className="text-xs uppercase text-gray-400 font-semibold tracking-wider mb-3 ml-1">
-									All Meetings
-								</h3>
-								{filteredMeetings.map((meeting) => (
-									<Button
-										key={meeting.id || Math.random()}
-										variant="ghost"
-										className={cn(
-											'w-full justify-start text-left p-3 h-auto mb-1 rounded-lg transition-all',
-											selectedMeeting?.id === meeting.id
-												? 'bg-[#63d392]/20 text-white hover:bg-[#63d392]/30 border-l-2 border-[#63d392]'
-												: 'hover:bg-[#156469]/50 text-white hover:text-green-200',
-										)}
-										onClick={() => {
-											onSelectMeeting(meeting);
-											onClose();
-										}}
-									>
-										<div className="flex flex-col items-start w-full space-y-2">
-											<span className="font-medium text-sm truncate w-full">
-												{meeting.title}
-											</span>
-											<div className="flex flex-wrap items-center gap-2 w-full">
-												<span className="text-xs text-gray-300 flex items-center gap-1">
-													<Calendar className="h-3 w-3" />
-													{formatDate(meeting.date)}
-												</span>
-												<span className="text-xs text-gray-300 flex items-center gap-1">
-													<Clock className="h-3 w-3" />
-													{formatTime(meeting.time)}
-												</span>
-											</div>
-											<div className="flex flex-wrap items-center gap-2 w-full">
-												<Badge
-													variant="outline"
-													className={`text-xs ${getStatusBadgeStyle(meeting.status as MeetingStatus)}`}
-												>
-													{MeetingStatus[meeting.status as MeetingStatus]}
-												</Badge>
-												{meeting.participants && (
+							{/* Display shared meetings */}
+							{filteredSharedMeetings.length > 0 && (
+								<div className="space-y-2 mt-4">
+									<h4 className="text-xs uppercase text-gray-400 font-medium px-4 flex items-center">
+										<Share2 className="h-3 w-3 mr-1" /> Shared With You
+									</h4>
+									{filteredSharedMeetings.map((meeting) => (
+										<Button
+											key={meeting.shareId || meeting.id}
+											variant="ghost"
+											className={cn(
+												'w-full justify-start text-left p-3 h-auto mb-1 rounded-lg',
+												selectedMeeting?.id === meeting.id
+													? 'bg-[#63d392]/20 text-white hover:bg-[#63d392]/30 border-l-2 border-[#63d392]'
+													: 'hover:bg-[#156469]/50 text-white',
+											)}
+											onClick={() => {
+												onSelectMeeting(meeting);
+												onClose();
+											}}
+										>
+											<div className="flex flex-col w-full">
+												<div className="flex items-center w-full">
+													<span className="font-medium text-sm truncate flex-1">
+														{meeting.title}
+													</span>
 													<TooltipProvider>
-														<Tooltip delayDuration={300}>
+														<Tooltip>
 															<TooltipTrigger asChild>
-																<Badge
-																	variant="secondary"
-																	className="text-xs flex items-center gap-1 bg-[#156469]/70 hover:bg-[#156469] text-white border-none"
-																>
-																	<Users className="h-3 w-3" />
-																	{meeting.participants.length}
-																</Badge>
+																<Share2 className="h-3 w-3 text-blue-300 ml-2" />
 															</TooltipTrigger>
 															<TooltipContent className="bg-[#0d5559] text-white border-[#63d392]/20">
 																<p>
-																	{meeting.participants.length} Participants
+																	Shared by:{' '}
+																	{(meeting as SharedMeetingInterface)
+																		.sharedBy || 'Unknown'}
+																</p>
+																<p>
+																	Permission:{' '}
+																	{(meeting as SharedMeetingInterface)
+																		.sharePermission || 'View'}
 																</p>
 															</TooltipContent>
 														</Tooltip>
 													</TooltipProvider>
-												)}
+												</div>
+
+												{/* Rest of your meeting display code */}
+
+												{/* Add permission badge */}
+												<div className="flex mt-2 items-center gap-2">
+													{/* Your existing status badge */}
+													<Badge
+														variant="outline"
+														className="bg-blue-500/20 text-blue-300 border-blue-500/30 text-xs"
+													>
+														{(meeting as SharedMeetingInterface)
+															.sharePermission || 'Shared'}
+													</Badge>
+												</div>
 											</div>
-										</div>
-									</Button>
-								))}
-							</div>
-						</ScrollArea>
+										</Button>
+									))}
+								</div>
+							)}
+						</div>
 					)}
 				</div>
 

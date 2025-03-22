@@ -30,14 +30,6 @@ export async function POST(
 			);
 		}
 
-		// Check if the share is for the current user
-		if (share.email !== user.email) {
-			return NextResponse.json(
-				{ error: 'This invitation is not for you' },
-				{ status: 403 },
-			);
-		}
-
 		// Update the share status
 		const updatedShare = await db?.meetingShare.update({
 			where: { id: share.id },

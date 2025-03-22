@@ -111,6 +111,13 @@ model TwoFactorConfirmation {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+enum RecordingType {
+  CLOUD
+  BROWSER
+  NONE
+}
+
+
 model Meeting {
   id              String        @id @default(cuid())
   title           String
@@ -129,6 +136,9 @@ model Meeting {
   transcriptKey   String? // This is the key to the transcript file in the S3 bucket
   videoKey        String?
   summary         Json?
+  recordingType   RecordingType @default(NONE)
+  recordingStatus String?       // Can be "pending", "recording", "processing", "completed", "failed"
+
 
   createdBy       User          @relation(fields: [userId], references: [id])
   userId          String

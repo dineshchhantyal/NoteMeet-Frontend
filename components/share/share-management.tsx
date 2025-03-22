@@ -338,7 +338,10 @@ export function ShareManagement({ meeting }: ShareManagementProps) {
 			<ShareMeetingDialog
 				meetingId={meeting.id}
 				isOpen={isShareDialogOpen}
-				onClose={() => setIsShareDialogOpen(false)}
+				onClose={() => {
+					setIsShareDialogOpen(false);
+					loadShareUsers();
+				}}
 				onShare={handleShareSubmit}
 			/>
 

@@ -39,7 +39,6 @@ export function ShareMeetingDialog({
 	meetingId,
 	isOpen,
 	onClose,
-	onShare,
 }: ShareMeetingDialogProps) {
 	const [email, setEmail] = useState('');
 	const [permission, setPermission] = useState('VIEW');
@@ -105,7 +104,7 @@ export function ShareMeetingDialog({
 	};
 
 	const handleShare = async () => {
-		if (!email) {
+		if (!email || isLoading) {
 			toast.error('Please enter an email address');
 			return;
 		}
@@ -123,14 +122,18 @@ export function ShareMeetingDialog({
 
 			if (!response.ok) {
 				const data = await response.json();
-				throw new Error(data.error || 'Failed to share meeting');
+				toast.error(data.error || 'Failed to share meeting');
+				return;
 			}
 
 			toast.success(`Meeting shared with ${email}`);
 			setEmail('');
-			onShare(email, permission);
-			onClose();
-		} catch {
+			// Small timeout to prevent dialog state conflicts
+			setTimeout(() => {
+				onClose();
+			}, 100);
+		} catch (error) {
+			console.error('Share error:', error);
 			toast.error('Failed to share meeting');
 		} finally {
 			setIsLoading(false);
@@ -310,7 +313,10 @@ export function ShareMeetingDialog({
 
 					{!showLinkOption && (
 						<Button
-							onClick={handleShare}
+							onMouseDown={(e) => {
+								e.preventDefault(); // Prevent any default behavior
+								if (!isLoading) handleShare();
+							}}
 							disabled={!email || isLoading}
 							className="bg-[#63d392] text-[#0a4a4e] hover:bg-[#63d392]/80"
 						>

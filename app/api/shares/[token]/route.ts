@@ -29,12 +29,12 @@ export async function GET(
 		}
 
 		// Check if the share is for the current user
-		if (share.email !== user.email) {
-			return NextResponse.json(
-				{ error: 'This share is for a different user' },
-				{ status: 403 },
-			);
-		}
+		// if (share.email !== user.email) {
+		// 	return NextResponse.json(
+		// 		{ error: 'This share is for a different user' },
+		// 		{ status: 403 },
+		// 	);
+		// }
 
 		// Update the pending share:
 		if (share.status === 'pending') {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { z } from 'zod';
 import { currentUser } from '@/lib/auth';
+import { sendMeetingInviteEmail } from '@/lib/mail';
 
 // Get all shares for a meeting
 export async function GET(
@@ -134,6 +135,14 @@ export async function POST(
 
 		// TODO: Send email notification to the invitee
 
+		if (share && share.token) {
+			await sendMeetingInviteEmail(email, id, share?.token);
+
+			return NextResponse.json(
+				{ share, message: 'Invitation has been sent.' },
+				{ status: 201 },
+			);
+		}
 		return NextResponse.json({ share }, { status: 201 });
 	} catch (error) {
 		console.error('Error creating share:', error);

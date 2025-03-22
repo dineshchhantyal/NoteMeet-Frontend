@@ -14,6 +14,8 @@ import {
 	Clock,
 	Users,
 	CornerDownLeft,
+	MicIcon,
+	CloudIcon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,6 +34,7 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
+	FormDescription,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -91,6 +94,7 @@ const formSchema = z.object({
 	provider: z.string().nullable().optional(),
 	sendTranscript: z.boolean().default(true),
 	sendSummary: z.boolean().default(true),
+	recordingType: z.enum(['CLOUD', 'BROWSER', 'NONE']).default('NONE'),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -120,6 +124,7 @@ export function NewMeetingDialog({
 			provider: null,
 			sendTranscript: true,
 			sendSummary: true,
+			recordingType: 'NONE',
 		},
 	});
 
@@ -142,6 +147,7 @@ export function NewMeetingDialog({
 				provider: null,
 				sendTranscript: true,
 				sendSummary: true,
+				recordingType: 'NONE',
 			});
 		} else {
 			// Focus on title input when dialog opens
@@ -591,22 +597,72 @@ export function NewMeetingDialog({
 								)}
 							</div>
 
-							<FormField
-								control={form.control}
-								name="description"
-								render={({ field }) => (
-									<FormItem className="grid gap-2">
-										<FormLabel className="text-gray-200">Description</FormLabel>
-										<FormControl>
-											<Textarea
-												placeholder="Enter meeting description"
-												className="bg-[#156469]/40 border-[#63d392]/30 text-white placeholder:text-gray-400 focus-visible:ring-[#63d392]/30 focus-visible:border-[#63d392]/50 min-h-[80px]"
-												{...field}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
+							<div className="space-y-4 bg-[#156469]/20 p-3 rounded-md border border-[#63d392]/10">
+								<h4 className="text-sm font-medium text-gray-200 mb-2">
+									Recording Settings
+								</h4>
+								<FormField
+									control={form.control}
+									name="recordingType"
+									render={({ field }) => (
+										<FormItem className="grid gap-2">
+											<FormLabel className="text-gray-200">
+												Recording Method
+											</FormLabel>
+											<div className="grid grid-cols-3 gap-2">
+												<Button
+													type="button"
+													onClick={() => field.onChange('NONE')}
+													className={cn(
+														'h-auto py-2 px-3 flex flex-col items-center justify-center gap-1 border border-[#63d392]/30',
+														field.value === 'NONE'
+															? 'bg-[#156469] text-white'
+															: 'bg-[#156469]/20 text-gray-300 hover:bg-[#156469]/40',
+													)}
+												>
+													<X className="h-4 w-4 text-red-400" />
+													<span className="text-xs">No Recording</span>
+												</Button>
+												<Button
+													type="button"
+													onClick={() => field.onChange('BROWSER')}
+													className={cn(
+														'h-auto py-2 px-3 flex flex-col items-center justify-center gap-1 border border-[#63d392]/30',
+														field.value === 'BROWSER'
+															? 'bg-[#156469] text-white'
+															: 'bg-[#156469]/20 text-gray-300 hover:bg-[#156469]/40',
+													)}
+												>
+													<MicIcon className="h-4 w-4 text-orange-400" />
+													<span className="text-xs">Browser Recording</span>
+												</Button>
+												<Button
+													type="button"
+													onClick={() => field.onChange('CLOUD')}
+													className={cn(
+														'h-auto py-2 px-3 flex flex-col items-center justify-center gap-1 border border-[#63d392]/30',
+														field.value === 'CLOUD'
+															? 'bg-[#156469] text-white'
+															: 'bg-[#156469]/20 text-gray-300 hover:bg-[#156469]/40',
+													)}
+												>
+													<CloudIcon className="h-4 w-4 text-blue-400" />
+													<span className="text-xs">Cloud Recording</span>
+												</Button>
+											</div>
+											<FormDescription className="text-xs text-gray-400">
+												{field.value === 'BROWSER' &&
+													'Records directly in your browser. Best for personal use.'}
+												{field.value === 'CLOUD' &&
+													'Records on our servers. Better quality and reliability.'}
+												{field.value === 'NONE' &&
+													'No recording will be made for this meeting.'}
+											</FormDescription>
+											<FormMessage className="text-xs text-red-400" />
+										</FormItem>
+									)}
+								/>
+							</div>
 
 							<div className="space-y-4 bg-[#156469]/20 p-3 rounded-md border border-[#63d392]/10">
 								<h4 className="text-sm font-medium text-gray-200 mb-2">

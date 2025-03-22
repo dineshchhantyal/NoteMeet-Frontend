@@ -34,3 +34,18 @@ export const sendTwoFactorTokenEmail = async (email: string, token: string) => {
 		html: `<p>Tour 2FA code: <strong>${token}</strong></p>`,
 	});
 };
+
+export const sendMeetingInviteEmail = async (
+	email: string,
+	meetingId: string,
+	token: string,
+) => {
+	const meetingLink = `${domain}/meetings/${meetingId}?token=${token}`;
+
+	await resend.emails.send({
+		from: '@notemeet.dineshchhantyal.com',
+		to: email,
+		subject: 'Meeting invite',
+		html: `<p>Click <a href="${meetingLink}">here</a> to join the meeting.</p>`,
+	});
+};

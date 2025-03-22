@@ -79,11 +79,17 @@ export default function InvitationPage() {
 				const response = await fetch(`/api/shares/${token}`);
 
 				if (!response.ok) {
-					const error = await response.json();
-					throw new Error(error.error || 'Failed to load meeting details');
+					const errorData = await response.json();
+					throw new Error(errorData.error || 'Failed to load meeting details');
 				}
 
+				// Only call response.json() ONCE
 				const data = await response.json();
+
+				if (!data.share.meeting || !data.share) {
+					console.error('Unexpected API response format:', data);
+					throw new Error('Invalid response format from server');
+				}
 
 				// Check if share is expired
 				const shareCreatedAt = new Date(data.share.createdAt);
@@ -99,7 +105,10 @@ export default function InvitationPage() {
 					throw new Error('This invitation link has expired');
 				}
 
-				setMeeting(data.meeting);
+				// Set meeting data first
+				setMeeting(data.share.meeting);
+
+				// Then set invitation details
 				setInvitationDetails({
 					email: data.share.email,
 					permission: data.share.permission,

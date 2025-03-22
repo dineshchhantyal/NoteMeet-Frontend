@@ -17,27 +17,41 @@ const eventBridgeClient = new EventBridgeClient({
 });
 
 export async function GET() {
-	const user = await currentUser();
-	if (!user) {
-		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-	}
-	const userId = user.id;
-	if (!userId) {
-		return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-	}
+	try {
+		const session = await currentUser();
 
-	const userIdString = Array.isArray(userId) ? userId[0] : userId;
-	const meetings = await db?.meeting.findMany({
-		where: { userId: userIdString },
-		orderBy: [
-			{
-				status: 'asc',
+		if (!session?.id) {
+			// Return empty data array instead of null
+			return NextResponse.json({ data: [] });
+		}
+
+		// Get user's meetings
+		const userMeetings = await db?.meeting.findMany({
+			where: {
+				userId: session.id,
 			},
-			{ date: 'desc' },
-		],
-	});
+			orderBy: {
+				createdAt: 'desc',
+			},
+		});
 
-	return NextResponse.json({ data: meetings }, { status: 200 });
+		// Always return an object with a data property, never null
+		return NextResponse.json({
+			data: userMeetings || [], // Ensure we return an array even if userMeetings is null
+		});
+	} catch (error) {
+		console.error('Error fetching meetings:', error);
+		// Return an error object, not null
+		return NextResponse.json(
+			{
+				error: 'Failed to fetch meetings',
+				data: [],
+			},
+			{
+				status: 500,
+			},
+		);
+	}
 }
 
 export async function POST(req: Request) {

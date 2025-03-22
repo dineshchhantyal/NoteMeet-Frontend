@@ -3,6 +3,8 @@ import { MeetingInterface } from '@/types';
 
 interface MeetingsState {
 	meetings: MeetingInterface[];
+	sharedMeetings: MeetingInterface[];
+	allMeetings: MeetingInterface[];
 	selectedMeeting: MeetingInterface | null;
 	loading: boolean;
 	error: string | null;
@@ -12,6 +14,8 @@ interface MeetingsState {
 
 const initialState: MeetingsState = {
 	meetings: [],
+	sharedMeetings: [],
+	allMeetings: [],
 	selectedMeeting: null,
 	loading: false,
 	error: null,
@@ -22,7 +26,7 @@ const initialState: MeetingsState = {
 // Async thunks for API calls
 export const fetchMeetings = createAsyncThunk(
 	'meetings/fetchMeetings',
-	async (_, { rejectWithValue }) => {
+	async (_, { dispatch, rejectWithValue }) => {
 		try {
 			const response = await fetch('/api/meetings');
 			const data = await response.json();
@@ -31,11 +35,26 @@ export const fetchMeetings = createAsyncThunk(
 				throw new Error(data.error || 'Failed to fetch meetings');
 			}
 
+			dispatch(fetchSharedMeetings());
+
 			return data.data;
 		} catch (error) {
 			return rejectWithValue(
 				error instanceof Error ? error.message : 'Failed to fetch meetings',
 			);
+		}
+	},
+);
+
+export const fetchSharedMeetings = createAsyncThunk(
+	'meetings/fetchSharedMeetings',
+	async () => {
+		try {
+			const response = await fetch('/api/shares/me');
+			const data = await response.json();
+			return data.data || [];
+		} catch (error) {
+			return []; // Fail silently to maintain compatibility
 		}
 	},
 );
@@ -196,6 +215,7 @@ const meetingsSlice = createSlice({
 			(state, action: PayloadAction<MeetingInterface[]>) => {
 				state.meetings = action.payload;
 				state.loading = false;
+				state.allMeetings = [...state.meetings, ...state.sharedMeetings];
 			},
 		);
 		builder.addCase(fetchMeetings.rejected, (state, action) => {
@@ -245,6 +265,17 @@ const meetingsSlice = createSlice({
 			// The undoDeleteMeeting action is dispatched in the thunk itself
 			// So we just need to update the loading state
 			state.loading = false;
+		});
+
+		builder.addCase(fetchSharedMeetings.fulfilled, (state, action) => {
+			state.sharedMeetings = action.payload.map((share: any) => ({
+				...share.meeting,
+				isShared: true,
+				sharedBy: share.sharedBy?.name || share.sharedBy?.email,
+				sharePermission: share.permission,
+				shareId: share.id,
+			}));
+			state.allMeetings = [...state.meetings, ...state.sharedMeetings];
 		});
 	},
 });
