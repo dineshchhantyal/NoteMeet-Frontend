@@ -4,7 +4,7 @@ import { db } from '@/lib/db';
 
 export async function GET(
 	request: Request,
-	{ params }: { params: { id: string } },
+	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
 		const user = await currentUser();
@@ -13,7 +13,7 @@ export async function GET(
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 		}
 
-		const meetingId = params.id;
+		const meetingId = (await params).id;
 
 		// Fetch the meeting to get actual participants if available
 		const meeting = await db?.meeting.findUnique({
@@ -34,9 +34,6 @@ export async function GET(
 			'Mike Johnson',
 			'Sarah Williams',
 		];
-
-		// Use meeting title to seed some randomness
-		const titleSeed = meeting.title?.length || 10;
 
 		// Generate dummy topic distribution
 		const keyTopics = [

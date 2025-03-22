@@ -2,29 +2,18 @@
 
 import {
 	Search,
-	Users,
 	X,
 	Calendar,
-	Clock,
 	CalendarCheck2,
 	Share2,
 	Users2,
-	Plus,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from '@/components/ui/tooltip';
+
 import { MeetingInterface } from '@/types';
 import { MeetingStatus } from '@/types/meeting';
 import { Skeleton } from '@/components/ui/skeleton';
-import { format, parseISO, isValid } from 'date-fns';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSearchTerm } from '@/lib/redux/features/meetings/meetingsSlice';
 import { RootState } from '@/lib/redux/store';
@@ -46,48 +35,6 @@ const BRAND = {
 	dark: '#0a4a4e',
 	darkMid: '#0d5559',
 	midTone: '#156469',
-};
-
-// Add these utility functions at the beginning of your component or outside
-const formatDate = (dateString: string) => {
-	try {
-		// Try to parse as ISO date first
-		const date = parseISO(dateString);
-		if (isValid(date)) {
-			return format(date, 'MMM d, yyyy'); // Format as "Jan 1, 2023"
-		}
-		// If it's already a formatted date string, return as is
-		return dateString;
-	} catch (error) {
-		console.error('Error formatting date:', error);
-		return dateString;
-	}
-};
-
-const formatTime = (timeString: string) => {
-	try {
-		// Check if timeString includes time with seconds (ISO format like 2023-10-15T14:30:00)
-		if (timeString.includes('T')) {
-			const date = parseISO(timeString);
-			if (isValid(date)) {
-				return format(date, 'h:mm a'); // Format as "2:30 PM"
-			}
-		}
-
-		// Handle time strings like "14:30"
-		if (timeString.includes(':')) {
-			const [hours, minutes] = timeString.split(':').map(Number);
-			const date = new Date();
-			date.setHours(hours, minutes);
-			return format(date, 'h:mm a'); // Format as "2:30 PM"
-		}
-
-		// Return as is if we can't format it
-		return timeString;
-	} catch (error) {
-		console.error('Error formatting time:', error);
-		return timeString;
-	}
 };
 
 interface AppSidebarProps {
@@ -136,10 +83,6 @@ export function AppSidebar({
 				MeetingStatus[meeting.status]
 					?.toLowerCase()
 					.includes(searchTerm.toLowerCase())),
-	);
-
-	const nextMeeting = meetings.find(
-		(meeting) => meeting.status === MeetingStatus.Scheduled,
 	);
 
 	return (
@@ -244,23 +187,4 @@ export function AppSidebar({
 			</div>
 		</div>
 	);
-}
-
-function getStatusBadgeStyle(status: MeetingStatus) {
-	switch (status) {
-		case MeetingStatus.Completed:
-			return 'bg-[#63d392]/80 text-white border-[#63d392]'; // Completed - primary green
-		case MeetingStatus.InProgress:
-			return 'bg-[#156469]/80 text-white border-[#156469]'; // In Progress - brand teal
-		case MeetingStatus.Scheduled:
-			return 'bg-[#fbbf24]/80 text-[#0a4a4e] border-[#fbbf24]'; // Scheduled - yellow
-		case MeetingStatus.Transcoding:
-			return 'bg-[#818cf8]/80 text-white border-[#818cf8]'; // Transcoding - indigo
-		case MeetingStatus.Transcring:
-			return 'bg-[#06b6d4]/80 text-white border-[#06b6d4]'; // Transcribing - cyan
-		case MeetingStatus.Cancelled:
-			return 'bg-[#ef4444]/80 text-white border-[#ef4444]'; // Cancelled - red
-		default:
-			return 'bg-gray-400/80 text-[#0a4a4e] border-gray-400'; // Default case
-	}
 }
