@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/collapsible';
 import { Search, Hourglass, Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { JSONValue } from 'ai';
 
 export function ToolInvocationPart({ part }: { part: ToolInvocationPartType }) {
 	const [isOpen, setIsOpen] = React.useState(false);
@@ -27,7 +28,7 @@ export function ToolInvocationPart({ part }: { part: ToolInvocationPartType }) {
 	};
 
 	// Format tool arguments for display
-	const formatArgs = (args: any) => {
+	const formatArgs = (args: JSONValue) => {
 		if (!args) return null;
 
 		return (

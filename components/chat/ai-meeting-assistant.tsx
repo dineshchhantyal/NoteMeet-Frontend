@@ -152,7 +152,7 @@ export function AIMeetingAssistant({ meeting }: AIMeetingAssistantProps) {
 
 	// First create extendedMessages (keep your existing processing code)
 
-	// @ts-ignore
+	// @ts-expect-error - TS doesn't know about the 'system' role
 	const extendedMessages: ExtendedChatMessage[] = messages
 		.filter((msg) => ['system', 'user', 'assistant'].includes(msg.role))
 		.map((msg) => {

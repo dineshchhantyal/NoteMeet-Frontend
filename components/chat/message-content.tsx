@@ -1,13 +1,6 @@
 // components/chat/MessageContent.tsx
 import React, { memo } from 'react';
-import {
-	ExtendedChatMessage,
-	TextPart as TextPartType,
-	ToolInvocationPart as ToolInvocationPartType,
-	ToolResultPart as ToolResultPartType,
-	ReasoningPart as ReasoningPartType,
-	SourcePart as SourcePartType,
-} from './types';
+import { ExtendedChatMessage } from './types';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeKatex from 'rehype-katex';

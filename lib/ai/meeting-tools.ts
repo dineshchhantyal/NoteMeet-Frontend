@@ -12,11 +12,19 @@ import {
 	extractPeopleMentioned,
 } from '@/lib/actions/meeting-actions';
 
-// Add these types at the top of your file
+// Replace the TranscriptSearchResult interface with this:
+interface WordMatch {
+	text: string;
+	start?: number;
+	end?: number;
+	confidence?: number;
+	speaker?: string | null;
+}
+
 interface TranscriptSearchResult {
 	text?: string;
-	words?: Array<any>;
-	[key: string]: any; // For any other properties
+	words?: Array<WordMatch>;
+	[key: string]: unknown; // Use unknown instead of any for index signature
 }
 
 /**

@@ -246,6 +246,7 @@ export async function POST(req: Request) {
 
 				// Attach target to the rule
 				const event = await eventBridgeClient.send(putTargetsCommand);
+				console.log('EventBridge rule created:', event);
 
 				// Update meeting with EventBridge and ECS details
 				await db?.meeting.update({

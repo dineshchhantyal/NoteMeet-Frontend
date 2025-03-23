@@ -20,8 +20,8 @@ export interface ToolInvocationPart extends BasePart {
 		step: number;
 		toolCallId: string;
 		toolName: string;
-		args: Record<string, any>;
-		result?: any;
+		args: Record<string, JsonValue>;
+		result?: JsonValue;
 		error?: string;
 	};
 }
@@ -30,7 +30,7 @@ export interface ToolResultPart extends BasePart {
 	type: 'tool-result';
 	toolResult: {
 		toolCallId: string;
-		result: any;
+		result: JsonValue;
 	};
 }
 
