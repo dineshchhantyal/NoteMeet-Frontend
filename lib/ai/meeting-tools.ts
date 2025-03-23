@@ -12,6 +12,13 @@ import {
 	extractPeopleMentioned,
 } from '@/lib/actions/meeting-actions';
 
+// Add these types at the top of your file
+interface TranscriptSearchResult {
+	text?: string;
+	words?: Array<any>;
+	[key: string]: any; // For any other properties
+}
+
 /**
  * Collection of AI tools for analyzing and extracting information from meeting data
  */
@@ -26,10 +33,56 @@ export const createMeetingTools = (meetingId: string) => ({
 			query: z.string().describe('The search query to find in the transcript'),
 		}),
 		execute: async ({ query }) => {
-			const lines = await searchTranscript(meetingId, query);
+			const result = await searchTranscript(meetingId, query);
 
-			if (lines.length === 0) return 'No matches found in the transcript.';
-			return lines.join('\n');
+			// If no matches found, return early
+			if (!result || (Array.isArray(result) && result.length === 0)) {
+				return 'No matches found in the transcript.';
+			}
+
+			// If the result is an array of strings (simple text matches)
+			if (Array.isArray(result)) {
+				if (result.length > 0 && typeof result[0] === 'string') {
+					// Return only up to 10 matches to avoid overwhelming responses
+					const limitedResults = result.slice(0, 10);
+					const remainingCount = result.length > 10 ? result.length - 10 : 0;
+
+					let response = limitedResults.join('\n\n');
+					if (remainingCount > 0) {
+						response += `\n\n...and ${remainingCount} more matches.`;
+					}
+
+					return response;
+				}
+				return 'Found matches in the transcript.';
+			}
+
+			// If it's an object with transcript data
+			if (result && typeof result === 'object') {
+				// Use a type assertion to help TypeScript
+				const typedResult = result as TranscriptSearchResult;
+
+				// Extract just a relevant portion of the text
+				const textContent =
+					typeof typedResult.text === 'string' ? typedResult.text : '';
+				if (textContent) {
+					const excerptLength = 500;
+					const textExcerpt =
+						textContent.length > excerptLength
+							? textContent.substring(0, excerptLength) + '...'
+							: textContent;
+
+					// Count word matches if available
+					const matchCount = Array.isArray(typedResult.words)
+						? typedResult.words.length
+						: 0;
+
+					return `Found ${matchCount} matches for "${query}" in the transcript.\n\nExcerpt:\n${textExcerpt}`;
+				}
+			}
+
+			// Fallback for other result formats
+			return `Found matches for "${query}" in the transcript. Use getMeetingTranscript tool for the full content.`;
 		},
 	}),
 
@@ -270,7 +323,7 @@ export const createMeetingTools = (meetingId: string) => ({
 				// MM/DD/YYYY or DD/MM/YYYY
 				/\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/g,
 				// Month Day, Year or Day Month Year
-				/\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{2,4}\b/gi,
+				/\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{2,4}\b/gi,
 				// Day of week
 				/\b(?:next|this|coming|following)\s+(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\b/gi,
 				// Relative dates

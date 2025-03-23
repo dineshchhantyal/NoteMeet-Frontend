@@ -84,37 +84,32 @@ export const MessageContent = memo(function MessageContent({
 	return (
 		<div className="prose dark:prose-invert prose-sm max-w-none space-y-4">
 			{message.parts.map((part, idx) => {
-				switch (part.type) {
-					case 'text':
-						return <TextPart key={`text-${idx}`} part={part as TextPartType} />;
-					case 'tool-invocation':
-						return (
-							<ToolInvocationPart
-								key={`tool-${idx}`}
-								part={part as ToolInvocationPartType}
-							/>
-						);
-					case 'tool-result':
-						return (
-							<ToolResultPart
-								key={`tool-result-${idx}`}
-								part={part as ToolResultPartType}
-							/>
-						);
-					case 'reasoning':
-						return (
-							<ReasoningPart
-								key={`reasoning-${idx}`}
-								part={part as ReasoningPartType}
-							/>
-						);
-					case 'source':
-						return (
-							<SourcePart key={`source-${idx}`} part={part as SourcePartType} />
-						);
-					default:
-						return null;
+				// Use type guards instead of casting
+				if (part.type === 'text') {
+					return <TextPart key={`text-${idx}`} part={part} />;
 				}
+
+				if (part.type === 'tool-invocation') {
+					return <ToolInvocationPart key={`tool-${idx}`} part={part} />;
+				}
+
+				if (part.type === 'tool-result') {
+					return <ToolResultPart key={`tool-result-${idx}`} part={part} />;
+				}
+
+				if (part.type === 'reasoning') {
+					return <ReasoningPart key={`reasoning-${idx}`} part={part} />;
+				}
+
+				if (part.type === 'source') {
+					return <SourcePart key={`source-${idx}`} part={part} />;
+				}
+
+				// Handle unknown types
+				console.warn(
+					`Unknown message part type: ${(part as { type: string }).type}`,
+				);
+				return null;
 			})}
 		</div>
 	);

@@ -151,7 +151,6 @@ export async function POST(req: Request) {
 
 		// Only schedule recording if meeting link is provided and meeting is in the future
 		if (meetingLink && duration && meetingDate > new Date()) {
-			console.log('Scheduling recording for meeting:', meeting.id);
 			try {
 				// Generate presigned URL for S3 upload
 				// Duration in minutes + 10 minutes buffer
@@ -247,7 +246,6 @@ export async function POST(req: Request) {
 
 				// Attach target to the rule
 				const event = await eventBridgeClient.send(putTargetsCommand);
-				console.log('EventBridge rule created:', event);
 
 				// Update meeting with EventBridge and ECS details
 				await db?.meeting.update({
@@ -258,10 +256,6 @@ export async function POST(req: Request) {
 						// We'll set ecsTaskId when the task actually runs, as we don't have it yet
 					},
 				});
-
-				console.log(
-					`Successfully scheduled recording for meeting ${meeting.id}`,
-				);
 
 				return NextResponse.json(
 					{

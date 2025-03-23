@@ -22,7 +22,6 @@ export function ToolResultPart({ part }: ToolResultPartProps) {
 		typeof result === 'object'
 			? JSON.stringify(result, null, 2)
 			: String(result);
-
 	return (
 		<div className="border border-[#63d392]/20 rounded-md overflow-hidden">
 			<Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full">

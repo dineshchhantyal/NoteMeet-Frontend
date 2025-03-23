@@ -56,16 +56,11 @@ export async function GET(req: NextRequest) {
 					summary.keyTopics.length > 0
 				) {
 					keyTopics = summary.keyTopics;
-					console.log('Found key topics in summary:', keyTopics);
-				} else {
-					console.log('No valid keyTopics found in summary');
 				}
 			} catch (error) {
 				console.error('Error parsing meeting summary:', error);
 				// Continue with default topics if parsing fails
 			}
-		} else {
-			console.log('No summary found for meeting');
 		}
 
 		// Select a subset of topics (3-5) based on meeting ID
@@ -85,13 +80,6 @@ export async function GET(req: NextRequest) {
 
 		// Ensure we always select at least 1 topic
 		const safeNumTopics = Math.max(1, numTopicsToSelect);
-
-		console.log(
-			'Topics available:',
-			keyTopics.length,
-			'Selecting:',
-			safeNumTopics,
-		);
 
 		// Select topics (take first N to keep it deterministic)
 		const meetingSpecificTopics = keyTopics.slice(0, safeNumTopics);
@@ -158,8 +146,6 @@ function generateTopicDistribution(
 	if (!topics || !Array.isArray(topics) || topics.length === 0) {
 		topics = ['General Discussion'];
 	}
-
-	console.log('Generating distribution for topics:', topics);
 
 	// Minimum percentage for any topic (5%)
 	const minPercentage = 5;

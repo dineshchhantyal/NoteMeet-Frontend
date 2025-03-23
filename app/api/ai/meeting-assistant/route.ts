@@ -55,7 +55,7 @@ When answering questions:
 				system: systemMessage,
 				messages: augmentedMessages,
 				tools: meetingTools,
-				maxSteps: 5,
+				maxSteps: 3,
 			});
 
 			return stream.toDataStreamResponse();

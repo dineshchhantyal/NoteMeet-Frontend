@@ -83,10 +83,6 @@ export async function GET(req: NextRequest) {
 							}),
 						};
 					});
-
-					console.log(
-						`Generated ${actionItems.length} action items from meeting summary`,
-					);
 				}
 			} catch (error) {
 				console.error('Error parsing meeting summary:', error);
@@ -95,8 +91,6 @@ export async function GET(req: NextRequest) {
 
 		// If we didn't get action items from the summary, create mock data
 		if (actionItems.length === 0) {
-			console.log('No action items in summary, generating mock data');
-
 			// Create stable "random" number generator based on meeting ID
 			const getNumberFromId = (position: number, max: number) => {
 				const char = meetingId.charCodeAt(position % meetingId.length);

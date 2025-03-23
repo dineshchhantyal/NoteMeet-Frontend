@@ -268,16 +268,8 @@ export function TranscriptViewer({
 		});
 	};
 
-	// Format timestamp from seconds to MM:SS
-	const formatTime = (seconds: number) => {
-		const minutes = Math.floor(seconds / 60);
-		const remainingSeconds = Math.floor(seconds % 60);
-		return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-	};
-
 	// Add a click handler to transcript segments
 	const handleSegmentClick = (startTime: number) => {
-		console.log('Segment clicked:', startTime);
 		if (onSegmentClick) {
 			onSegmentClick(startTime / 1000);
 		}

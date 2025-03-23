@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { useChat } from 'ai/react';
+import { useChat } from '@ai-sdk/react';
 import { Meeting } from '@/types/meeting';
 import {
 	AlertDialog,
@@ -151,10 +151,24 @@ export function AIMeetingAssistant({ meeting }: AIMeetingAssistantProps) {
 	}, [searchVisible]);
 
 	// First create extendedMessages (keep your existing processing code)
+
+	// @ts-ignore
 	const extendedMessages: ExtendedChatMessage[] = messages
 		.filter((msg) => ['system', 'user', 'assistant'].includes(msg.role))
 		.map((msg) => {
 			const timestamp = msg.createdAt || new Date();
+			const parts =
+				msg.parts?.map((part) => ({
+					...part,
+					content:
+						part.type === 'text'
+							? part.text
+							: part.type === 'reasoning'
+								? part.reasoning
+								: part.type === 'tool-invocation'
+									? JSON.stringify(part.toolInvocation)
+									: '',
+				})) || [];
 
 			return {
 				id:
@@ -163,7 +177,7 @@ export function AIMeetingAssistant({ meeting }: AIMeetingAssistantProps) {
 				role: msg.role as 'system' | 'user' | 'assistant',
 				content: msg.content,
 				createdAt: timestamp instanceof Date ? timestamp : new Date(timestamp),
-				parts: [{ type: 'text' as const, content: msg.content }],
+				parts: parts,
 			};
 		});
 
