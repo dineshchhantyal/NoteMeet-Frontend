@@ -43,7 +43,7 @@ export function TextPart({ part }: TextPartProps) {
 					),
 				}}
 			>
-				{part.content}
+				{part.text}
 			</Markdown>
 		</div>
 	);

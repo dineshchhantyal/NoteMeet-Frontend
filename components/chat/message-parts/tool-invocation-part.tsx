@@ -44,33 +44,40 @@ export function ToolInvocationPart({ part }: { part: ToolInvocationPartType }) {
 	};
 
 	// Format result for different types of responses
-	const formatResult = (result: any) => {
+	const formatResult = (result: JSONValue) => {
 		if (!result) return null;
 
 		if (typeof result === 'string') {
 			return <div className="text-white mt-2">{result}</div>;
 		}
 
-		// Handle specific tool results
-		if (toolInvocation.toolName === 'searchTranscriptTool' && result.text) {
-			// For transcript searches, show a summary instead of full response
-			return (
-				<div className="mt-2">
-					<div className="text-xs p-2 bg-[#0a4a4e] rounded overflow-x-auto text-white">
-						<div className="font-medium mb-2">Search Results:</div>
-						<div className="truncate-text">
-							{result.text.length > 300
-								? result.text.substring(0, 300) + '...'
-								: result.text}
-						</div>
-						{result.words && (
-							<div className="mt-2 text-gray-400 text-xs">
-								Found {result.words.length} matching segments
+		// Use type guard to ensure result is an object before accessing properties
+		if (typeof result === 'object' && result !== null) {
+			// Handle specific tool results
+			if (
+				toolInvocation.toolName === 'searchTranscriptTool' &&
+				'text' in result &&
+				typeof result.text === 'string'
+			) {
+				// For transcript searches, show a summary instead of full response
+				return (
+					<div className="mt-2">
+						<div className="text-xs p-2 bg-[#0a4a4e] rounded overflow-x-auto text-white">
+							<div className="font-medium mb-2">Search Results:</div>
+							<div className="truncate-text">
+								{result.text.length > 300
+									? result.text.substring(0, 300) + '...'
+									: result.text}
 							</div>
-						)}
+							{'words' in result && Array.isArray(result.words) && (
+								<div className="mt-2 text-gray-400 text-xs">
+									Found {result.words.length} matching segments
+								</div>
+							)}
+						</div>
 					</div>
-				</div>
-			);
+				);
+			}
 		}
 
 		// For other object results, limit the size
@@ -157,7 +164,7 @@ export function ToolInvocationPart({ part }: { part: ToolInvocationPartType }) {
 				{toolInvocation.state === 'result' && (
 					<div>
 						<div className="text-gray-400 mb-1">Result:</div>
-						{formatResult(toolInvocation.result)}
+						{toolInvocation.result && formatResult(toolInvocation.result)}
 					</div>
 				)}
 

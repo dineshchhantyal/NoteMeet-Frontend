@@ -15,7 +15,11 @@ interface ToolResultPartProps {
 
 export function ToolResultPart({ part }: ToolResultPartProps) {
 	const [isOpen, setIsOpen] = React.useState(false);
-	const { toolName, result, success } = part;
+	const { toolInvocation } = part;
+	const { toolName, result, state } = toolInvocation;
+
+	// Determine success based on state
+	const success = state === 'result';
 
 	// Format the result for display
 	const formattedResult =

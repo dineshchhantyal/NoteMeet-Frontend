@@ -1,3 +1,5 @@
+import { JSONValue } from 'ai';
+
 // Define JSON value types to replace 'any'
 type JsonValue = string | number | boolean | null | JsonObject | JsonArray;
 type JsonObject = { [key: string]: JsonValue };
@@ -32,6 +34,11 @@ export interface ToolResultPart extends BasePart {
 		toolCallId: string;
 		result: JsonValue;
 	};
+	toolInvocation: {
+		toolName: string;
+		result: JSONValue;
+		state: 'result' | string;
+	};
 }
 
 export interface ReasoningPart extends BasePart {
@@ -41,11 +48,8 @@ export interface ReasoningPart extends BasePart {
 
 export interface SourcePart extends BasePart {
 	type: 'source';
-	source: {
-		title: string;
-		url?: string;
-		content?: string;
-	};
+	citation: string;
+	url?: string; // Optional since your component checks if it exists
 }
 
 // Union type for all message parts

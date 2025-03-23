@@ -13,7 +13,7 @@ export function ReasoningPart({ part }: ReasoningPartProps) {
 					<Brain className="h-4 w-4 mr-1" />
 					<p className="text-xs">Reasoning</p>
 				</div>
-				<div className="text-gray-200 text-sm italic">{part.content}</div>
+				<div className="text-gray-200 text-sm italic">{part.reasoning}</div>
 			</div>
 		</div>
 	);
