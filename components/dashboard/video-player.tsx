@@ -1,14 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Pause, Play, SkipBack, SkipForward } from 'lucide-react';
-// import { Button } from '@/components/ui/button'
-// import { Play, Pause, SkipBack, SkipForward } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react';
-import { MediaPlayer, MediaProvider } from '@vidstack/react';
 import '@vidstack/react/player/styles/base.css';
 
-interface VideoPlayerProps extends React.HTMLAttributes<HTMLVideoElement> {
+interface VideoPlayerProps {
 	sources: { src: { url: string; expiresAt: string }; type: string }[];
+	seekToTime?: number | null;
+	onTimeUpdate?: () => void;
 	showControls?: boolean;
 }
 
@@ -154,24 +153,38 @@ export function VideoPlayer2({
 
 export function VideoPlayer({
 	sources,
-	showControls = true,
+	seekToTime,
+	onTimeUpdate,
 }: VideoPlayerProps) {
-	const [isPlaying, setIsPlaying] = useState(false);
-	console.log(isPlaying);
+	const videoRef = useRef<HTMLVideoElement>(null);
+
+	// Effect to handle seeking when the seekToTime prop changes
+	useEffect(() => {
+		if (seekToTime !== null && seekToTime !== undefined && videoRef.current) {
+			videoRef.current.currentTime = seekToTime;
+			videoRef.current
+				.play()
+				.catch((err) => console.error('Could not play video:', err));
+
+			// Call the onTimeUpdate callback to reset the seekToTime state
+			if (onTimeUpdate) onTimeUpdate();
+		}
+	}, [seekToTime, onTimeUpdate]);
 
 	return (
-		<MediaPlayer
-			title="Sprite Fight"
-			src={sources[0].src.url}
-			poster="https://vidstack.io/assets/img/sprite-fight-poster.jpg"
-			controls={showControls}
-			autoplay={false}
-			playsinline
-			loop={false}
-			onPlay={() => setIsPlaying(true)}
-			onPause={() => setIsPlaying(false)}
-		>
-			<MediaProvider />
-		</MediaPlayer>
+		<div className="aspect-video relative rounded-lg overflow-hidden bg-black">
+			<video
+				ref={videoRef}
+				className="w-full h-full"
+				controls
+				playsInline
+				preload="metadata"
+			>
+				{sources.map((source, index) => (
+					<source key={index} src={source.src.url} type={source.type} />
+				))}
+				Your browser does not support the video tag.
+			</video>
+		</div>
 	);
 }

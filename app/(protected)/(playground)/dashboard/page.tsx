@@ -62,6 +62,7 @@ export default function DashboardPage() {
 	const [transcript, setTranscript] = useState<VideoTranscriptResponse | null>(
 		null,
 	);
+	const [currentVideoTime, setCurrentVideoTime] = useState<number | null>(null);
 
 	// Fetch meetings on component mount
 	useEffect(() => {
@@ -177,7 +178,11 @@ export default function DashboardPage() {
 										</div>
 									</VideoPlayerPlaceholder>
 								) : sources.length > 0 ? (
-									<VideoPlayer sources={sources} />
+									<VideoPlayer
+										sources={sources}
+										seekToTime={currentVideoTime}
+										onTimeUpdate={() => setCurrentVideoTime(null)}
+									/>
 								) : (
 									<VideoUploader
 										meeting={selectedMeeting}
@@ -242,7 +247,10 @@ export default function DashboardPage() {
 												<p className="text-gray-300">Loading transcript...</p>
 											</div>
 										) : (
-											<TranscriptViewer transcript={transcript ?? null} />
+											<TranscriptViewer
+												transcript={transcript ?? null}
+												onSegmentClick={(time) => setCurrentVideoTime(time)}
+											/>
 										)}
 									</div>
 								</TabsContent>

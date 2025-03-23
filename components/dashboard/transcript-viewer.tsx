@@ -51,9 +51,13 @@ interface Sentence {
 
 interface TranscriptViewerProps {
 	transcript: VideoTranscriptResponse | null;
+	onSegmentClick?: (timeInSeconds: number) => void;
 }
 
-export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
+export function TranscriptViewer({
+	transcript,
+	onSegmentClick,
+}: TranscriptViewerProps) {
 	const [searchTerm, setSearchTerm] = useState('');
 	const [showConfidence, setShowConfidence] = useState(false);
 	const [currentResultIndex, setCurrentResultIndex] = useState(0);
@@ -264,6 +268,21 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 		});
 	};
 
+	// Format timestamp from seconds to MM:SS
+	const formatTime = (seconds: number) => {
+		const minutes = Math.floor(seconds / 60);
+		const remainingSeconds = Math.floor(seconds % 60);
+		return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+	};
+
+	// Add a click handler to transcript segments
+	const handleSegmentClick = (startTime: number) => {
+		console.log('Segment clicked:', startTime);
+		if (onSegmentClick) {
+			onSegmentClick(startTime / 1000);
+		}
+	};
+
 	if (!transcript) {
 		return (
 			<div className="bg-[#156469]/30 backdrop-blur-sm border border-[#63d392]/20 p-6 rounded-xl text-white text-center">
@@ -458,7 +477,9 @@ export function TranscriptViewer({ transcript }: TranscriptViewerProps) {
 									currentResultIndex === index &&
 										searchTerm &&
 										'ring-2 ring-[#63d392]/50',
+									'pb-3 border-b border-[#63d392]/10 last:border-0 transition-colors hover:bg-[#156469]/50 p-2 rounded',
 								)}
+								onClick={() => handleSegmentClick(sentence.startTime)}
 							>
 								<div className="flex flex-col items-center space-y-1 min-w-[60px] mr-3 justify-center">
 									<TooltipProvider>
