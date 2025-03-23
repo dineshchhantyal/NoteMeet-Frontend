@@ -4,7 +4,7 @@ import { streamText } from 'ai';
 import { google } from '@ai-sdk/google';
 import {
 	getMeetingById,
-	getMeetingTranscript,
+	getMeetingTranscription,
 } from '@/lib/actions/meeting-actions';
 
 export async function POST(req: NextRequest) {
@@ -20,8 +20,6 @@ export async function POST(req: NextRequest) {
 
 		// Fetch real meeting data from the database
 		const meetingData = await fetchMeetingData(meetingId);
-
-		console.log('Fetched meeting data:', meetingData);
 
 		try {
 			const systemMessage = `You are NoteMeet's AI Meeting Assistant, a helpful AI that answers questions about meetings.
@@ -40,7 +38,8 @@ When answering questions:
 - Don't make up information that isn't in the transcript or summary
 - Format your responses using Markdown for better readability
 - Use bullet points or numbered lists when appropriate`;
-			const meetingAssistantModel = google('gemini-1.5-pro', {});
+
+			const meetingAssistantModel = google('gemini-2.0-flash-001', {});
 
 			const augmentedMessages = [
 				{ role: 'system', content: systemMessage },
@@ -81,7 +80,7 @@ async function fetchMeetingData(meetingId: string) {
 		const meeting = await getMeetingById(meetingId);
 
 		if (meeting) {
-			const transcript = await getMeetingTranscript(meetingId);
+			const transcript = await getMeetingTranscription(meetingId);
 			return {
 				title: meeting.title,
 				transcript: transcript,
@@ -94,8 +93,6 @@ async function fetchMeetingData(meetingId: string) {
 		console.error('Error fetching real meeting data:', error);
 	}
 
-	// Fallback to mock data if real data fetch fails
-	console.warn('Using mock meeting data as fallback');
 	return {
 		title: 'Quarterly Planning Session',
 		transcript: 'This is a sample transcript of the meeting...',

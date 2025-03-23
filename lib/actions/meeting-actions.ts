@@ -130,6 +130,62 @@ export async function getMeetingTranscript(
 }
 
 /**
+ * Get meeting transcription string
+ * @param meetingId
+ * @returns
+ */
+
+export async function getMeetingTranscription(
+	meetingId: string,
+): Promise<string | null> {
+	try {
+		const meeting = await db?.meeting.findUnique({
+			where: { id: meetingId },
+			select: { transcriptKey: true },
+		});
+
+		if (!meeting?.transcriptKey) return null;
+
+		// Fetch directly from S3 instead of using API
+		const transcript =
+			(await getObject(
+				'recordings/transcript/' + meeting.transcriptKey,
+				S3BucketType.MAIN_BUCKET,
+			)) ?? '';
+
+		// Handle JSON transcripts
+		if (typeof transcript === 'string' && transcript.startsWith('{')) {
+			try {
+				const parsedTranscript = JSON.parse(transcript);
+				if (
+					parsedTranscript.results &&
+					Array.isArray(parsedTranscript.results)
+				) {
+					return parsedTranscript.results
+						.map(
+							(segment: {
+								speaker_label?: string;
+								alternatives?: { transcript?: string }[];
+							}) => {
+								const text = segment.alternatives?.[0]?.transcript || '';
+								return text;
+							},
+						)
+						.join('\n');
+				}
+			} catch (e) {
+				console.warn('Error parsing transcript:', e);
+			}
+		}
+
+		return transcript;
+	} catch (error) {
+		console.error('Error fetching transcript from S3:', error);
+		return null;
+	}
+}
+
+/**
  * Get meeting summary
  */
 export async function getMeetingSummary(
