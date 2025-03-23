@@ -17,7 +17,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSearchTerm } from '@/lib/redux/features/meetings/meetingsSlice';
 import { RootState } from '@/lib/redux/store';
-import { SharedMeetingCard } from '../meetings/shared-meeting-card';
+import {
+	MeetingCard,
+	SharedMeetingCard,
+} from '../meetings/shared-meeting-card';
 
 // Add this interface near the top of your file
 interface SharedMeetingInterface extends MeetingInterface {
@@ -144,7 +147,7 @@ export function AppSidebar({
 						) : (
 							<div className="space-y-2">
 								{filteredOwnedMeetings.map((meeting) => (
-									<SharedMeetingCard
+									<MeetingCard
 										key={meeting.id}
 										meeting={meeting}
 										isSelected={selectedMeeting?.id === meeting.id}

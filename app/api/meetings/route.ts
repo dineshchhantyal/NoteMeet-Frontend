@@ -123,7 +123,7 @@ export async function POST(req: Request) {
 				meetingLink: meetingLink || '',
 				userId: userIdString,
 				participants: {
-					create: participants.map((participant: string) => ({
+					create: participants?.map((participant: string) => ({
 						email: participant,
 					})),
 				},
@@ -289,7 +289,7 @@ export async function POST(req: Request) {
 		}
 
 		// create MeetingShare for each participant
-		for (const participant of participants) {
+		for (const participant of participants || []) {
 			const token = crypto.randomUUID();
 			await db?.meetingShare.create({
 				data: {

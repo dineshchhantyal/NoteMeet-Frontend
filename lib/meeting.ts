@@ -9,7 +9,7 @@ export async function checkMeetingUserAuthorization(
 		throw new Error('Invalid meeting ID');
 	}
 
-	if (!user) {
+	if (!user || !user.email) {
 		throw new Error('Unauthorized');
 	}
 
@@ -18,8 +18,29 @@ export async function checkMeetingUserAuthorization(
 		include: { participants: true },
 	});
 
-	if (!meeting || meeting.userId !== user.id) {
-		throw new Error('Access denied');
+	if (!meeting) {
+		throw new Error('Meeting not found');
+	}
+
+	// Check if user is the owner
+	if (meeting.userId === user.id) {
+		return meeting; // Owner has full access
+	}
+
+	// If not owner, check for shares - IMPORTANT: add await here
+	const shared = await db?.meetingShare.findFirst({
+		where: {
+			meetingId,
+			email: user.email,
+			status: 'accepted', // Only consider accepted shares
+		},
+	});
+
+	console.log({ meeting, shared });
+
+	// Only throw access denied if user is not owner AND has no share
+	if (!shared) {
+		throw new Error('Access denied - This meeting is not shared with you');
 	}
 
 	return meeting;

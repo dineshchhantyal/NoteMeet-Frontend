@@ -29,7 +29,6 @@ export async function GET(
 							some: {
 								email: user.email,
 								permission: { in: ['EDIT', 'ADMIN'] },
-								status: 'accepted',
 							},
 						},
 					},

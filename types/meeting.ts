@@ -15,7 +15,7 @@ export interface Meeting {
 	description?: string;
 	provider: 'zoom' | 'teams' | 'google-meet';
 	meetingLink: string;
-	participants: string[];
+	participants?: string[];
 	notifications: {
 		sendTranscript: boolean;
 		sendSummary: boolean;

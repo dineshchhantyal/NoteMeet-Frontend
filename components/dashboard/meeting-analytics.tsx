@@ -43,7 +43,7 @@ interface MeetingAnalyticsProps {
 }
 
 export function MeetingAnalytics({ meeting }: MeetingAnalyticsProps) {
-	const [expanded, setExpanded] = useState(false);
+	const [expanded, setExpanded] = useState(true);
 	const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
 	const [loading, setLoading] = useState(true);
 
@@ -194,21 +194,21 @@ export function MeetingAnalytics({ meeting }: MeetingAnalyticsProps) {
 						</div>
 					) : (
 						<div className="p-4">
-							<Tabs defaultValue="participants" className="w-full">
+							<Tabs defaultValue="topics" className="w-full">
 								<TabsList className="w-full bg-[#0d5559]/50 p-1 rounded-lg">
-									<TabsTrigger
-										value="participants"
-										className="flex-1 data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-white"
-									>
-										<UserCheck className="h-4 w-4 mr-2" />
-										Participation
-									</TabsTrigger>
 									<TabsTrigger
 										value="topics"
 										className="flex-1 data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-white"
 									>
 										<PieChart className="h-4 w-4 mr-2" />
 										Topics
+									</TabsTrigger>
+									<TabsTrigger
+										value="participants"
+										className="flex-1 data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-white"
+									>
+										<UserCheck className="h-4 w-4 mr-2" />
+										Participation
 									</TabsTrigger>
 								</TabsList>
 

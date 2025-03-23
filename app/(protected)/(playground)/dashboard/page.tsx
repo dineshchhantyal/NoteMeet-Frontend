@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import {
 	Menu,
 	FileText,
-	VideoIcon,
 	FileBarChart2,
 	Loader2,
 	MessageSquare,
@@ -38,6 +37,7 @@ import { AIMeetingAssistant } from '@/components/chat/ai-meeting-assistant';
 import { MeetingAnalytics } from '@/components/dashboard/meeting-analytics';
 import { VideoPlayerPlaceholder } from '@/components/dashboard/video-player-placeholder';
 import { NewMeetingDialog } from '@/components/dashboard/new-meeting-dialog';
+import { VideoUploader } from '@/components/dashboard/video-uploader';
 
 // Types
 import { MeetingInterface } from '@/types';
@@ -176,19 +176,31 @@ export default function DashboardPage() {
 											<p className="text-gray-200">Loading video...</p>
 										</div>
 									</VideoPlayerPlaceholder>
-								) : !sources.length ? (
-									<VideoPlayerPlaceholder>
-										<div className="flex flex-col items-center justify-center p-8">
-											<div className="bg-[#0d5559]/70 p-4 rounded-full mb-4">
-												<VideoIcon className="h-8 w-8 text-[#63d392]/80" />
-											</div>
-											<p className="text-gray-200">
-												Video is processing or unavailable
-											</p>
-										</div>
-									</VideoPlayerPlaceholder>
-								) : (
+								) : sources.length > 0 ? (
 									<VideoPlayer sources={sources} />
+								) : (
+									<VideoUploader
+										meeting={selectedMeeting}
+										onUploadComplete={() => {
+											// Refetch video URLs when upload completes
+											const fetchVideoUrl = async () => {
+												setLoadingVideo(true);
+												try {
+													const response = await fetch(
+														`/api/meetings/${selectedMeeting.id}/presigned-url`,
+													);
+													const data = await response.json();
+													setSources(data.sources);
+												} catch (error) {
+													console.error('Error fetching video url:', error);
+												} finally {
+													setLoadingVideo(false);
+												}
+											};
+
+											fetchVideoUrl();
+										}}
+									/>
 								)}
 							</div>
 

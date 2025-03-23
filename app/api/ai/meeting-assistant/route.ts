@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 		try {
 			const systemMessage = `You are NoteMeet's AI Meeting Assistant, a helpful AI that answers questions about meetings.
 You're currently discussing a meeting called "${meetingData.title}" from ${meetingData.date}.
-The meeting had these participants: ${meetingData.participants.join(', ')}.
+The meeting had these participants: ${meetingData.participants?.join(', ')}.
 
 This is the complete information about the meeting:
 - ${JSON.stringify(meetingData, null, 2)}
