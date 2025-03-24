@@ -106,9 +106,13 @@ export async function POST(req: Request) {
 		} = body;
 
 		if (user.email) {
-			await sendMeetingReminderEmail(user.email, 'meetingId', 'token');
-			for (const participant of participants || []) {
-				await sendMeetingInviteEmail(participant, 'meetingId', 'token');
+			try {
+				await sendMeetingReminderEmail(user.email, 'meetingId', 'token');
+				for (const participant of participants || []) {
+					await sendMeetingInviteEmail(participant, 'meetingId', 'token');
+				}
+			} catch (error) {
+				console.error('Error sending email:', error);
 			}
 		}
 		// Validate required fields

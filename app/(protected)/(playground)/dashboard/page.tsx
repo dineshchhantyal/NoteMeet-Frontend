@@ -38,6 +38,7 @@ import { MeetingAnalytics } from '@/components/dashboard/meeting-analytics';
 import { VideoPlayerPlaceholder } from '@/components/dashboard/video-player-placeholder';
 import { NewMeetingDialog } from '@/components/dashboard/new-meeting-dialog';
 import { VideoUploader } from '@/components/dashboard/video-uploader';
+import { SubscriptionPanel } from '@/components/dashboard/subscription-panel';
 
 // Types
 import { MeetingInterface } from '@/types';
@@ -161,121 +162,130 @@ export default function DashboardPage() {
 
 				{selectedMeeting ? (
 					<main className="flex flex-1 overflow-hidden">
-						<div className="flex-1 overflow-auto p-4 md:p-6 space-y-6">
-							<MeetingInfo
-								meeting={selectedMeeting}
-								onMeetingDelete={onMeetingDelete}
-							/>
-
-							<div className="bg-[#156469]/30 backdrop-blur-sm rounded-xl border border-[#63d392]/20 p-4 overflow-hidden transition-all shadow-md">
-								{loadingVideo ? (
-									<VideoPlayerPlaceholder>
-										<div className="flex flex-col items-center justify-center p-8">
-											<div className="bg-[#0d5559]/70 p-4 rounded-full mb-4 animate-pulse">
-												<Loader2 className="h-8 w-8 text-[#63d392]/80 animate-spin" />
-											</div>
-											<p className="text-gray-200">Loading video...</p>
-										</div>
-									</VideoPlayerPlaceholder>
-								) : sources.length > 0 ? (
-									<VideoPlayer
-										sources={sources}
-										seekToTime={currentVideoTime}
-										onTimeUpdate={() => setCurrentVideoTime(null)}
-									/>
-								) : (
-									<VideoUploader
+						<div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+							<div className="md:col-span-8">
+								<div className="flex-1 overflow-auto p-4 md:p-6 space-y-6">
+									<MeetingInfo
 										meeting={selectedMeeting}
-										onUploadComplete={() => {
-											// Refetch video URLs when upload completes
-											const fetchVideoUrl = async () => {
-												setLoadingVideo(true);
-												try {
-													const response = await fetch(
-														`/api/meetings/${selectedMeeting.id}/presigned-url`,
-													);
-													const data = await response.json();
-													setSources(data.sources);
-												} catch (error) {
-													console.error('Error fetching video url:', error);
-												} finally {
-													setLoadingVideo(false);
-												}
-											};
-
-											fetchVideoUrl();
-										}}
+										onMeetingDelete={onMeetingDelete}
 									/>
-								)}
-							</div>
 
-							<Tabs defaultValue="transcript" className="w-full">
-								<TabsList className="w-full justify-start bg-[#0d5559]/80 p-1 rounded-lg shadow-inner">
-									<TabsTrigger
-										value="transcript"
-										className="flex-1 data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-white hover:bg-[#156469]/50 transition-colors"
-									>
-										<FileText className="h-4 w-4 mr-2" />
-										Transcript
-									</TabsTrigger>
-									<TabsTrigger
-										value="summary"
-										className="flex-1 data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-white hover:bg-[#156469]/50 transition-colors"
-									>
-										<FileBarChart2 className="h-4 w-4 mr-2" />
-										Summary
-									</TabsTrigger>
-									<TabsTrigger
-										value="ai-assistant"
-										className="flex-1 data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-white hover:bg-[#156469]/50 transition-colors"
-									>
-										<MessageSquare className="h-4 w-4 mr-2" />
-										AI Assistant
-									</TabsTrigger>
-								</TabsList>
-
-								<TabsContent value="transcript" className="mt-4">
-									<div
-										className={cn(
-											'bg-[#156469]/30 backdrop-blur-sm rounded-xl border border-[#63d392]/20 transition-all shadow-md',
-											loadingTranscript && 'animate-pulse',
-										)}
-									>
-										{loadingTranscript ? (
-											<div className="flex flex-col items-center justify-center py-8">
-												<Loader2 className="h-8 w-8 text-[#63d392]/60 animate-spin mb-2" />
-												<p className="text-gray-300">Loading transcript...</p>
-											</div>
+									<div className="bg-[#156469]/30 backdrop-blur-sm rounded-xl border border-[#63d392]/20 p-4 overflow-hidden transition-all shadow-md">
+										{loadingVideo ? (
+											<VideoPlayerPlaceholder>
+												<div className="flex flex-col items-center justify-center p-8">
+													<div className="bg-[#0d5559]/70 p-4 rounded-full mb-4 animate-pulse">
+														<Loader2 className="h-8 w-8 text-[#63d392]/80 animate-spin" />
+													</div>
+													<p className="text-gray-200">Loading video...</p>
+												</div>
+											</VideoPlayerPlaceholder>
+										) : sources.length > 0 ? (
+											<VideoPlayer
+												sources={sources}
+												seekToTime={currentVideoTime}
+												onTimeUpdate={() => setCurrentVideoTime(null)}
+											/>
 										) : (
-											<TranscriptViewer
-												transcript={transcript ?? null}
-												onSegmentClick={(time) => setCurrentVideoTime(time)}
+											<VideoUploader
+												meeting={selectedMeeting}
+												onUploadComplete={() => {
+													// Refetch video URLs when upload completes
+													const fetchVideoUrl = async () => {
+														setLoadingVideo(true);
+														try {
+															const response = await fetch(
+																`/api/meetings/${selectedMeeting.id}/presigned-url`,
+															);
+															const data = await response.json();
+															setSources(data.sources);
+														} catch (error) {
+															console.error('Error fetching video url:', error);
+														} finally {
+															setLoadingVideo(false);
+														}
+													};
+
+													fetchVideoUrl();
+												}}
 											/>
 										)}
 									</div>
-								</TabsContent>
 
-								<TabsContent value="summary" className="mt-4">
-									<div className="bg-[#156469]/30 backdrop-blur-sm rounded-xl border border-[#63d392]/20 transition-all shadow-md">
-										<SummarySection
-											summary={
-												selectedMeeting?.summary
-													? JSON.parse(selectedMeeting.summary as string)
-													: null
-											}
-											isLoading={loadingTranscript}
-										/>
+									<Tabs defaultValue="transcript" className="w-full">
+										<TabsList className="w-full justify-start bg-[#0d5559]/80 p-1 rounded-lg shadow-inner">
+											<TabsTrigger
+												value="transcript"
+												className="flex-1 data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-white hover:bg-[#156469]/50 transition-colors"
+											>
+												<FileText className="h-4 w-4 mr-2" />
+												Transcript
+											</TabsTrigger>
+											<TabsTrigger
+												value="summary"
+												className="flex-1 data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-white hover:bg-[#156469]/50 transition-colors"
+											>
+												<FileBarChart2 className="h-4 w-4 mr-2" />
+												Summary
+											</TabsTrigger>
+											<TabsTrigger
+												value="ai-assistant"
+												className="flex-1 data-[state=active]:bg-[#63d392] data-[state=active]:text-[#0a4a4e] text-white hover:bg-[#156469]/50 transition-colors"
+											>
+												<MessageSquare className="h-4 w-4 mr-2" />
+												AI Assistant
+											</TabsTrigger>
+										</TabsList>
+
+										<TabsContent value="transcript" className="mt-4">
+											<div
+												className={cn(
+													'bg-[#156469]/30 backdrop-blur-sm rounded-xl border border-[#63d392]/20 transition-all shadow-md',
+													loadingTranscript && 'animate-pulse',
+												)}
+											>
+												{loadingTranscript ? (
+													<div className="flex flex-col items-center justify-center py-8">
+														<Loader2 className="h-8 w-8 text-[#63d392]/60 animate-spin mb-2" />
+														<p className="text-gray-300">
+															Loading transcript...
+														</p>
+													</div>
+												) : (
+													<TranscriptViewer
+														transcript={transcript ?? null}
+														onSegmentClick={(time) => setCurrentVideoTime(time)}
+													/>
+												)}
+											</div>
+										</TabsContent>
+
+										<TabsContent value="summary" className="mt-4">
+											<div className="bg-[#156469]/30 backdrop-blur-sm rounded-xl border border-[#63d392]/20 transition-all shadow-md">
+												<SummarySection
+													summary={
+														selectedMeeting?.summary
+															? JSON.parse(selectedMeeting.summary as string)
+															: null
+													}
+													isLoading={loadingTranscript}
+												/>
+											</div>
+										</TabsContent>
+
+										<TabsContent value="ai-assistant" className="mt-4">
+											<AIMeetingAssistant meeting={selectedMeeting} />
+										</TabsContent>
+									</Tabs>
+
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+										<ActionItemsTracker meeting={selectedMeeting} />
+										<MeetingAnalytics meeting={selectedMeeting} />
 									</div>
-								</TabsContent>
-
-								<TabsContent value="ai-assistant" className="mt-4">
-									<AIMeetingAssistant meeting={selectedMeeting} />
-								</TabsContent>
-							</Tabs>
-
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-								<ActionItemsTracker meeting={selectedMeeting} />
-								<MeetingAnalytics meeting={selectedMeeting} />
+								</div>
+							</div>
+							<div className="md:col-span-4">
+								<SubscriptionPanel />
 							</div>
 						</div>
 
