@@ -10,7 +10,10 @@ import {
 	PutRuleCommand,
 	PutTargetsCommand,
 } from '@aws-sdk/client-eventbridge';
-import { sendMeetingInviteEmail } from '@/lib/mail';
+import {
+	sendMeetingInviteEmail,
+	sendMeetingReminderEmail,
+} from '@/lib/sesemail';
 
 // AWS Configuration for EventBridge - using SDK v3
 const eventBridgeClient = new EventBridgeClient({
@@ -102,6 +105,12 @@ export async function POST(req: Request) {
 			notifications,
 		} = body;
 
+		if (user.email) {
+			await sendMeetingReminderEmail(user.email, 'meetingId', 'token');
+			for (const participant of participants || []) {
+				await sendMeetingInviteEmail(participant, 'meetingId', 'token');
+			}
+		}
 		// Validate required fields
 		if (!meetingLink && provider) {
 			return NextResponse.json(

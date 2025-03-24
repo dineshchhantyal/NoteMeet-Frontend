@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { z } from 'zod';
 import { currentUser } from '@/lib/auth';
-import { sendMeetingInviteEmail } from '@/lib/mail';
+import { sendMeetingInviteEmail } from '@/lib/sesemail';
 
 // Get all shares for a meeting
 export async function GET(
