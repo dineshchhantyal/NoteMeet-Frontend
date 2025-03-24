@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import {
 	Card,
@@ -20,7 +21,9 @@ import {
 	VideoIcon,
 	AlertCircle,
 	Loader2,
+	CreditCard,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface SubscriptionPlan {
 	id: string;
@@ -50,32 +53,79 @@ interface SubscriptionData {
 }
 
 export function SubscriptionPanel() {
+	const router = useRouter();
 	const [data, setData] = useState<SubscriptionData | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [cancelLoading, setCancelLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
-		const fetchSubscriptionData = async () => {
-			try {
-				setLoading(true);
-				const response = await fetch('/api/user/subscription');
-
-				if (!response.ok) {
-					throw new Error('Failed to fetch subscription data');
-				}
-
-				const subscriptionData = await response.json();
-				setData(subscriptionData);
-			} catch (err) {
-				setError('Could not load your subscription information');
-				console.error(err);
-			} finally {
-				setLoading(false);
-			}
-		};
-
 		fetchSubscriptionData();
 	}, []);
+
+	const fetchSubscriptionData = async () => {
+		try {
+			setLoading(true);
+			const response = await fetch('/api/user/subscription');
+
+			if (!response.ok) {
+				throw new Error('Failed to fetch subscription data');
+			}
+
+			const subscriptionData = await response.json();
+			setData(subscriptionData);
+		} catch (err) {
+			setError('Could not load your subscription information');
+			console.error(err);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleUpgrade = () => {
+		router.push('/subscription/upgrade');
+	};
+
+	const handleCancelSubscription = async () => {
+		if (!data?.subscriptions[0]?.id) return;
+
+		// Confirm before canceling
+		if (
+			!confirm(
+				'Are you sure you want to cancel your subscription? This action cannot be undone.',
+			)
+		) {
+			return;
+		}
+
+		setCancelLoading(true);
+		try {
+			const response = await fetch(`/api/user/subscription/cancel`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					subscriptionId: data.subscriptions[0].id,
+				}),
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to cancel subscription');
+			}
+
+			toast.success('Your subscription has been cancelled');
+			// Refresh data
+			await fetchSubscriptionData();
+		} catch (err) {
+			console.error(err);
+			toast.error(
+				'Failed to cancel your subscription. Please try again or contact support.',
+			);
+		} finally {
+			setCancelLoading(false);
+		}
+	};
 
 	// Format bytes to human-readable size
 	const formatStorageSize = (bytes: number) => {
@@ -98,10 +148,10 @@ export function SubscriptionPanel() {
 
 	if (loading) {
 		return (
-			<Card className="w-full">
+			<Card className="w-full bg-[#156469]/10 border-[#63d392]/20">
 				<CardHeader className="pb-2">
 					<CardTitle className="text-xl flex items-center">
-						<Loader2 className="mr-2 h-5 w-5 animate-spin" />
+						<Loader2 className="mr-2 h-5 w-5 animate-spin text-[#63d392]" />
 						Loading subscription data...
 					</CardTitle>
 				</CardHeader>
@@ -116,9 +166,9 @@ export function SubscriptionPanel() {
 
 	if (error || !data) {
 		return (
-			<Card className="w-full border-red-200">
+			<Card className="w-full bg-[#156469]/10 border-red-300/30">
 				<CardHeader className="pb-2">
-					<CardTitle className="text-xl flex items-center text-red-500">
+					<CardTitle className="text-xl flex items-center text-red-400">
 						<AlertCircle className="mr-2 h-5 w-5" />
 						Subscription Information Unavailable
 					</CardTitle>
@@ -129,8 +179,8 @@ export function SubscriptionPanel() {
 					</p>
 					<Button
 						variant="outline"
-						className="mt-4"
-						onClick={() => window.location.reload()}
+						className="mt-4 border-[#63d392]/30 text-[#63d392] hover:bg-[#0d5559]/30"
+						onClick={fetchSubscriptionData}
 					>
 						Try Again
 					</Button>
@@ -140,6 +190,11 @@ export function SubscriptionPanel() {
 	}
 
 	const hasActiveSubscription = data.subscriptions.some(
+		(sub) => sub.status === 'ACTIVE',
+	);
+
+	// Get active subscription if there is one
+	const activeSubscription = data.subscriptions.find(
 		(sub) => sub.status === 'ACTIVE',
 	);
 
@@ -154,18 +209,28 @@ export function SubscriptionPanel() {
 						</Badge>
 					)}
 				</div>
-				<CardDescription>
+				<CardDescription className="text-gray-300">
 					{hasActiveSubscription
-						? `You're currently on the ${data.subscriptions[0].planName} plan`
-						: "You don't have an active subscription"}
+						? `You're currently on the ${activeSubscription?.planName} plan`
+						: "You're currently on the free plan"}
 				</CardDescription>
 			</CardHeader>
 
 			<CardContent className="space-y-6">
 				<Tabs defaultValue="usage" className="w-full">
-					<TabsList className="grid w-full grid-cols-2">
-						<TabsTrigger value="usage">Usage</TabsTrigger>
-						<TabsTrigger value="plans">Plans</TabsTrigger>
+					<TabsList className="grid w-full grid-cols-2 bg-[#0d5559]/50">
+						<TabsTrigger
+							value="usage"
+							className="data-[state=active]:bg-[#13a870]/80"
+						>
+							Usage
+						</TabsTrigger>
+						<TabsTrigger
+							value="plans"
+							className="data-[state=active]:bg-[#13a870]/80"
+						>
+							Plans
+						</TabsTrigger>
 					</TabsList>
 
 					<TabsContent value="usage" className="space-y-6 pt-4">
@@ -247,6 +312,9 @@ export function SubscriptionPanel() {
 												variant={
 													sub.status === 'ACTIVE' ? 'default' : 'outline'
 												}
+												className={
+													sub.status === 'ACTIVE' ? 'bg-[#13a870]' : ''
+												}
 											>
 												{sub.status}
 											</Badge>
@@ -292,20 +360,32 @@ export function SubscriptionPanel() {
 				</Tabs>
 			</CardContent>
 
-			<CardFooter className="flex justify-between pt-0">
+			<CardFooter className="pt-0 flex justify-center">
 				{hasActiveSubscription ? (
 					<Button
 						variant="outline"
-						className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+						className="text-red-400 hover:text-red-300 hover:bg-red-900/20 w-full"
+						onClick={handleCancelSubscription}
+						disabled={cancelLoading}
 					>
-						Cancel Subscription
+						{cancelLoading ? (
+							<>
+								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+								Cancelling...
+							</>
+						) : (
+							'Cancel Subscription'
+						)}
 					</Button>
 				) : (
-					<Button className="bg-[#13a870] hover:bg-[#13a870]/80">
+					<Button
+						className="bg-[#13a870] hover:bg-[#13a870]/80 w-full"
+						onClick={handleUpgrade}
+					>
+						<CreditCard className="mr-2 h-4 w-4" />
 						Upgrade Plan
 					</Button>
 				)}
-				<Button variant="ghost">Billing History</Button>
 			</CardFooter>
 		</Card>
 	);

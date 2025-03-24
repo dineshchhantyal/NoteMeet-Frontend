@@ -4,7 +4,7 @@ import { NewMeetingDialog } from './new-meeting-dialog';
 import { NotificationDropdown } from './notification-dropdown';
 import { UserButtonClient } from './user-button-client';
 import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
+import { Search, CreditCard } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,9 +13,13 @@ import { RootState } from '@/lib/redux/store';
 
 interface DashboardHeaderProps {
 	handleMeetingCreated: (newMeeting: MeetingInterface) => void;
+	onShowSubscription: () => void;
 }
 
-const DashboardHeader = ({ handleMeetingCreated }: DashboardHeaderProps) => {
+const DashboardHeader = ({
+	handleMeetingCreated,
+	onShowSubscription,
+}: DashboardHeaderProps) => {
 	const dispatch = useDispatch();
 	const searchTerm = useSelector(
 		(state: RootState) => state.meetings.searchTerm,
@@ -64,6 +68,15 @@ const DashboardHeader = ({ handleMeetingCreated }: DashboardHeaderProps) => {
 					aria-label="Search"
 				>
 					<Search className="h-4.5 w-4.5" />
+				</Button>
+
+				<Button
+					variant="ghost"
+					onClick={onShowSubscription}
+					className="text-white hover:bg-[#156469]/50"
+				>
+					<CreditCard className="h-4 w-4 mr-2 text-[#63d392]" />
+					<span className="hidden sm:inline">Subscription</span>
 				</Button>
 
 				<NewMeetingDialog

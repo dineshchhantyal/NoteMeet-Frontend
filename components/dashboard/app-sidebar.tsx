@@ -7,6 +7,7 @@ import {
 	CalendarCheck2,
 	Share2,
 	Users2,
+	CreditCard,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -47,6 +48,7 @@ interface AppSidebarProps {
 	onClose: () => void;
 	selectedMeeting?: MeetingInterface | null;
 	loading?: boolean; // Add loading prop
+	onShowSubscription: () => void;
 }
 
 export function AppSidebar({
@@ -56,6 +58,7 @@ export function AppSidebar({
 	onClose,
 	selectedMeeting,
 	loading = false, // Default to false
+	onShowSubscription,
 }: AppSidebarProps) {
 	const dispatch = useDispatch();
 	const searchTerm = useSelector(
@@ -186,6 +189,18 @@ export function AppSidebar({
 							</div>
 						)}
 					</div>
+				</div>
+
+				{/* Add subscription link at the bottom of the sidebar */}
+				<div className="mt-auto px-3 py-4 border-t border-[#63d392]/20">
+					<Button
+						variant="ghost"
+						className="w-full justify-start text-gray-300 hover:text-white hover:bg-[#156469]/50"
+						onClick={onShowSubscription}
+					>
+						<CreditCard className="h-4 w-4 mr-2 text-[#63d392]" />
+						Manage Subscription
+					</Button>
 				</div>
 			</div>
 		</div>

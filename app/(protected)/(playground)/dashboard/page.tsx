@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	Menu,
 	FileText,
@@ -9,6 +9,7 @@ import {
 	MessageSquare,
 	PanelRight,
 	PanelLeft,
+	CreditCard,
 } from 'lucide-react';
 
 // UI Components
@@ -16,6 +17,12 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+} from '@/components/ui/dialog';
 
 // Redux
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
@@ -43,7 +50,6 @@ import { SubscriptionPanel } from '@/components/dashboard/subscription-panel';
 // Types
 import { MeetingInterface } from '@/types';
 import { MeetingStatus } from '@/types/meeting';
-import { useState } from 'react';
 import { VideoTranscriptResponse } from '@/types/video-transcript';
 import DashboardHeader from '@/components/dashboard/dashboard-header';
 
@@ -64,6 +70,7 @@ export default function DashboardPage() {
 		null,
 	);
 	const [currentVideoTime, setCurrentVideoTime] = useState<number | null>(null);
+	const [showSubscriptionDialog, setShowSubscriptionDialog] = useState(false);
 
 	// Fetch meetings on component mount
 	useEffect(() => {
@@ -143,6 +150,7 @@ export default function DashboardPage() {
 				onClose={() => setSidebarOpen(false)}
 				selectedMeeting={selectedMeeting}
 				loading={loading} // Pass the loading state from Redux
+				onShowSubscription={() => setShowSubscriptionDialog(true)}
 			/>
 
 			<div className="flex flex-1 flex-col overflow-hidden relative z-10">
@@ -157,7 +165,10 @@ export default function DashboardPage() {
 						<Menu className="h-5 w-5" />
 					</Button>
 
-					<DashboardHeader handleMeetingCreated={handleMeetingCreated} />
+					<DashboardHeader
+						handleMeetingCreated={handleMeetingCreated}
+						onShowSubscription={() => setShowSubscriptionDialog(true)}
+					/>
 				</header>
 
 				{selectedMeeting ? (
@@ -284,9 +295,6 @@ export default function DashboardPage() {
 									</div>
 								</div>
 							</div>
-							<div className="md:col-span-4">
-								<SubscriptionPanel />
-							</div>
 						</div>
 
 						{/* Right Panel Toggle Button (Mobile) */}
@@ -328,12 +336,76 @@ export default function DashboardPage() {
 										Select a meeting from the sidebar to view details, or create
 										a new meeting to get started.
 									</p>
-									<NewMeetingDialog onMeetingCreated={handleMeetingCreated} />
+									<div className="flex gap-3 justify-center">
+										<NewMeetingDialog onMeetingCreated={handleMeetingCreated} />
+										<Button
+											variant="outline"
+											className="border-[#63d392]/30 text-[#63d392] hover:bg-[#0d5559]"
+											onClick={() => setShowSubscriptionDialog(true)}
+										>
+											<CreditCard className="h-4 w-4 mr-2" /> View Subscription
+										</Button>
+									</div>
 								</>
 							)}
 						</div>
+
+						{/* Show subscription summary card below welcome message */}
+						{!loading && (
+							<div className="mt-6 max-w-md w-full">
+								<SubscriptionSummaryCard
+									onClick={() => setShowSubscriptionDialog(true)}
+								/>
+							</div>
+						)}
 					</div>
 				)}
+			</div>
+
+			{/* Subscription Dialog accessible from anywhere */}
+			<Dialog
+				open={showSubscriptionDialog}
+				onOpenChange={setShowSubscriptionDialog}
+			>
+				<DialogContent className="sm:max-w-[600px] bg-[#0d5559] border-[#63d392]/20 text-white">
+					<DialogHeader>
+						<DialogTitle className="text-[#63d392] text-xl">
+							Your Subscription
+						</DialogTitle>
+					</DialogHeader>
+					<SubscriptionPanel />
+				</DialogContent>
+			</Dialog>
+		</div>
+	);
+}
+
+// Create a simple subscription summary card for the no-meeting state
+function SubscriptionSummaryCard({ onClick }: { onClick: () => void }) {
+	return (
+		<div
+			onClick={onClick}
+			className="bg-[#156469]/30 backdrop-blur-sm rounded-xl border border-[#63d392]/20 p-4 shadow-md hover:shadow-lg transition-all cursor-pointer hover:bg-[#156469]/40"
+		>
+			<div className="flex items-center justify-between">
+				<div className="flex items-center">
+					<div className="bg-[#13a870]/20 p-2 rounded-full mr-3">
+						<CreditCard className="h-5 w-5 text-[#63d392]" />
+					</div>
+					<div>
+						<h3 className="font-medium text-[#63d392]">Subscription Status</h3>
+						<p className="text-sm text-gray-300">
+							Click to view your plan details and usage
+						</p>
+					</div>
+				</div>
+				<Button
+					variant="ghost"
+					size="sm"
+					className="text-[#63d392] hover:bg-[#0d5559]/50"
+				>
+					View Details
+				</Button>
 			</div>
 		</div>
 	);
