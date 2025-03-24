@@ -148,8 +148,8 @@ export function SubscriptionPanel() {
 
 	if (loading) {
 		return (
-			<Card className="w-full bg-[#156469]/10 border-[#63d392]/20">
-				<CardHeader className="pb-2">
+			<Card className="w-full text-gray-200 bg-[#156469]/10 border-[#63d392]/20 flex flex-col justify-center items-center">
+				<CardHeader className="pb-2 ">
 					<CardTitle className="text-xl flex items-center">
 						<Loader2 className="mr-2 h-5 w-5 animate-spin text-[#63d392]" />
 						Loading subscription data...
@@ -166,7 +166,7 @@ export function SubscriptionPanel() {
 
 	if (error || !data) {
 		return (
-			<Card className="w-full bg-[#156469]/10 border-red-300/30">
+			<Card className="w-full text-white bg-[#156469]/10 border-red-300/30">
 				<CardHeader className="pb-2">
 					<CardTitle className="text-xl flex items-center text-red-400">
 						<AlertCircle className="mr-2 h-5 w-5" />
@@ -199,7 +199,7 @@ export function SubscriptionPanel() {
 	);
 
 	return (
-		<Card className="w-full bg-[#156469]/20 border-[#63d392]/20">
+		<Card className="w-full text-white bg-[#156469]/20 border-[#63d392]/20">
 			<CardHeader className="pb-2">
 				<div className="flex items-center justify-between">
 					<CardTitle className="text-xl">Your Subscription</CardTitle>
