@@ -217,10 +217,11 @@ export default function AboutPage() {
 						</Button>
 					</div>
 					{/* link to presentation */}
-					<Link href="https://www.canva.com/design/DAGhi3SiSRo/3yfzdhBXk0ODtGmPVuvP0Q/edit?utm_content=DAGhi3SiSRo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton">
-						<a className="p-4 bg-[#63d392] rounded-tl-xl text-[#0a4a4e] font-medium">
-							See Our Presentation
-						</a>
+					<Link
+						href="https://www.canva.com/design/DAGhi3SiSRo/3yfzdhBXk0ODtGmPVuvP0Q/edit?utm_content=DAGhi3SiSRo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton"
+						className="p-4 bg-[#63d392] rounded-tl-xl text-[#0a4a4e] font-medium"
+					>
+						See Our Presentation
 					</Link>
 				</section>
 			</div>
