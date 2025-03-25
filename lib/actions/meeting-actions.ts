@@ -104,6 +104,7 @@ export async function getMeetingTranscript(
 					parsedTranscript.results &&
 					Array.isArray(parsedTranscript.results)
 				) {
+					parsedTranscript.remove('audio_url');
 					return parsedTranscript.results
 						.map(
 							(segment: {
