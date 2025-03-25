@@ -53,6 +53,9 @@ model User {
   meetings              Meeting[]
   sessions              Session[]
   storage               UserStorage?           @relation(fields: [storageId], references: [userId])
+  emailNotifications    Boolean   @default(true)
+  newsletterSubscribed  Boolean   @default(false)
+  lastLogin             DateTime?
 
   @@map("users")
 }

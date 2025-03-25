@@ -34,6 +34,22 @@ import {
 	User as UserType,
 } from '@/types/admin';
 import { formatDate } from '@/lib/utils/date-time';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from '@/components/ui/dialog';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
+import { toast } from 'sonner';
 
 interface UsersTableProps {
 	users: UserType[];
@@ -49,6 +65,10 @@ export function UsersTable({
 	onViewUser,
 }: UsersTableProps) {
 	const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
+	const [isRoleDialogOpen, setRoleDialogOpen] = useState(false);
+	const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
+	const [newRole, setNewRole] = useState<UserRole | null>(null);
+	const [isChangingRole, setIsChangingRole] = useState(false);
 
 	const toggleSort = (field: SortField) => {
 		if (sortBy.field === field) {
@@ -89,6 +109,56 @@ export function UsersTable({
 			default:
 				return <Badge className="bg-gray-600">Unknown</Badge>;
 		}
+	};
+
+	const handleRoleChange = async () => {
+		if (!selectedUser || !newRole) return;
+
+		setIsChangingRole(true);
+
+		try {
+			const response = await fetch(`/api/admin/users/${selectedUser.id}/role`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ role: newRole }),
+			});
+
+			const data = await response.json();
+
+			if (data.success) {
+				toast.success(`Changed ${selectedUser.name}'s role to ${newRole}`);
+				// Update user in the list
+				const updatedUsers = users.map((user) =>
+					user.id === selectedUser.id ? { ...user, role: newRole } : user,
+				);
+				// This assumes you have a way to update the users array
+				// If you're using state, you might have a setUsers function
+				// Otherwise, you might need to trigger a refetch
+
+				closeRoleDialog();
+			} else {
+				toast.error(data.error || 'Failed to change role');
+			}
+		} catch (error) {
+			toast.error('An error occurred');
+			console.error(error);
+		} finally {
+			setIsChangingRole(false);
+		}
+	};
+
+	const openRoleDialog = (user: UserType) => {
+		setSelectedUser(user);
+		setNewRole(user.role);
+		setRoleDialogOpen(true);
+	};
+
+	const closeRoleDialog = () => {
+		setRoleDialogOpen(false);
+		setSelectedUser(null);
+		setNewRole(null);
 	};
 
 	return (
@@ -238,7 +308,10 @@ export function UsersTable({
 												<Edit className="mr-2 h-4 w-4" />
 												Edit User
 											</DropdownMenuItem>
-											<DropdownMenuItem className="cursor-pointer hover:bg-[#156469] text-yellow-400">
+											<DropdownMenuItem
+												className="cursor-pointer hover:bg-[#156469] text-yellow-400"
+												onClick={() => openRoleDialog(user)}
+											>
 												<Shield className="mr-2 h-4 w-4" />
 												Change Role
 											</DropdownMenuItem>
@@ -261,6 +334,67 @@ export function UsersTable({
 					)}
 				</TableBody>
 			</Table>
+			{isRoleDialogOpen && selectedUser && (
+				<Dialog open={isRoleDialogOpen} onOpenChange={closeRoleDialog}>
+					<DialogContent className="bg-[#0d5559] border-[#63d392]/20 text-white sm:max-w-md">
+						<DialogHeader>
+							<DialogTitle>Change User Role</DialogTitle>
+							<DialogDescription className="text-gray-300">
+								Update role for {selectedUser.name}
+							</DialogDescription>
+						</DialogHeader>
+						<div className="py-4">
+							<div className="space-y-4">
+								<div className="flex flex-col space-y-2">
+									<label className="text-sm font-medium text-gray-300">
+										Select New Role
+									</label>
+									<Select
+										value={newRole || undefined}
+										onValueChange={(value) => setNewRole(value as UserRole)}
+										disabled={isChangingRole}
+									>
+										<SelectTrigger className="bg-[#156469]/50 border-[#63d392]/30 text-white">
+											<SelectValue placeholder="Select a role" />
+										</SelectTrigger>
+										<SelectContent className="bg-[#156469] border-[#63d392]/30 text-white">
+											<SelectItem
+												value={UserRole.ADMIN}
+												className="focus:bg-[#63d392]/20 focus:text-white"
+											>
+												Admin
+											</SelectItem>
+											<SelectItem
+												value={UserRole.USER}
+												className="focus:bg-[#63d392]/20 focus:text-white"
+											>
+												User
+											</SelectItem>
+										</SelectContent>
+									</Select>
+								</div>
+							</div>
+						</div>
+						<DialogFooter>
+							<Button
+								variant="outline"
+								onClick={closeRoleDialog}
+								className="border-[#63d392]/30 text-white hover:bg-[#156469]/50"
+								disabled={isChangingRole}
+							>
+								Cancel
+							</Button>
+							<Button
+								onClick={handleRoleChange}
+								disabled={isChangingRole || newRole === selectedUser.role}
+								className="bg-[#63d392] hover:bg-[#63d392]/80 text-[#0a4a4e] font-medium"
+							>
+								{isChangingRole ? 'Updating...' : 'Update Role'}
+							</Button>
+						</DialogFooter>
+					</DialogContent>
+				</Dialog>
+			)}
 		</div>
 	);
 }

@@ -135,7 +135,10 @@ export function AIMeetingAssistant({ meeting }: AIMeetingAssistantProps) {
 	// Scroll to bottom
 	const scrollToBottom = useCallback(() => {
 		if (messagesEndRef?.current) {
-			messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+			messagesEndRef.current.scrollIntoView({
+				behavior: 'smooth',
+				block: 'end',
+			});
 			setHasNewMessages(false);
 		}
 	}, []);

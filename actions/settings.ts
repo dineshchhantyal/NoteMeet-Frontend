@@ -1,87 +1,194 @@
 'use server';
 
 import * as z from 'zod';
-import bcrypt from 'bcryptjs';
-
 import { db } from '@/lib/db';
-import { SettingsSchema } from '@/schemas';
-import { getUserByEmail, getUserById } from '@/data/user';
 import { currentUser } from '@/lib/auth';
-import { generateVerificationToken } from '@/lib/tokens';
-import { sendVerificationEmail } from '@/lib/mail';
+import {
+	PersonalInfoSchema,
+	PasswordSchema,
+	CommunicationPreferencesSchema,
+} from '@/schemas';
+import { revalidatePath } from 'next/cache';
+import bcrypt from 'bcryptjs';
 import { UserRole } from '@prisma/client';
 
-export const settings = async (values: z.infer<typeof SettingsSchema>) => {
-	const user = await currentUser();
+export const updatePersonalInfo = async (
+	values: z.infer<typeof PersonalInfoSchema>,
+) => {
+	try {
+		const user = await currentUser();
 
-	if (!user || !user.id) {
-		return { error: 'Unauthorized' };
-	}
-
-	const dbUser = await getUserById(user.id);
-
-	if (user.isOAuth) {
-		(values.email = undefined),
-			(values.password = undefined),
-			(values.newPassword = undefined),
-			(values.isTwoFactorEnabled = undefined);
-	}
-
-	if (values.role && values.role !== dbUser?.role) {
-		if (values?.role === UserRole.ADMIN && dbUser?.role !== UserRole.ADMIN) {
-			return { error: 'Cannot change role of admin!' };
-		}
-	}
-
-	if (values.email && values.email !== user.email) {
-		const existingUser = await getUserByEmail(values.email);
-
-		if (existingUser && existingUser.id !== user.id) {
-			return { error: 'Email already in use!' };
+		if (!user) {
+			return { error: 'Unauthorized' };
 		}
 
-		const verificationToken = await generateVerificationToken(values.email);
+		await db?.user.update({
+			where: { id: user.id },
+			data: {
+				name: values.name,
+				email: values.email,
+			},
+		});
 
-		if (!verificationToken) {
-			return { error: 'Failed to generate verification token!' };
+		revalidatePath('/settings');
+		return { success: 'Personal information updated successfully!' };
+	} catch (error) {
+		console.error('[SETTINGS_ERROR]', error);
+		return { error: 'Failed to update personal information' };
+	}
+};
+
+export const updatePassword = async (
+	values: z.infer<typeof PasswordSchema>,
+) => {
+	try {
+		const user = await currentUser();
+
+		if (!user || !user.id) {
+			return { error: 'Unauthorized' };
 		}
 
-		await sendVerificationEmail(
-			verificationToken.email,
-			verificationToken.token,
-		);
+		const dbUser = await db?.user.findUnique({
+			where: { id: user.id },
+		});
+
+		if (!dbUser || !dbUser.password) {
+			return { error: 'Invalid credentials' };
+		}
+
+		// Verify current password
+		const isValid = await bcrypt.compare(values.password, dbUser.password);
+
+		if (!isValid) {
+			return { error: 'Current password is incorrect' };
+		}
+
+		// Hash the new password
+		const hashedPassword = await bcrypt.hash(values.newPassword, 10);
+
+		// Update the password
+		await db?.user.update({
+			where: { id: user.id },
+			data: { password: hashedPassword },
+		});
+
+		return { success: 'Password updated successfully!' };
+	} catch (error) {
+		console.error('[SETTINGS_ERROR]', error);
+		return { error: 'Failed to update password' };
+	}
+};
+
+export const toggleTwoFactor = async (enabled: boolean) => {
+	try {
+		const user = await currentUser();
+
+		if (!user) {
+			return { error: 'Unauthorized' };
+		}
+
+		await db?.user.update({
+			where: { id: user.id },
+			data: { isTwoFactorEnabled: enabled },
+		});
 
 		return {
-			success: 'Verification email send!',
+			success: enabled
+				? 'Two-factor authentication enabled'
+				: 'Two-factor authentication disabled',
 		};
+	} catch (error) {
+		console.error('[SETTINGS_ERROR]', error);
+		return { error: 'Failed to update two-factor authentication' };
 	}
+};
 
-	if (values.password && values.newPassword && dbUser?.password) {
-		const passwordMatch = await bcrypt.compare(
-			values.password,
-			dbUser.password,
-		);
+export const updateCommunicationPreferences = async (
+	values: z.infer<typeof CommunicationPreferencesSchema>,
+) => {
+	try {
+		const user = await currentUser();
 
-		if (!passwordMatch) {
-			return { error: 'Incorrect password!' };
+		if (!user || !user.email) {
+			return { error: 'Unauthorized' };
 		}
 
-		const hashedPassword = await bcrypt.hash(values.password, 10);
+		// Update newsletter subscription
+		if (values.newsletterSubscribed) {
+			// Add to newsletter subscriptions
+			await db?.newsletterSubscription.upsert({
+				where: { email: user.email },
+				update: { status: 'active' },
+				create: {
+					email: user.email,
+					status: 'active',
+				},
+			});
+		} else {
+			// Update existing subscription to unsubscribed
+			const existingSubscription = await db?.newsletterSubscription.findUnique({
+				where: { email: user.email },
+			});
 
-		values.password = hashedPassword;
-		values.newPassword = undefined;
+			if (existingSubscription) {
+				await db?.newsletterSubscription.update({
+					where: { email: user.email },
+					data: { status: 'unsubscribed' },
+				});
+			}
+		}
+
+		// For email notifications, we'll need to add this field to the User model
+		// This is a placeholder assuming you'll migrate the schema later
+
+		return { success: 'Communication preferences updated successfully!' };
+	} catch (error) {
+		console.error('[SETTINGS_ERROR]', error);
+		return { error: 'Failed to update communication preferences' };
 	}
+};
 
-	if (!dbUser) {
-		return { error: 'Unauthorized' };
+export const updateAdminSettings = async (role: UserRole) => {
+	try {
+		const user = await currentUser();
+
+		if (!user || user.role !== UserRole.ADMIN) {
+			return { error: 'Unauthorized' };
+		}
+
+		// Admin-only operations here
+
+		return { success: 'Admin settings updated successfully!' };
+	} catch (error) {
+		console.error('[SETTINGS_ERROR]', error);
+		return { error: 'Failed to update admin settings' };
 	}
+};
 
-	await db?.user.update({
-		where: { id: user.id },
-		data: {
-			...values,
-		},
-	});
+export const settings = async ({ role }: { role?: UserRole }) => {
+	try {
+		const user = await currentUser();
 
-	return { success: 'Settings Updated!' };
+		if (!user) {
+			return { error: 'Unauthorized' };
+		}
+
+		if (user.role !== UserRole.ADMIN) {
+			return { error: 'Only admins can change roles' };
+		}
+
+		if (role) {
+			// Update the user's role
+			await db?.user.update({
+				where: { id: user.id },
+				data: { role },
+			});
+		}
+
+		revalidatePath('/settings');
+		return { success: 'Settings updated successfully!' };
+	} catch (error) {
+		console.error('[SETTINGS_ERROR]', error);
+		return { error: 'Failed to update settings' };
+	}
 };

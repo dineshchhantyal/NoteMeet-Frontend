@@ -67,7 +67,7 @@ export default function AdminUsersListPage() {
 	};
 
 	return (
-		<div className="space-y-6 p-6">
+		<div className="bg-primary space-y-6 p-6">
 			{/* Header section without using children */}
 			<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-gray-700">
 				<AdminPageHeader

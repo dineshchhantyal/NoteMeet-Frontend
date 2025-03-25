@@ -71,3 +71,23 @@ export const SettingsSchema = z
 			path: ['password'],
 		},
 	);
+
+// Personal Info Schema
+export const PersonalInfoSchema = z.object({
+	name: z.string().min(1, { message: 'Name is required' }),
+	email: z.string().email({ message: 'Invalid email address' }),
+});
+
+// Password Update Schema
+export const PasswordSchema = z.object({
+	password: z.string().min(1, { message: 'Current password is required' }),
+	newPassword: z
+		.string()
+		.min(6, { message: 'New password must be at least 6 characters' }),
+});
+
+// Communication Preferences Schema
+export const CommunicationPreferencesSchema = z.object({
+	emailNotifications: z.boolean().default(true),
+	newsletterSubscribed: z.boolean().default(false),
+});
