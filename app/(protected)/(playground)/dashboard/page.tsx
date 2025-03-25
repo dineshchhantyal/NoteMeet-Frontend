@@ -172,7 +172,7 @@ export default function DashboardPage() {
 				</header>
 
 				{selectedMeeting ? (
-					<main className="flex flex-1 overflow-hidden">
+					<main className="flex flex-1 overflow-y-scroll">
 						<div className="flex-1 overflow-auto p-4 md:p-6 space-y-6">
 							<MeetingInfo
 								meeting={selectedMeeting}
