@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Link, Lock, ShieldCheck, Sparkles } from 'lucide-react';
+import { ArrowRight, Lock, ShieldCheck, Sparkles } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { FaLinkedinIn } from 'react-icons/fa';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
 	title: 'About Us | NoteMeet',
@@ -199,7 +200,6 @@ export default function AboutPage() {
 						<div className="absolute top-0 right-0 w-72 h-72 bg-[#63d392]/30 rounded-full blur-[80px]"></div>
 						<div className="absolute bottom-0 left-0 w-72 h-72 bg-[#63d392]/20 rounded-full blur-[80px]"></div>
 					</div>
-
 					<div className="relative z-10 text-center py-16 px-4">
 						<h2 className="text-3xl font-semibold mb-4">Join Our Journey</h2>
 						<p className="text-xl mb-8 max-w-2xl mx-auto">
@@ -217,9 +217,8 @@ export default function AboutPage() {
 						</Button>
 					</div>
 					{/* link to presentation */}
-
 					<Link href="https://www.canva.com/design/DAGhi3SiSRo/3yfzdhBXk0ODtGmPVuvP0Q/edit?utm_content=DAGhi3SiSRo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton">
-						<a className="absolute bottom-0 right-0 p-4 bg-[#63d392] rounded-tl-xl text-[#0a4a4e] font-medium">
+						<a className="p-4 bg-[#63d392] rounded-tl-xl text-[#0a4a4e] font-medium">
 							See Our Presentation
 						</a>
 					</Link>
