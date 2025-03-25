@@ -11,6 +11,10 @@ import {
 	analyzeSentiment,
 	extractPeopleMentioned,
 } from '@/lib/actions/meeting-actions';
+import {
+	generateMeetingImage,
+	listMeetingImages,
+} from '@/lib/ai/dalleImageGenerator';
 
 // Replace the TranscriptSearchResult interface with this:
 interface WordMatch {
@@ -426,6 +430,163 @@ export const createMeetingTools = (meetingId: string) => ({
 				'External people mentioned in the meeting:\n\n' +
 				people.map((p) => `- ${p.name}: ${p.mentions} mentions`).join('\n')
 			);
+		},
+	}),
+
+	/**
+	 * Generate an image related to the meeting content
+	 */
+	generateImage: tool({
+		description: 'Generate an image related to meeting content with DALL-E',
+		parameters: z.object({
+			description: z
+				.string()
+				.describe(
+					'Brief description or theme for the image. Will be enhanced with meeting context automatically.',
+				),
+			style: z
+				.enum(['professional', 'creative', 'abstract'])
+				.optional()
+				.describe(
+					'Style of the image: professional (default), creative, or abstract',
+				),
+		}),
+		execute: async ({ description, style = 'professional' }) => {
+			try {
+				// Get meeting metadata to enhance the image context
+				const meeting = await getMeetingById(meetingId);
+				const summary = await getMeetingSummary(meetingId);
+
+				if (!meeting) {
+					return {
+						success: false,
+						message: "Couldn't find meeting data to generate a relevant image",
+						fallbackText: 'Please try again with a more specific description',
+					};
+				}
+
+				// Create a context-aware prompt that includes meeting details
+				const contextualDescription = description || 'meeting visualization';
+
+				// Build an enhanced prompt with meeting context
+				let enhancedDescription = `Create a visual representation for a meeting titled "${meeting.title}" more details: ${JSON.stringify(
+					meeting,
+				)}.`;
+
+				// Add summary context if available
+				if (summary && summary.length > 0) {
+					// Extract key points from summary (first 100 chars max)
+					const summaryExcerpt =
+						summary.substring(0, 100) + (summary.length > 100 ? '...' : '');
+					enhancedDescription += ` about: ${summaryExcerpt}`;
+				}
+
+				// Add the user's description
+				enhancedDescription += `. Specifically focusing on: ${contextualDescription}.`;
+
+				// Apply style variations
+				switch (style) {
+					case 'creative':
+						enhancedDescription +=
+							' Use vibrant colors, dynamic elements, and a creative, modern style. Include visual metaphors related to collaboration and innovation.';
+						break;
+					case 'abstract':
+						enhancedDescription +=
+							' Create an abstract representation with geometric shapes, minimal colors, and subtle business symbolism. Use a clean, minimalist approach.';
+						break;
+					default: // professional
+						enhancedDescription +=
+							' Use a professional corporate style with clean design. Include subtle business elements like charts, handshakes, or conference room imagery where appropriate.';
+				}
+
+				console.log(
+					`Generating meeting image with context: ${enhancedDescription.substring(0, 100)}...`,
+				);
+
+				// Generate the image with meeting context
+				const imageUrl = await generateMeetingImage(
+					meetingId,
+					enhancedDescription,
+				);
+
+				return {
+					success: true,
+					message: `Image successfully generated for "${meeting.title}" meeting`,
+					description: enhancedDescription.substring(0, 100) + '...', // Return truncated description for reference
+					imageUrl: imageUrl,
+					markdown: `![Generated image for ${meeting.title}](${imageUrl})`,
+				};
+			} catch (error) {
+				console.error('Error in generateImage tool:', error);
+				return {
+					success: false,
+					message: `Failed to generate meeting image: ${(error as Error).message}`,
+					fallbackText:
+						'Unable to create the requested image at this time. Try providing more specific details about what you want in the image.',
+				};
+			}
+		},
+	}),
+
+	/**
+	 * List previously generated images for this meeting
+	 */
+	listGeneratedImages: tool({
+		description: 'List all previously generated images for this meeting',
+		parameters: z.object({
+			limit: z
+				.number()
+				.optional()
+				.describe('Maximum number of images to return (default: 10)'),
+			sortBy: z
+				.enum(['newest', 'oldest'])
+				.optional()
+				.describe('Sort order for images (default: newest)'),
+		}),
+		execute: async ({ limit = 10, sortBy = 'newest' }) => {
+			try {
+				const result = await listMeetingImages(meetingId);
+
+				if (!result.images || result.images.length === 0) {
+					return {
+						message: 'No images have been generated for this meeting yet.',
+						images: [],
+					};
+				}
+
+				// Sort images by generation date
+				const sortedImages = [...result.images].sort((a, b) => {
+					const dateA = new Date(a.generatedAt).getTime();
+					const dateB = new Date(b.generatedAt).getTime();
+					return sortBy === 'newest' ? dateB - dateA : dateA - dateB;
+				});
+
+				// Limit the number of images returned
+				const limitedImages = sortedImages.slice(0, limit);
+
+				// Format the response
+				const imageList = limitedImages.map((img, index) => {
+					const date = new Date(img.generatedAt).toLocaleString();
+					return `${index + 1}. Image generated on ${date}\n![Image ${
+						index + 1
+					}](${img.url})`;
+				});
+
+				return {
+					message: `Found ${result.images.length} images for this meeting. Showing ${limitedImages.length}:`,
+					images: limitedImages,
+					markdown: imageList.join('\n\n'),
+				};
+			} catch (error) {
+				console.error('Error listing generated images:', error);
+				return {
+					success: false,
+					message: `Failed to list generated images: ${
+						(error as Error).message
+					}`,
+					images: [],
+				};
+			}
 		},
 	}),
 });

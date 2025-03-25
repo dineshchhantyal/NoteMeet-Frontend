@@ -3,6 +3,7 @@ import {
 	GetObjectCommand,
 	PutObjectCommand,
 	S3Client,
+	ListObjectsV2Command,
 } from '@aws-sdk/client-s3';
 
 // Define bucket configurations type
@@ -125,3 +126,42 @@ export const getObject = async (key: string, bucketType: S3BucketType) => {
 		);
 	}
 };
+
+/**
+ * List objects in an S3 bucket with a specific prefix
+ * @param bucketType The type of bucket to use
+ * @param prefix The prefix to list objects under
+ * @returns Array of S3 objects
+ */
+export async function listS3Objects(bucketType: S3BucketType, prefix: string) {
+	try {
+		// Get the appropriate bucket name based on bucket type
+		const config = s3Configs[bucketType];
+		if (!config) {
+			throw new Error(`Invalid bucket type: ${bucketType}`);
+		}
+		const bucketName = config.bucketName;
+
+		// Create S3 client
+		const s3Client = new S3Client({
+			region: process.env.AWS_REGION,
+			credentials: {
+				accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+				secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+			},
+		});
+
+		// List objects
+		const command = new ListObjectsV2Command({
+			Bucket: bucketName,
+			Prefix: prefix,
+			MaxKeys: 100, // Limit to 100 objects
+		});
+
+		const response = await s3Client.send(command);
+		return response.Contents || [];
+	} catch (error) {
+		console.error('Error listing S3 objects:', error);
+		throw error;
+	}
+}
