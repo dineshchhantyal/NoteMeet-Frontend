@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { UserCog } from 'lucide-react';
 import { PersonalInfoSection } from '@/components/settings/personal-info-section';

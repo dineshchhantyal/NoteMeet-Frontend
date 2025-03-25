@@ -9,8 +9,8 @@ export type ExtendedUser = DefaultSession['user'] & {
 	emailNotifications: boolean;
 	newsletterSubscribed: boolean;
 	subscriptionId: string;
-	createdAt: string | null;
-	lastLogin: string | null;
+	createdAt: Date | undefined;
+	lastLogin: Date | undefined;
 };
 
 declare module 'next-auth' {

@@ -7,10 +7,12 @@ export function AccountInfo() {
 	const user = useCurrentUser();
 
 	const accountCreated = user?.createdAt
-		? formatDate(user.createdAt)
+		? formatDate(user.createdAt.toISOString())
 		: 'Unknown';
 
-	const lastLogin = user?.lastLogin ? formatDate(user.lastLogin) : 'Unknown';
+	const lastLogin = user?.lastLogin
+		? formatDate(user.lastLogin.toISOString())
+		: 'Unknown';
 
 	const copyAccountId = () => {
 		if (user?.id) {

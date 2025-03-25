@@ -1,7 +1,7 @@
 import { useState, useTransition } from 'react';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
-import { BellRing, Mail } from 'lucide-react';
+import { BellRing } from 'lucide-react';
 import { FormError } from '@/components/form-error';
 import { FormSuccess } from '@/components/form-success';
 import { useCurrentUser } from '@/hooks/use-current-user';

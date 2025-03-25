@@ -130,9 +130,9 @@ export function UsersTable({
 			if (data.success) {
 				toast.success(`Changed ${selectedUser.name}'s role to ${newRole}`);
 				// Update user in the list
-				const updatedUsers = users.map((user) =>
-					user.id === selectedUser.id ? { ...user, role: newRole } : user,
-				);
+				// const updatedUsers = users.map((user) =>
+				// 	user.id === selectedUser.id ? { ...user, role: newRole } : user,
+				// );
 				// This assumes you have a way to update the users array
 				// If you're using state, you might have a setUsers function
 				// Otherwise, you might need to trigger a refetch
