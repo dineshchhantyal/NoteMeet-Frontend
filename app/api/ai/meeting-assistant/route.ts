@@ -6,10 +6,19 @@ import {
 	getMeetingById,
 	getMeetingTranscription,
 } from '@/lib/actions/meeting-actions';
+import { currentUser } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
 	try {
 		const { messages, meetingId } = await req.json();
+		const user = await currentUser();
+
+		if (!user) {
+			return NextResponse.json(
+				{ error: 'User is not authenticated' },
+				{ status: 401 },
+			);
+		}
 
 		if (!meetingId) {
 			return NextResponse.json(
@@ -28,6 +37,8 @@ The meeting had these participants: ${meetingData.participants?.join(', ')}.
 
 This is the complete information about the meeting:
 - ${JSON.stringify(meetingData, null, 2)}
+
+The users in this chat is ${user?.name}. Be sure to provide the best assistance possible.
 
 You have access to the meeting transcript and summary. Use the provided tools to search for specific information.
 When answering questions:

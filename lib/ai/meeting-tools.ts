@@ -40,7 +40,7 @@ export const createMeetingTools = (meetingId: string) => ({
 	 */
 	searchTranscript: tool({
 		description:
-			'Search the meeting transcript for specific information or keywords. If time is returned, it is approximate and will be in seconds, convert to minutes for more accuracy.',
+			'Search the meeting transcript for specific information or keywords. ',
 		parameters: z.object({
 			query: z.string().describe('The search query to find in the transcript'),
 		}),
