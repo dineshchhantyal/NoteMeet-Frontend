@@ -46,6 +46,15 @@ export const MessageContent = memo(function MessageContent({
 								/>
 							),
 							// Type the code component props correctly
+							img: ({
+								className,
+								...props
+							}: React.ImgHTMLAttributes<HTMLImageElement>) => (
+								<img
+									{...props}
+									className={`max-w-full h-auto rounded-lg ${className || ''}`}
+								/>
+							),
 							code: ({ className, children, ...props }) => {
 								return (
 									<code
