@@ -40,7 +40,7 @@ export const createMeetingTools = (meetingId: string) => ({
 	 */
 	searchTranscript: tool({
 		description:
-			'Search the meeting transcript for specific information or keywords',
+			'Search the meeting transcript for specific information or keywords. If time is returned, it is approximate and will be in seconds, convert to minutes for more accuracy.',
 		parameters: z.object({
 			query: z.string().describe('The search query to find in the transcript'),
 		}),
@@ -455,23 +455,32 @@ export const createMeetingTools = (meetingId: string) => ({
 			try {
 				// Get meeting metadata to enhance the image context
 				const meeting = await getMeetingById(meetingId);
-				const summary = await getMeetingSummary(meetingId);
+				let summary = '';
+
+				try {
+					summary = (await getMeetingSummary(meetingId)) || '';
+				} catch (summaryError) {
+					console.error('Error fetching meeting summary:', summaryError);
+					// Continue without summary if it fails
+				}
 
 				if (!meeting) {
 					return {
 						success: false,
 						message: "Couldn't find meeting data to generate a relevant image",
-						fallbackText: 'Please try again with a more specific description',
+						imageUrl: null,
+						markdown: '⚠️ Unable to generate image: Meeting data not found.',
 					};
 				}
+
+				// Extract key meeting information
+				const meetingTitle = meeting.title || 'Business Meeting';
 
 				// Create a context-aware prompt that includes meeting details
 				const contextualDescription = description || 'meeting visualization';
 
 				// Build an enhanced prompt with meeting context
-				let enhancedDescription = `Create a visual representation for a meeting titled "${meeting.title}" more details: ${JSON.stringify(
-					meeting,
-				)}.`;
+				let enhancedDescription = `Create a visual representation for a meeting titled "${meetingTitle}"`;
 
 				// Add summary context if available
 				if (summary && summary.length > 0) {
@@ -511,18 +520,20 @@ export const createMeetingTools = (meetingId: string) => ({
 
 				return {
 					success: true,
-					message: `Image successfully generated for "${meeting.title}" meeting`,
-					description: enhancedDescription.substring(0, 100) + '...', // Return truncated description for reference
+					message: `Image successfully generated for "${meetingTitle}" meeting`,
+					description: enhancedDescription.substring(0, 100) + '...',
 					imageUrl: imageUrl,
-					markdown: `![Generated image for ${meeting.title}](${imageUrl})`,
+					markdown: `![Generated image for ${meetingTitle}](${imageUrl})`,
 				};
 			} catch (error) {
 				console.error('Error in generateImage tool:', error);
+				// CRITICAL: Always return a result object even on failure
 				return {
 					success: false,
 					message: `Failed to generate meeting image: ${(error as Error).message}`,
-					fallbackText:
-						'Unable to create the requested image at this time. Try providing more specific details about what you want in the image.',
+					imageUrl: null,
+					markdown:
+						'⚠️ Unable to generate the requested image at this time. Please try again later.',
 				};
 			}
 		},
