@@ -44,12 +44,12 @@ async function getMeetingData(id: string) {
 export default async function MeetingPage({
 	params,
 }: {
-	params: { id: string };
+	params: Promise<{ id: string }>;
 }) {
 	let meetingData;
 
 	try {
-		meetingData = await getMeetingData(params.id);
+		meetingData = await getMeetingData((await params).id);
 	} catch (error) {
 		console.error('Error fetching meeting data:', error);
 		return notFound();
