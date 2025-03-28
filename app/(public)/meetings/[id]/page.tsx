@@ -8,6 +8,7 @@ import { SummarySection } from '@/components/summary-section';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, Users, FileText, FileBarChart2 } from 'lucide-react';
 import { currentUser } from '@/lib/auth';
+import { Participant } from '@prisma/client';
 
 async function getMeetingData(id: string) {
 	try {
@@ -50,6 +51,7 @@ export default async function MeetingPage({
 	try {
 		meetingData = await getMeetingData(params.id);
 	} catch (error) {
+		console.error('Error fetching meeting data:', error);
 		return notFound();
 	}
 
@@ -121,13 +123,13 @@ export default async function MeetingPage({
 										<span className="text-gray-300">Participants:</span>
 										<div className="flex flex-wrap gap-1 mt-1">
 											{meetingData.participants?.map(
-												(participant: any, idx: number) => (
+												(participant: Participant, idx: number) => (
 													<Badge
 														key={idx}
 														variant="outline"
 														className="bg-[#0d5559]/70 border-[#63d392]/30 text-white"
 													>
-														{participant.user?.name ||
+														{participant.email ||
 															participant.email ||
 															'Unknown'}
 													</Badge>
