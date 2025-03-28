@@ -206,23 +206,31 @@ export default function AboutPage() {
 							We&apos;re always looking for talented individuals to join our
 							team and help shape the future of meetings.
 						</p>
-						<Button
-							size="lg"
-							className="bg-[#63d392] text-[#0a4a4e] hover:bg-[#4fb87a] hover:shadow-lg hover:shadow-[#63d392]/20 transition-all"
-						>
-							<a href="/careers" className="flex items-center">
-								View Open Positions
-								<ArrowRight className="ml-2 h-5 w-5" />
-							</a>
-						</Button>
+						<div className="flex flex-wrap gap-4 justify-center">
+							<Button
+								size="lg"
+								className="bg-[#63d392] text-[#0a4a4e] hover:bg-[#4fb87a] hover:shadow-lg hover:shadow-[#63d392]/20 transition-all"
+							>
+								<a href="/careers" className="flex items-center">
+									View Open Positions
+									<ArrowRight className="ml-2 h-5 w-5" />
+								</a>
+							</Button>
+							<Button
+								size="lg"
+								variant="outline"
+								className="border-[#63d392] text-[#63d392] hover:bg-[#63d392]/10 hover:shadow-lg hover:shadow-[#63d392]/10 transition-all"
+							>
+								<Link
+									href="https://www.canva.com/design/DAGhi3SiSRo/3yfzdhBXk0ODtGmPVuvP0Q/edit?utm_content=DAGhi3SiSRo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton"
+									className="flex items-center"
+								>
+									See Our Presentation
+									<ArrowRight className="ml-2 h-5 w-5" />
+								</Link>
+							</Button>
+						</div>
 					</div>
-					{/* link to presentation */}
-					<Link
-						href="https://www.canva.com/design/DAGhi3SiSRo/3yfzdhBXk0ODtGmPVuvP0Q/edit?utm_content=DAGhi3SiSRo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton"
-						className="p-4 bg-[#63d392] rounded-tl-xl text-[#0a4a4e] font-medium"
-					>
-						See Our Presentation
-					</Link>
 				</section>
 			</div>
 		</div>
